@@ -202,6 +202,13 @@ async def parse_payload(payload: dict, ctx: DiddyKongRacingContext):
         await ctx.send_connect()
         return
 
+    if payload["gameComplete"] == "true" and not ctx.finished_game:
+        await ctx.send_msgs([{
+            "cmd": "StatusUpdate",
+            "status": 30
+        }])
+        ctx.finished_game = True
+
     # Locations handling
     locations = payload['locations']
 
@@ -216,26 +223,9 @@ async def parse_payload(payload: dict, ctx: DiddyKongRacingContext):
                 if len(dkr_location_table) == 0:
                     continue
 
-                # Game completion handling
-                if ctx.slot_data["victory_condition"] == 0:
-                    victory_item_location = "1616700"
-                elif ctx.slot_data["victory_condition"] == 1:
-                    victory_item_location = "1616701"
-                else:
-                    raise Exception("Unexpected victory condition")
-
-                if (not ctx.finished_game
-                        and victory_item_location in dkr_location_table
-                        and dkr_location_table[victory_item_location]):
-                    await ctx.send_msgs([{
-                        "cmd": "StatusUpdate",
-                        "status": 30
-                    }])
-                    ctx.finished_game = True
-                else:
-                    for locationId, value in dkr_location_table.items():
-                        if value and locationId not in ctx.location_table:
-                            updated_locations.append(int(locationId))
+                for locationId, value in dkr_location_table.items():
+                    if value and locationId not in ctx.location_table:
+                        updated_locations.append(int(locationId))
             if len(updated_locations) > 0:
                 await ctx.send_msgs([{
                     "cmd": "LocationChecks",

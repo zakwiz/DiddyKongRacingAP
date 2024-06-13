@@ -89,8 +89,8 @@ FUTURE_FUN_LAND_LOCATION_TABLE = {
 }
 
 EVENT_LOCATION_TABLE = {
-    LocationName.WIZPIG_1: LocationData(1616700),
-    LocationName.WIZPIG_2: LocationData(1616701)
+    LocationName.WIZPIG_1: LocationData(),
+    LocationName.WIZPIG_2: LocationData()
 }
 
 

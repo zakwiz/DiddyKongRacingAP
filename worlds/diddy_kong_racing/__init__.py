@@ -38,7 +38,7 @@ class DiddyKongRacingWorld(World):
     Diddy Kong Racing is a kart racing game with a story mode, complete with bosses and hidden collectibles.
     """
 
-    game: str = "Diddy Kong Racing"
+    game = "Diddy Kong Racing"
     web = DiddyKongRacingWeb()
     topology_preset = True
     item_name_to_id = {}
@@ -59,9 +59,6 @@ class DiddyKongRacingWorld(World):
 
     def create_item(self, item_name: str) -> Item:
         dkr_item = ALL_ITEM_TABLE.get(item_name)
-
-        if dkr_item.type == "victory":
-            return DiddyKongRacingItem(ItemName.VICTORY, ItemClassification.filler, None, self.player)
 
         created_item = DiddyKongRacingItem(
             self.item_id_to_name[dkr_item.dkr_id],

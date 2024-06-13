@@ -14,6 +14,7 @@ local DKR_VERSION = "V0.1.0"
 local player
 local seed
 local skip_trophy_races
+local victory_condition
 
 local STATE_OK = "Ok"
 local STATE_TENTATIVELY_CONNECTED = "Tentatively Connected"
@@ -107,8 +108,7 @@ local ITEM_GROUPS = {
     FUTURE_FUN_LAND_BALLOON = "FUTURE_FUN_LAND_BALLOON",
     KEY = "KEY",
     WIZPIG_AMULET_PIECE = "WIZPIG_AMULET_PIECE",
-    TT_AMULET_PIECE = "TT_AMULET_PIECE",
-    EVENT = "EVENT"
+    TT_AMULET_PIECE = "TT_AMULET_PIECE"
 }
 
 local BALLOON_ITEM_GROUP_TO_COUNT_ADDRESS = {
@@ -519,18 +519,19 @@ local AGI_MASTER_MAP = {
             [BIT] = 1,
             [NAME] = "Smokey Castle"
         },
+    }
+}
+
+local VICTORY_CONDITION_TO_ADDRESS = {
+    [0] = {
+        [BYTE] = DKR_RAM.ADDRESS.BOSS_COMPLETION_2,
+        [BIT] = 0,
+        [NAME] = "Wizpig 1"
     },
-    [ITEM_GROUPS.EVENT] = {
-        ["1616700"] = {
-            [BYTE] = DKR_RAM.ADDRESS.BOSS_COMPLETION_2,
-            [BIT] = 0,
-            [NAME] = "Wizpig 1"
-        },
-        ["1616701"] = {
-            [BYTE] = DKR_RAM.ADDRESS.BOSS_COMPLETION_2,
-            [BIT] = 5,
-            [NAME] = "Wizpig 2"
-        }
+    [1] = {
+        [BYTE] = DKR_RAM.ADDRESS.BOSS_COMPLETION_2,
+        [BIT] = 5,
+        [NAME] = "Wizpig 2"
     }
 }
 
@@ -896,6 +897,10 @@ function process_slot(block)
         skip_trophy_races = true
     end
 
+    if block["slot_victory_condition"] and block["slot_victory_condition"] ~= "" then
+        victory_condition = block["slot_victory_condition"]
+    end
+
     if seed then
         load_agi()
         slot_loaded = true
@@ -936,6 +941,7 @@ function send_to_dkr_client()
     retTable["scriptVersion"] = SCRIPT_VERSION
     retTable["playerName"] = player
     retTable["locations"] = all_location_checks("AMM")
+    retTable["gameComplete"] = is_game_complete()
 
     if not init_complete then
         retTable["sync_ready"] = "false"
@@ -957,6 +963,16 @@ function send_to_dkr_client()
         print("Connected!")
         current_state = STATE_OK
     end
+end
+
+function is_game_complete()
+    if victory_condition then
+        local victory_condition_address = VICTORY_CONDITION_TO_ADDRESS[victory_condition]
+        if DKR_RAM:check_flag(victory_condition_address[BYTE], victory_condition_address[BIT], "Check victory condition") then
+            return "true"
+        end
+    end
+    return "false"
 end
 
 function process_block(block)

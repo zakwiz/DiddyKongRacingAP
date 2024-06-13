@@ -324,8 +324,14 @@ class DiddyKongRacingRules:
             amulet_location = self.world.multiworld.get_location(location, self.player)
             set_rule(amulet_location, rules)
 
-        for location, rules in self.event_rules.items():
-            event_item_location = self.world.multiworld.get_location(location, self.player)
-            set_rule(event_item_location, rules)
+        if self.world.options.victory_condition.value == 0:
+            victory_location_name = LocationName.WIZPIG_1
+        elif self.world.options.victory_condition.value == 1:
+            victory_location_name = LocationName.WIZPIG_2
+        else:
+            raise Exception("Unexpected victory condition")
+
+        event_item_location = self.world.multiworld.get_location(victory_location_name, self.player)
+        set_rule(event_item_location, self.event_rules[victory_location_name])
 
         self.world.multiworld.completion_condition[self.player] = lambda state: state.has(ItemName.VICTORY, self.player)

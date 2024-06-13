@@ -2,7 +2,7 @@ import typing
 from BaseClasses import Region
 
 from .Names import RegionName, LocationName, ItemName
-from .Locations import DiddyKongRacingLocation, EVENT_LOCATION_TABLE
+from .Locations import DiddyKongRacingLocation
 from .Rules import DiddyKongRacingRules
 
 
@@ -89,28 +89,30 @@ def create_regions(self):
     player = self.player
     active_locations = self.location_name_to_id
 
-    multiworld.regions += [create_region(multiworld, player, active_locations, region, locations) for region, locations in
-                           DIDDY_KONG_RACING_REGIONS.items()]
-
     if multiworld.worlds[player].options.victory_condition.value == 0:
         victory_item_location = LocationName.WIZPIG_1
-    elif multiworld.worlds[player].options.victory_condition.value == 0:
+    elif multiworld.worlds[player].options.victory_condition.value == 1:
         victory_item_location = LocationName.WIZPIG_2
     else:
         raise Exception("Unexpected victory condition")
+
+    multiworld.regions += [
+        create_region(multiworld, player, active_locations, region, locations, victory_item_location)
+        for region, locations in DIDDY_KONG_RACING_REGIONS.items()
+    ]
+
     multiworld.get_location(victory_item_location, player).place_locked_item(
         multiworld.worlds[player].create_event_item(ItemName.VICTORY))
 
 
-def create_region(multiworld, player: int, active_locations, name: str, locations=None):
+def create_region(multiworld, player: int, active_locations, name: str, locations, victory_item_location):
     region = Region(name, player, multiworld)
     if locations:
-        loc_to_id = {loc: active_locations.get(loc, 0) for loc in locations if active_locations.get(loc, None)}
-        for event_location in EVENT_LOCATION_TABLE.keys():
-            if loc_to_id.get(event_location):
-                loc_to_id.pop(event_location)
-                region.add_locations({event_location: None})
-        region.add_locations(loc_to_id, DiddyKongRacingLocation)
+        if victory_item_location in locations:
+            region.add_locations({victory_item_location: None})
+
+        location_to_id = {loc: active_locations.get(loc, 0) for loc in locations if active_locations.get(loc, None)}
+        region.add_locations(location_to_id, DiddyKongRacingLocation)
 
     return region
 
