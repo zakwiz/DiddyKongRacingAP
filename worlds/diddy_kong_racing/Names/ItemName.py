@@ -1,0 +1,25 @@
+TIMBERS_ISLAND_BALLOON = "Timber's Island Balloon"
+DINO_DOMAIN_BALLOON = "Dino Domain Balloon"
+SNOWFLAKE_MOUNTAIN_BALLOON = "Snowflake Mountain Balloon"
+SHERBET_ISLAND_BALLOON = "Sherbet Island Balloon"
+DRAGON_FOREST_BALLOON = "Dragon Forest Balloon"
+FUTURE_FUN_LAND_BALLOON = "Future Fun Land Balloon"
+
+FIRE_MOUNTAIN_KEY = "Fire Mountain Key"
+ICICLE_PYRAMID_KEY = "Icicle Pyramid Key"
+DARKWATER_BEACH_KEY = "Darkwater Beach Key"
+SMOKEY_CASTLE_KEY = "Smokey Castle Key"
+
+WIZPIG_AMULET_PIECE = "Wizpig Amulet Piece"
+TT_AMULET_PIECE = "T.T. Amulet Piece"
+
+VICTORY = "Victory"
+
+ALL_BALLOONS = [
+    TIMBERS_ISLAND_BALLOON,
+    DINO_DOMAIN_BALLOON,
+    SNOWFLAKE_MOUNTAIN_BALLOON,
+    SHERBET_ISLAND_BALLOON,
+    DRAGON_FOREST_BALLOON,
+    FUTURE_FUN_LAND_BALLOON
+]
