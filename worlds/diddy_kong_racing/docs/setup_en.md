@@ -36,7 +36,7 @@ It is strongly recommended to associate N64 rom extensions (*.n64, *.z64) to the
 - Run the Archipelago launcher and select Diddy Kong Racing Client
 - Connect the Archipelago Client with the server.
 - Open Bizhawk (2.9.1+) and open your Diddy Kong Racing ROM.
-- Once you have entered a save file, run the diddy_kong_racing.lua script (drag and drop it into Bizhawk)
+- Once you have entered a save file, run the `diddy_kong_racing.lua` script (drag and drop it into Bizhawk)
 
 ## Generate your world
 - Familiarize yourself on how Archipelago works. Here is a guide to learn how to generate your world: https://archipelago.gg/tutorial/Archipelago/setup/en#on-your-local-installation
