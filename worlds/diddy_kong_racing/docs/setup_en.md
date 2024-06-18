@@ -1,11 +1,9 @@
-# SETUP GUIDE FOR DIDDY KONG RACING ARCHIPELAGO
+# Setup Guide For Diddy Kong Racing Archipelago
 
 ## Important
-
 As we are using BizHawk, this guide is only applicable to Windows and Linux systems.
 
 ## Required Software/Files
-
 -   BizHawk:  [BizHawk Releases from TASVideos](https://tasvideos.org/BizHawk/ReleaseHistory)
     -   Version 2.9.1 and later are supported.
     -   Detailed installation instructions for BizHawk can be found at the above link.
@@ -14,7 +12,6 @@ As we are using BizHawk, this guide is only applicable to Windows and Linux syst
 -   A Diddy Kong Racing v1.0 ROM (USA ONLY).
 
 ## Configuring BizHawk
-
 Once BizHawk has been installed, open EmuHawk and change the following settings:
 
 -   Under Config > Customize, check the "Run in background" and "Accept background input" boxes. This will allow you to continue playing in the background, even if another window is selected.
@@ -24,13 +21,10 @@ Once BizHawk has been installed, open EmuHawk and change the following settings:
 
 It is strongly recommended to associate N64 rom extensions (*.n64, *.z64) to the EmuHawk we've just installed. To do so, we simply have to search any N64 rom we happened to own, right click and select "Open with…", unfold the list that appears and select the bottom option "Look for another application", then browse to the BizHawk folder and select EmuHawk.exe.
 
-## Prerequisites
-
-## How to Install - Server Side
+## How To Install - Server Side
 - Copy `diddy_kong_racing.apworld` into the worlds folder in your existing Archipelago folder (`libs/worlds`)
 
-## How to install - Client Side
-
+## How To Install - Client Side
 - Copy `data/lua/connector_diddy_kong_racing.lua` into the `lua` folder in your existing Archipelago folder (`data/lua`)
 - Copy `diddy_kong_racing.apworld` into the worlds folder in your existing Archipelago folder (`libs/worlds`)
 - Run the Archipelago launcher and select Diddy Kong Racing Client
@@ -38,9 +32,8 @@ It is strongly recommended to associate N64 rom extensions (*.n64, *.z64) to the
 - Open Bizhawk (2.9.1+) and open your Diddy Kong Racing ROM.
 - Once you have entered a save file, run the `diddy_kong_racing.lua` script (drag and drop it into Bizhawk)
 
-## Generate your world
-- Familiarize yourself on how Archipelago works. Here is a guide to learn how to generate your world: https://archipelago.gg/tutorial/Archipelago/setup/en#on-your-local-installation
+## Generating Your World
+- Familiarize yourself on how Archipelago works. Here is a guide to learn how to generate your world: https://archipelago.gg/tutorial/Archipelago/setup/en#generating-a-game
 
-## Connect to the Multiserver
-
+## Connect To The Multiserver
 To connect the client to the multiserver, simply put `<address>:<port>` in the textfield on top and press `connect` (if the server uses password, then it will prompt after connection).
