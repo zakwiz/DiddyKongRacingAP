@@ -1,4 +1,4 @@
-from BaseClasses import Item
+from BaseClasses import Item, ItemClassification
 import typing
 from .Names import ItemName
 
@@ -8,31 +8,29 @@ class DiddyKongRacingItem(Item):
 
 
 class ItemData(typing.NamedTuple):
-    dkr_id: int = 0
-    qty: int = 0
-    type: str = ""
-    default_location: None | str = ""
+    dkr_id: int
+    count: int
 
 
 BALLOON_TABLE = {
-    ItemName.TIMBERS_ISLAND_BALLOON: ItemData(1616000, 7, "progress", None),
-    ItemName.DINO_DOMAIN_BALLOON: ItemData(1616001, 8, "progress", None),
-    ItemName.SNOWFLAKE_MOUNTAIN_BALLOON: ItemData(1616002, 8, "progress", None),
-    ItemName.SHERBET_ISLAND_BALLOON: ItemData(1616003, 8, "progress", None),
-    ItemName.DRAGON_FOREST_BALLOON: ItemData(1616004, 8, "progress", None),
-    ItemName.FUTURE_FUN_LAND_BALLOON: ItemData(1616005, 8, "progress", None)
+    ItemName.TIMBERS_ISLAND_BALLOON: ItemData(1616000, 7),
+    ItemName.DINO_DOMAIN_BALLOON: ItemData(1616001, 8),
+    ItemName.SNOWFLAKE_MOUNTAIN_BALLOON: ItemData(1616002, 8),
+    ItemName.SHERBET_ISLAND_BALLOON: ItemData(1616003, 8),
+    ItemName.DRAGON_FOREST_BALLOON: ItemData(1616004, 8),
+    ItemName.FUTURE_FUN_LAND_BALLOON: ItemData(1616005, 8)
 }
 
 KEY_TABLE = {
-    ItemName.FIRE_MOUNTAIN_KEY: ItemData(1616006, 1, "progress", None),
-    ItemName.ICICLE_PYRAMID_KEY: ItemData(1616007, 1, "progress", None),
-    ItemName.DARKWATER_BEACH_KEY: ItemData(1616008, 1, "progress", None),
-    ItemName.SMOKEY_CASTLE_KEY: ItemData(1616009, 1, "progress", None)
+    ItemName.FIRE_MOUNTAIN_KEY: ItemData(1616006, 1),
+    ItemName.ICICLE_PYRAMID_KEY: ItemData(1616007, 1),
+    ItemName.DARKWATER_BEACH_KEY: ItemData(1616008, 1),
+    ItemName.SMOKEY_CASTLE_KEY: ItemData(1616009, 1)
 }
 
 AMULET_TABLE = {
-    ItemName.WIZPIG_AMULET_PIECE: ItemData(1616010, 4, "progress", None),
-    ItemName.TT_AMULET_PIECE: ItemData(1616011, 4, "progress", None)
+    ItemName.WIZPIG_AMULET_PIECE: ItemData(1616010, 4),
+    ItemName.TT_AMULET_PIECE: ItemData(1616011, 4)
 }
 
 

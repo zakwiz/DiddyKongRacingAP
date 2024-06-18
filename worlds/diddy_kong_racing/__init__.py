@@ -1,7 +1,7 @@
 import random
 from multiprocessing import Process
 import typing
-from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE
+from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE, KEY_TABLE
 from .Locations import DiddyKongRacingLocation, ALL_LOCATION_TABLE
 from .Regions import DIDDY_KONG_RACING_REGIONS, create_regions, connect_regions
 from .Options import DiddyKongRacingOptions
@@ -34,9 +34,7 @@ class DiddyKongRacingWeb(WebWorld):
 
 
 class DiddyKongRacingWorld(World):
-    """
-    Diddy Kong Racing is a kart racing game with a story mode, complete with bosses and hidden collectibles.
-    """
+    """Diddy Kong Racing is a kart racing game with a story mode, complete with bosses and hidden collectibles."""
 
     game = "Diddy Kong Racing"
     web = DiddyKongRacingWeb()
@@ -58,12 +56,20 @@ class DiddyKongRacingWorld(World):
         super(DiddyKongRacingWorld, self).__init__(world, player)
 
     def create_item(self, item_name: str) -> Item:
-        dkr_item = ALL_ITEM_TABLE.get(item_name)
+        item = ALL_ITEM_TABLE.get(item_name)
+
+        item_classification = ItemClassification.progression
+        if self.options.victory_condition.value != 1:
+            if item_name == ItemName.TT_AMULET_PIECE:
+                item_classification = ItemClassification.filler
+
+            if not self.options.shuffle_tt_amulet and item_name in KEY_TABLE:
+                item_classification = ItemClassification.filler
 
         created_item = DiddyKongRacingItem(
-            self.item_id_to_name[dkr_item.dkr_id],
-            ItemClassification.progression,
-            dkr_item.dkr_id,
+            self.item_id_to_name[item.dkr_id],
+            item_classification,
+            item.dkr_id,
             self.player
         )
 
@@ -76,23 +82,23 @@ class DiddyKongRacingWorld(World):
         return created_item
 
     def create_items(self) -> None:
-        for name, item_id in ALL_ITEM_TABLE.items():
-            if self.item_not_pre_filled(name):
-                for i in range(item_id.qty):
+        for name, dkr_id in ALL_ITEM_TABLE.items():
+            if not self.item_pre_filled(name):
+                for _ in range(dkr_id.count):
                     item = self.create_item(name)
                     self.multiworld.itempool.append(item)
 
-    def item_not_pre_filled(self, item_name: str) -> bool:
+    def item_pre_filled(self, item_name: str) -> bool:
         if self.options.victory_condition.value == 0 and item_name == ItemName.FUTURE_FUN_LAND_BALLOON:
-            return False
+            return True
 
         if not self.options.shuffle_wizpig_amulet and item_name == ItemName.WIZPIG_AMULET_PIECE:
-            return False
+            return True
 
         if not self.options.shuffle_tt_amulet and item_name == ItemName.TT_AMULET_PIECE:
-            return False
+            return True
 
-        return True
+        return False
 
     def create_regions(self) -> None:
         create_regions(self)
