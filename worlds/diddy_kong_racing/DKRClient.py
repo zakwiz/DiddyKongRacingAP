@@ -184,8 +184,10 @@ def get_slot_payload(ctx: DiddyKongRacingContext):
     payload = json.dumps({
             "slot_player": ctx.slot_data["player_name"],
             "slot_seed": ctx.slot_data["seed"],
-            "slot_skip_trophy_races": ctx.slot_data["skip_trophy_races"],
-            "slot_victory_condition": ctx.slot_data["victory_condition"]
+            "slot_victory_condition": ctx.slot_data["victory_condition"],
+            "slot_starting_balloon_count": ctx.slot_data["starting_balloon_count"],
+            "slot_starting_regional_balloon_count": ctx.slot_data["starting_regional_balloon_count"],
+            "slot_skip_trophy_races": ctx.slot_data["skip_trophy_races"]
         })
     ctx.sendSlot = False
 

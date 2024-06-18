@@ -136,8 +136,10 @@ class DiddyKongRacingWorld(World):
         dkr_options = dict[str, any]()
         dkr_options["player_name"] = self.multiworld.player_name[self.player]
         dkr_options["seed"] = random.randint(12212, 69996)
-        dkr_options["skip_trophy_races"] = "true" if self.options.skip_trophy_races else "false"
         dkr_options["victory_condition"] = self.options.victory_condition.value
+        dkr_options["starting_balloon_count"] = self.options.starting_balloon_count.value
+        dkr_options["starting_regional_balloon_count"] = self.options.starting_regional_balloon_count.value
+        dkr_options["skip_trophy_races"] = "true" if self.options.skip_trophy_races else "false"
 
         return dkr_options
 

@@ -13,8 +13,10 @@ local DKR_VERSION = "V0.1.0"
 
 local player
 local seed
-local skip_trophy_races
 local victory_condition
+local starting_balloon_count
+local starting_regional_balloon_count
+local skip_trophy_races
 
 local STATE_OK = "Ok"
 local STATE_TENTATIVELY_CONNECTED = "Tentatively Connected"
@@ -683,10 +685,25 @@ end
 function initialize_flags()
     if slot_loaded then
         all_location_checks("AMM")
-        set_races_as_visited()
 
-        if skip_trophy_races then
-            set_trophy_flags()
+        if not DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.ANCIENT_LAKE, 0, "Check if flags have been initialized") then
+            print("Initialize flags")
+            set_races_as_visited()
+
+            if starting_balloon_count > 0 and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT) == 0 then
+                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, starting_balloon_count)
+            end
+
+            if starting_regional_balloon_count > 0 and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT) == 0 then
+                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT, starting_regional_balloon_count)
+                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT, starting_regional_balloon_count)
+                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT, starting_regional_balloon_count)
+                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT, starting_regional_balloon_count)
+            end
+
+            if skip_trophy_races then
+                set_trophy_flags()
+            end
         end
 
 		init_complete = true
@@ -893,12 +910,20 @@ function process_slot(block)
         seed = block["slot_seed"]
     end
 
-    if block["slot_skip_trophy_races"] and block["slot_skip_trophy_races"] ~= "false" then
-        skip_trophy_races = true
-    end
-
     if block["slot_victory_condition"] and block["slot_victory_condition"] ~= "" then
         victory_condition = block["slot_victory_condition"]
+    end
+
+    if block["slot_starting_balloon_count"] and block["slot_starting_balloon_count"] ~= "" then
+        starting_balloon_count = block["slot_starting_balloon_count"]
+    end
+
+    if block["slot_starting_regional_balloon_count"] and block["slot_starting_regional_balloon_count"] ~= "" then
+        starting_regional_balloon_count = block["slot_starting_regional_balloon_count"]
+    end
+
+    if block["slot_skip_trophy_races"] and block["slot_skip_trophy_races"] ~= "false" then
+        skip_trophy_races = true
     end
 
     if seed then
