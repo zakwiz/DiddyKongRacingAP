@@ -5,7 +5,7 @@ from Options import Choice, DefaultOnToggle, PerGameCommonOptions, Range, Toggle
 class VictoryCondition(Choice):
     """
     The victory condition for the seed:
-        Beat Wizpig 1: Find the 4 Wizpig amulet pieces and beat the first Wizpig race. Future Fun Land will not be part of the seed.
+        Beat Wizpig 1: Find the 4 Wizpig amulet pieces and beat the first Wizpig race. Future Fun Land items will not be randomized.
         Beat Wizpig 2: Get access to Future Fun Land, find the 4 T.T. amulet pieces and all 47 golden balloons, and beat the second Wizpig race.
     """
     display_name: "Victory condition"
@@ -33,6 +33,22 @@ class StartingRegionalBalloonCount(Range):
     default = range_start
 
 
+class StartingWizpigAmuletPieceCount(Range):
+    """Start with Wizpig amulet pieces"""
+    display_name: "Starting Wizpig amulet piece count"
+    range_start = 0
+    range_end = 4
+    default = range_start
+
+
+class StartingTTAmuletPieceCount(Range):
+    """Start with T.T. amulet pieces"""
+    display_name: "Starting T.T. amulet piece count"
+    range_start = 0
+    range_end = 4
+    default = range_start
+
+
 class ShuffleWizpigAmulet(Toggle):
     """Shuffle the 4 Wizpig amulet pieces into the item pool"""
     display_name: "Shuffle Wizpig amulet"
@@ -53,6 +69,8 @@ class DiddyKongRacingOptions(PerGameCommonOptions):
     victory_condition: VictoryCondition
     starting_balloon_count: StartingBalloonCount
     starting_regional_balloon_count: StartingRegionalBalloonCount
+    starting_wizpig_amulet_piece_count: StartingWizpigAmuletPieceCount
+    starting_tt_amulet_piece_count: StartingTTAmuletPieceCount
     shuffle_wizpig_amulet: ShuffleWizpigAmulet
     shuffle_tt_amulet: ShuffleTTAmulet
     skip_trophy_races: SkipTrophyRaces

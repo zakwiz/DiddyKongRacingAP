@@ -145,6 +145,8 @@ class DiddyKongRacingWorld(World):
         dkr_options["victory_condition"] = self.options.victory_condition.value
         dkr_options["starting_balloon_count"] = self.options.starting_balloon_count.value
         dkr_options["starting_regional_balloon_count"] = self.options.starting_regional_balloon_count.value
+        dkr_options["starting_wizpig_amulet_piece_count"] = self.options.starting_wizpig_amulet_piece_count.value
+        dkr_options["starting_tt_amulet_piece_count"] = self.options.starting_tt_amulet_piece_count.value
         dkr_options["skip_trophy_races"] = "true" if self.options.skip_trophy_races else "false"
 
         return dkr_options

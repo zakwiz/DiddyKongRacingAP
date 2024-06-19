@@ -114,7 +114,7 @@ class DiddyKongRacingRules:
 
     def can_access_future_fun_land(self, state: CollectionState) -> bool:
         return (self.has_total_balloon_count(state, 37)
-                and state.has(ItemName.WIZPIG_AMULET_PIECE, self.player, 4))
+                and self.wizpig_1(state))
 
     def balloon_bridge(self, state: CollectionState) -> bool:
         return True
@@ -298,10 +298,15 @@ class DiddyKongRacingRules:
         return self.can_access_boss_2(state, ItemName.DRAGON_FOREST_BALLOON)
 
     def wizpig_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.WIZPIG_AMULET_PIECE, self.player, 4)
+        num_required_amulet_pieces = 4 - self.world.options.starting_wizpig_amulet_piece_count
+
+        return state.has(ItemName.WIZPIG_AMULET_PIECE, self.player, num_required_amulet_pieces)
 
     def wizpig_2(self, state: CollectionState) -> bool:
-        return state.has(ItemName.TT_AMULET_PIECE, self.player, 4) and self.has_total_balloon_count(state, 47)
+        num_required_amulet_pieces = 4 - self.world.options.starting_tt_amulet_piece_count
+
+        return (state.has(ItemName.TT_AMULET_PIECE, self.player, num_required_amulet_pieces)
+                and self.has_total_balloon_count(state, 47))
 
     def has_total_balloon_count(self, state: CollectionState, balloon_count: int) -> bool:
         collected_balloon_count = (state.count(ItemName.TIMBERS_ISLAND_BALLOON, self.player)

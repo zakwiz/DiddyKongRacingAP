@@ -5,7 +5,7 @@ The [player settings page for this game](../player-settings) contains all the op
 config file.
 
 ## What does randomization do to this game?
-Randomizes items, allows starting with balloons, and allows skipping trophy races.
+Randomizes items, allows starting with balloons and amulet pieces, and allows skipping trophy races.
 
 ## What items and locations get shuffled?
 - Golden balloons
@@ -16,6 +16,6 @@ Randomizes items, allows starting with balloons, and allows skipping trophy race
 ## When the player receives an item, what happens?
 When the player receives an item, it will be displayed on the client.
 
-## Unique Local Commands
+## Unique local commands
 The following commands are available when using the Diddy Kong Racing Client to play with Archipelago.
 - `/n64` Check N64 Connection State

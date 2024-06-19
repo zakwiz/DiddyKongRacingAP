@@ -16,6 +16,8 @@ local seed
 local victory_condition
 local starting_balloon_count
 local starting_regional_balloon_count
+local starting_wizpig_amulet_piece_count
+local starting_tt_amulet_piece_count
 local skip_trophy_races
 
 local STATE_OK = "Ok"
@@ -687,7 +689,6 @@ function initialize_flags()
         all_location_checks("AMM")
 
         if not DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.ANCIENT_LAKE, 0, "Check if flags have been initialized") then
-            print("Initialize flags")
             set_races_as_visited()
 
             if starting_balloon_count > 0 and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT) == 0 then
@@ -699,6 +700,14 @@ function initialize_flags()
                 DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT, starting_regional_balloon_count)
                 DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT, starting_regional_balloon_count)
                 DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT, starting_regional_balloon_count)
+            end
+
+            if starting_wizpig_amulet_piece_count > 0 and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET) == 0 then
+                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, starting_wizpig_amulet_piece_count)
+            end
+
+            if starting_tt_amulet_piece_count > 0 and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TT_AMULET) == 0 then
+                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TT_AMULET, starting_tt_amulet_piece_count)
             end
 
             if skip_trophy_races then
@@ -793,22 +802,10 @@ function get_local_checks()
                         DKR_RAMOBJ:decrement_counter(BALLOON_ITEM_GROUP_TO_COUNT_ADDRESS[check_type], "Decrement region balloon count")
                     end
                 elseif check_type == ITEM_GROUPS.WIZPIG_AMULET_PIECE then
-                    local amulet_piece_count = 0
-                    for _, item in pairs(receive_map) do
-                        if item == (ITEM_IDS.WIZPIG_AMULET_PIECE .. "") then
-                            amulet_piece_count = amulet_piece_count + 1
-                        end
-                    end
-
+                    local amulet_piece_count = get_amulet_piece_count(ITEM_IDS.WIZPIG_AMULET_PIECE, starting_wizpig_amulet_piece_count)
                     DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, amulet_piece_count, "Decrement Wizpig amulet piece count")
                 elseif check_type == ITEM_GROUPS.TT_AMULET_PIECE then
-                    local amulet_piece_count = 0
-                    for _, item in pairs(receive_map) do
-                        if item == (ITEM_IDS.TT_AMULET_PIECE .. "") then
-                            amulet_piece_count = amulet_piece_count + 1
-                        end
-                    end
-
+                    local amulet_piece_count = get_amulet_piece_count(ITEM_IDS.TT_AMULET_PIECE, starting_tt_amulet_piece_count)
                     DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TT_AMULET, amulet_piece_count, "Decrement T.T. amulet piece count")
                 elseif check_type == ITEM_GROUPS.KEY and not amm[ITEM_GROUPS.KEY][location_id] then
                     local key_ram_address = AGI_MASTER_MAP[ITEM_GROUPS.KEY][location_id]
@@ -821,6 +818,17 @@ function get_local_checks()
     previous_checks = checks
 
     return checks
+end
+
+function get_amulet_piece_count(item_id, starting_amulet_piece_count)
+    local collected_amulet_piece_count = 0
+    for _, item in pairs(receive_map) do
+        if item == (item_id .. "") then
+            collected_amulet_piece_count = collected_amulet_piece_count + 1
+        end
+    end
+
+    return math.min(4, starting_amulet_piece_count + collected_amulet_piece_count)
 end
 
 function receive()
@@ -920,6 +928,14 @@ function process_slot(block)
 
     if block["slot_starting_regional_balloon_count"] and block["slot_starting_regional_balloon_count"] ~= "" then
         starting_regional_balloon_count = block["slot_starting_regional_balloon_count"]
+    end
+
+    if block["slot_starting_wizpig_amulet_piece_count"] and block["slot_starting_wizpig_amulet_piece_count"] ~= "" then
+        starting_wizpig_amulet_piece_count = block["slot_starting_wizpig_amulet_piece_count"]
+    end
+
+    if block["slot_starting_tt_amulet_piece_count"] and block["slot_starting_tt_amulet_piece_count"] ~= "" then
+        starting_tt_amulet_piece_count = block["slot_starting_tt_amulet_piece_count"]
     end
 
     if block["slot_skip_trophy_races"] and block["slot_skip_trophy_races"] ~= "false" then
@@ -1036,9 +1052,9 @@ function process_agi_item(item_list)
                         DKR_RAMOBJ:set_flag(boss_1_completion_address[BYTE], boss_1_completion_address[BIT], "Set boss 1 completion")
                     end
                 end
-            elseif item_id == ITEM_IDS.WIZPIG_AMULET_PIECE then
+            elseif item_id == ITEM_IDS.WIZPIG_AMULET_PIECE and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, "Check if Wizpig amulet is already complete") < 4 then
                 DKR_RAMOBJ:increment_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, "Increment Wizpig amulet piece count")
-            elseif item_id == ITEM_IDS.TT_AMULET_PIECE then
+            elseif item_id == ITEM_IDS.TT_AMULET_PIECE and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TT_AMULET, "Check if T.T. amulet is already complete") < 4 then
                 DKR_RAMOBJ:increment_counter(DKR_RAM.ADDRESS.TT_AMULET, "Increment T.T. amulet piece count")
             elseif KEY_ITEM_ID_TO_DOOR_ADDRESS_INFO[item_id] then
                 for _, key_door_ram_address in pairs(KEY_ITEM_ID_TO_DOOR_ADDRESS_INFO[item_id]) do
