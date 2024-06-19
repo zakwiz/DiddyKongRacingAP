@@ -8,8 +8,8 @@ require('common')
 local socket = require("socket")
 local json = require('json')
 
-local SCRIPT_VERSION = 1
-local DKR_VERSION = "V0.1.0"
+local SCRIPT_VERSION = 2
+local DKR_VERSION = "v0.2.0"
 
 local player
 local seed
