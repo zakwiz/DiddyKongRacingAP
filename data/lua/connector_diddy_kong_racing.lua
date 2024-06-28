@@ -8,8 +8,8 @@ require('common')
 local socket = require("socket")
 local json = require('json')
 
-local SCRIPT_VERSION = 2
-local DKR_VERSION = "v0.2.0"
+local SCRIPT_VERSION = 3
+local DKR_VERSION = "v0.2.1"
 
 local player
 local seed
@@ -28,7 +28,9 @@ local current_state = STATE_UNINITIALIZED
 local frame = 0
 
 local slot_loaded = false
+local in_save_file = false
 local init_complete = false
+local in_save_file_counter = 0
 
 local debug_level_1 = false
 local debug_level_2 = false
@@ -48,6 +50,9 @@ local NAME = "name"
 
 DKR_RAM = {
     ADDRESS = {
+        IN_SAVE_FILE_1 = 0x214E72,
+        IN_SAVE_FILE_2 = 0x214E76,
+        IN_SAVE_FILE_3 = 0x21545A,
         TOTAL_BALLOON_COUNT = 0x1FCBED,
         DINO_DOMAIN_BALLOON_COUNT = 0x1FCBEF,
         SNOWFLAKE_MOUNTAIN_BALLOON_COUNT = 0x1FCBF3,
@@ -648,6 +653,7 @@ function main()
     end
 
     print("Diddy Kong Racing Archipelago Version " .. DKR_VERSION)
+    print("----------------")
     server, error = socket.bind("localhost", 21221)
     DKR_RAMOBJ = DKR_RAM:new(nil)
 
@@ -656,21 +662,23 @@ function main()
         if current_state == STATE_OK
                 or current_state == STATE_INITIAL_CONNECTION_MADE
                 or current_state == STATE_TENTATIVELY_CONNECTED then
-            if (frame % 60 == 1) then
+            if frame % 60 == 1 then
                 receive()
-            elseif (frame % 10 == 1) then
+            elseif frame % 10 == 1 then
+                check_if_in_save_file()
                 if not (init_complete) then
 					initialize_flags()
 				end
                 dpad_stats()
             end
-        elseif (current_state == STATE_UNINITIALIZED) then
-            if  (frame % 60 == 1) then
+        elseif current_state == STATE_UNINITIALIZED then
+            if  frame % 60 == 1 then
                 server:settimeout(2)
                 local client, timeout = server:accept()
 
                 if timeout == nil then
-                    print("Initial Connection Made")
+                    print("Initial connection made")
+                    print("----------------")
                     current_state = STATE_INITIAL_CONNECTION_MADE
                     DKR_SOCK = client
                     DKR_SOCK:settimeout(0)
@@ -684,11 +692,37 @@ function main()
     end
 end
 
+function check_if_in_save_file()
+    local in_save_file_1 = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.IN_SAVE_FILE_1, "Check if in a save file") ~= 0
+    local in_save_file_2 = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.IN_SAVE_FILE_2, "Check if in a save file") ~= 0
+    local in_save_file_3 = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.IN_SAVE_FILE_3, "Check if in a save file") ~= 0
+
+    if in_save_file then
+        if not (in_save_file_1 and in_save_file_2 and in_save_file_3) then
+            print("Exited save file")
+            print("----------------")
+            in_save_file = false
+            init_complete = false
+            in_save_file_counter = 0
+        end
+    else
+        if in_save_file_1 and in_save_file_2 and in_save_file_3 then
+            if in_save_file_counter == 6 then
+                print("Entered save file")
+                print("----------------")
+                in_save_file = true
+            else
+                in_save_file_counter = in_save_file_counter + 1
+            end
+        end
+    end
+end
+
 function initialize_flags()
-    if slot_loaded then
+    if slot_loaded and in_save_file then
         all_location_checks("AMM")
 
-        if not DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.ANCIENT_LAKE, 0, "Check if flags have been initialized") then
+        if not DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.STAR_CITY, 0, "Check if flags have been initialized") then
             set_races_as_visited()
 
             if starting_balloon_count > 0 and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT) == 0 then
@@ -794,7 +828,7 @@ function get_local_checks()
 
             checks[check_type][location_id] = DKR_RAMOBJ:check_flag(table[BYTE], table[BIT], "Check item flag: " .. table[NAME])
 
-            if (previous_checks and checks[check_type][location_id] ~= previous_checks[check_type][location_id]) then
+            if previous_checks and checks[check_type][location_id] ~= previous_checks[check_type][location_id] then
                 if BALLOON_ITEM_GROUP_TO_COUNT_ADDRESS[check_type] then
                     DKR_RAMOBJ:decrement_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, "Decrement total balloon count")
 
@@ -984,7 +1018,7 @@ function send_to_dkr_client()
     retTable["locations"] = all_location_checks("AMM")
     retTable["gameComplete"] = is_game_complete()
 
-    if not init_complete then
+    if not in_save_file then
         retTable["sync_ready"] = "false"
     else
         retTable["sync_ready"] = "true"
@@ -1002,6 +1036,7 @@ function send_to_dkr_client()
         current_state = STATE_TENTATIVELY_CONNECTED
     elseif current_state == STATE_TENTATIVELY_CONNECTED then
         print("Connected!")
+        print("----------------")
         current_state = STATE_OK
     end
 end

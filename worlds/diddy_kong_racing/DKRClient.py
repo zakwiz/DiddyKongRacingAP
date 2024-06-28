@@ -168,6 +168,7 @@ def get_payload(ctx: DiddyKongRacingContext):
                 "messages": [message for (i, message) in ctx.messages.items() if i != 0],
             })
     else:
+        ctx.startup = False
         payload = json.dumps({
                 "items": [],
                 "playerNames": [name for (i, name) in ctx.player_names.items() if i != 0],
@@ -238,8 +239,11 @@ async def parse_payload(payload: dict, ctx: DiddyKongRacingContext):
             ctx.location_table = locations
 
     # Send Async Data.
-    if "sync_ready" in payload and payload["sync_ready"] == "true" and not ctx.sync_ready:
-        ctx.sync_ready = True
+    if "sync_ready" in payload:
+        if payload["sync_ready"] == "true":
+            ctx.sync_ready = True
+        else:
+            ctx.sync_ready = False
 
 
 async def n64_sync_task(ctx: DiddyKongRacingContext):
