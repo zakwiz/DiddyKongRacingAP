@@ -135,7 +135,7 @@ class DiddyKongRacingWorld(World):
     def place_locked_item(self, location_name: str, item: Item) -> None:
         self.multiworld.get_location(location_name, self.player).place_locked_item(item)
 
-    def fill_slot_data(self) -> dict[str, any]:
+    def fill_slot_data(self) -> typing.Dict[str, typing.Any]:
         dkr_options = dict[str, any]()
         dkr_options["player_name"] = self.multiworld.player_name[self.player]
         dkr_options["seed"] = self.random.randint(12212, 69996)
