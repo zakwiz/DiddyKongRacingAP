@@ -1,6 +1,6 @@
 import typing
-from BaseClasses import Region
 
+from BaseClasses import Region
 from .Names import RegionName, LocationName, ItemName
 from .Locations import DiddyKongRacingLocation
 from .Rules import DiddyKongRacingRules

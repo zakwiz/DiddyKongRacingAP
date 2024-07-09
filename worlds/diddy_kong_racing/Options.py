@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from Options import Choice, DefaultOnToggle, PerGameCommonOptions, Range, Toggle
 
 

@@ -1,5 +1,6 @@
-from BaseClasses import CollectionState
 from typing import TYPE_CHECKING
+
+from BaseClasses import CollectionState
 from .Names import ItemName, LocationName
 from worlds.generic.Rules import set_rule
 
