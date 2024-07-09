@@ -1,8 +1,8 @@
 import asyncio
+import copy
 import json
 import multiprocessing
-import copy
-from asyncio import StreamReader, StreamWriter
+from typing import Union
 
 # CommonClient import first to trigger ModuleUpdater
 from CommonClient import CommonContext, server_loop, gui_enabled, \
@@ -65,7 +65,7 @@ class DiddyKongRacingContext(CommonContext):
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
         self.game = 'Diddy Kong Racing'
-        self.n64_streams: (StreamReader, StreamWriter) = None  # type: ignore
+        self.n64_streams: (asyncio.StreamReader, asyncio.StreamWriter) = None  # type: ignore
         self.n64_sync_task = None
         self.n64_status = CONNECTION_INITIAL_STATUS
         self.awaiting_rom = False
@@ -90,7 +90,7 @@ class DiddyKongRacingContext(CommonContext):
 
         return
 
-    def _set_message(self, msg: str, msg_id: int | None):
+    def _set_message(self, msg: str, msg_id: Union[int, None]):
         if msg_id is None:
             self.messages.update({len(self.messages)+1: msg})
         else:
