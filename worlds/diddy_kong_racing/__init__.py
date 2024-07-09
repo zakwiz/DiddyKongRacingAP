@@ -63,9 +63,6 @@ class DiddyKongRacingWorld(World):
             if item_name == ItemName.TT_AMULET_PIECE:
                 item_classification = ItemClassification.filler
 
-            if not self.options.shuffle_tt_amulet and item_name in KEY_TABLE:
-                item_classification = ItemClassification.filler
-
         created_item = DiddyKongRacingItem(
             self.item_id_to_name[item.dkr_id],
             item_classification,
