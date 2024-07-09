@@ -102,7 +102,7 @@ class DiddyKongRacingWorld(World):
         connect_regions(self)
 
     def set_rules(self) -> None:
-        rules = Rules.DiddyKongRacingRules(self)
+        rules = DiddyKongRacingRules(self)
 
         return rules.set_rules()
 
