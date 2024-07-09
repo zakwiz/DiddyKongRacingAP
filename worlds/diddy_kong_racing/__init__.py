@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from multiprocessing import Process
-import typing
 
 from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE, KEY_TABLE
 from .Locations import DiddyKongRacingLocation, ALL_LOCATION_TABLE
@@ -135,8 +136,8 @@ class DiddyKongRacingWorld(World):
     def place_locked_item(self, location_name: str, item: Item) -> None:
         self.multiworld.get_location(location_name, self.player).place_locked_item(item)
 
-    def fill_slot_data(self) -> typing.Dict[str, typing.Any]:
-        dkr_options = typing.Dict[str, typing.Any]()
+    def fill_slot_data(self) -> dict[str, any]:
+        dkr_options = dict[str, any]()
         dkr_options["player_name"] = self.multiworld.player_name[self.player]
         dkr_options["seed"] = self.random.randint(12212, 69996)
         dkr_options["victory_condition"] = self.options.victory_condition.value
@@ -152,6 +153,6 @@ class DiddyKongRacingWorld(World):
 
     # For the universal tracker, doesn't get called in standard gen
     @staticmethod
-    def interpret_slot_data(slot_data: typing.Dict[str, typing.Any]) -> typing.Dict[str, typing.Any]:
+    def interpret_slot_data(slot_data: dict[str, any]) -> dict[str, any]:
         # Returning slot_data so it regens, giving it back in multiworld.re_gen_passthrough
         return slot_data
