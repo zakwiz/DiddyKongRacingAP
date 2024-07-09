@@ -1,6 +1,6 @@
-import random
 from multiprocessing import Process
 import typing
+
 from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE, KEY_TABLE
 from .Locations import DiddyKongRacingLocation, ALL_LOCATION_TABLE
 from .Regions import DIDDY_KONG_RACING_REGIONS, create_regions, connect_regions
@@ -138,7 +138,7 @@ class DiddyKongRacingWorld(World):
     def fill_slot_data(self) -> dict[str, any]:
         dkr_options = dict[str, any]()
         dkr_options["player_name"] = self.multiworld.player_name[self.player]
-        dkr_options["seed"] = random.randint(12212, 69996)
+        dkr_options["seed"] = self.random.randint(12212, 69996)
         dkr_options["victory_condition"] = self.options.victory_condition.value
         dkr_options["starting_balloon_count"] = self.options.starting_balloon_count.value
         dkr_options["starting_regional_balloon_count"] = self.options.starting_regional_balloon_count.value
