@@ -143,4 +143,3 @@ def connect_regions(self) -> None:
             RegionName.FUTURE_FUN_LAND: lambda state: rules.can_access_future_fun_land(state)
         }
     )
- 
