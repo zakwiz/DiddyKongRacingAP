@@ -1042,7 +1042,7 @@ function send_to_dkr_client()
 end
 
 function is_game_complete()
-    if victory_condition then
+    if victory_condition and in_save_file then
         local victory_condition_address = VICTORY_CONDITION_TO_ADDRESS[victory_condition]
         if DKR_RAM:check_flag(victory_condition_address[BYTE], victory_condition_address[BIT], "Check victory condition") then
             return "true"
