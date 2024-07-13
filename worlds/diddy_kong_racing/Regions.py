@@ -84,7 +84,7 @@ DIDDY_KONG_RACING_REGIONS: typing.Dict[str, typing.List[str]] = {
 }
 
 
-def create_regions(self):
+def create_regions(self) -> None:
     multiworld = self.multiworld
     player = self.player
     active_locations = self.location_name_to_id
@@ -102,10 +102,11 @@ def create_regions(self):
     ]
 
     multiworld.get_location(victory_item_location, player).place_locked_item(
-        multiworld.worlds[player].create_event_item(ItemName.VICTORY))
+        multiworld.worlds[player].create_event_item(ItemName.VICTORY)
+    )
 
 
-def create_region(multiworld, player: int, active_locations, name: str, locations, victory_item_location):
+def create_region(multiworld, player: int, active_locations, name: str, locations, victory_item_location) -> Region:
     region = Region(name, player, multiworld)
     if locations:
         if victory_item_location in locations:
@@ -117,7 +118,7 @@ def create_region(multiworld, player: int, active_locations, name: str, location
     return region
 
 
-def connect_regions(self):
+def connect_regions(self) -> None:
     multiworld = self.multiworld
     player = self.player
     rules = DiddyKongRacingRules(self)

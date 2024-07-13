@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from multiprocessing import Process
 
-from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE, KEY_TABLE
-from .Locations import DiddyKongRacingLocation, ALL_LOCATION_TABLE
-from .Regions import DIDDY_KONG_RACING_REGIONS, create_regions, connect_regions
+from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE
+from .Locations import ALL_LOCATION_TABLE
+from .Regions import create_regions, connect_regions
 from .Options import DiddyKongRacingOptions
 from .Rules import DiddyKongRacingRules
-from .Names import ItemName, LocationName, RegionName
+from .Names import ItemName, LocationName
 
 from BaseClasses import ItemClassification, Tutorial, Item
 from ..AutoWorld import World, WebWorld
@@ -52,7 +52,7 @@ class DiddyKongRacingWorld(World):
     options_dataclass = DiddyKongRacingOptions
     options: DiddyKongRacingOptions
 
-    def __init__(self, world, player):
+    def __init__(self, world, player) -> None:
         self.slot_data = []
         super(DiddyKongRacingWorld, self).__init__(world, player)
 
