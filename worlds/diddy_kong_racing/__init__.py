@@ -137,17 +137,18 @@ class DiddyKongRacingWorld(World):
         self.multiworld.get_location(location_name, self.player).place_locked_item(item)
 
     def fill_slot_data(self) -> dict[str, any]:
-        dkr_options = dict[str, any]()
-        dkr_options["player_name"] = self.multiworld.player_name[self.player]
-        dkr_options["seed"] = self.random.randint(12212, 69996)
-        dkr_options["victory_condition"] = self.options.victory_condition.value
-        dkr_options["starting_balloon_count"] = self.options.starting_balloon_count.value
-        dkr_options["starting_regional_balloon_count"] = self.options.starting_regional_balloon_count.value
-        dkr_options["starting_wizpig_amulet_piece_count"] = self.options.starting_wizpig_amulet_piece_count.value
-        dkr_options["starting_tt_amulet_piece_count"] = self.options.starting_tt_amulet_piece_count.value
-        dkr_options["shuffle_wizpig_amulet"] = "true" if self.options.shuffle_wizpig_amulet else "false"
-        dkr_options["shuffle_tt_amulet"] = "true" if self.options.shuffle_tt_amulet else "false"
-        dkr_options["skip_trophy_races"] = "true" if self.options.skip_trophy_races else "false"
+        dkr_options: dict[str, any] = {
+            "player_name": self.multiworld.player_name[self.player],
+            "seed": self.random.randint(12212, 69996),
+            "victory_condition": self.options.victory_condition.value,
+            "starting_balloon_count": self.options.starting_balloon_count.value,
+            "starting_regional_balloon_count": self.options.starting_regional_balloon_count.value,
+            "starting_wizpig_amulet_piece_count": self.options.starting_wizpig_amulet_piece_count.value,
+            "starting_tt_amulet_piece_count": self.options.starting_tt_amulet_piece_count.value,
+            "shuffle_wizpig_amulet": "true" if self.options.shuffle_wizpig_amulet else "false",
+            "shuffle_tt_amulet": "true" if self.options.shuffle_tt_amulet else "false",
+            "skip_trophy_races": "true" if self.options.skip_trophy_races else "false"
+        }
 
         return dkr_options
 
