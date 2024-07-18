@@ -1,14 +1,13 @@
-import asyncio
-import copy
-import json
-import multiprocessing
-from typing import Union
+from __future__ import annotations
+
+from asyncio import create_task, open_connection, run, StreamReader, StreamWriter, TimeoutError, wait_for
+from copy import deepcopy
+from json import dumps, loads
+from multiprocessing import freeze_support
 
 # CommonClient import first to trigger ModuleUpdater
-from CommonClient import CommonContext, server_loop, gui_enabled, \
-    ClientCommandProcessor, logger, get_base_parser
-import Utils
-from Utils import async_start
+from CommonClient import ClientCommandProcessor, CommonContext, get_base_parser, gui_enabled, logger, server_loop
+from Utils import async_start, init_logging
 from worlds import network_data_package
 
 SYSTEM_MESSAGE_ID = 0
@@ -65,7 +64,7 @@ class DiddyKongRacingContext(CommonContext):
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
         self.game = 'Diddy Kong Racing'
-        self.n64_streams: (asyncio.StreamReader, asyncio.StreamWriter) = None  # type: ignore
+        self.n64_streams: (StreamReader, StreamWriter) = None  # type: ignore
         self.n64_sync_task = None
         self.n64_status = CONNECTION_INITIAL_STATUS
         self.awaiting_rom = False
@@ -90,7 +89,7 @@ class DiddyKongRacingContext(CommonContext):
 
         return
 
-    def _set_message(self, msg: str, msg_id: Union[int, None]):
+    def _set_message(self, msg: str, msg_id: int | None):
         if msg_id is None:
             self.messages.update({len(self.messages)+1: msg})
         else:
@@ -106,13 +105,13 @@ class DiddyKongRacingContext(CommonContext):
             base_title = "Archipelago Diddy Kong Racing Client"
 
         self.ui = DiddyKongRacingManager(self)
-        self.ui_task = asyncio.create_task(self.ui.async_run(), name="UI")
+        self.ui_task = create_task(self.ui.async_run(), name="UI")
 
     def on_package(self, cmd, args):
         if cmd == 'Connected':
             self.slot_data = args.get('slot_data', None)
             logger.info("Please open Diddy Kong Racing and load connector_diddy_kong_racing.lua")
-            self.n64_sync_task = asyncio.create_task(n64_sync_task(self), name="N64 Sync")
+            self.n64_sync_task = create_task(n64_sync_task(self), name="N64 Sync")
         elif cmd == 'Print':
             msg = args['text']
             if ': !' not in msg:
@@ -137,7 +136,7 @@ class DiddyKongRacingContext(CommonContext):
 
     def on_print_json(self, args: dict):
         if self.ui:
-            self.ui.print_json(copy.deepcopy(args["data"]))
+            self.ui.print_json(deepcopy(args["data"]))
             relevant = args.get("type", None) in {"Hint", "ItemSend"}
             if relevant:
                 relevant = False
@@ -148,28 +147,28 @@ class DiddyKongRacingContext(CommonContext):
                     relevant = True
 
                 if relevant:
-                    msg = self.raw_text_parser(copy.deepcopy(args["data"]))
+                    msg = self.raw_text_parser(deepcopy(args["data"]))
                     self._set_message(msg, None)
         else:
-            text = self.jsontotextparser(copy.deepcopy(args["data"]))
+            text = self.jsontotextparser(deepcopy(args["data"]))
             logger.info(text)
             relevant = args.get("type", None) in {"Hint", "ItemSend"}
             if relevant:
-                msg = self.raw_text_parser(copy.deepcopy(args["data"]))
+                msg = self.raw_text_parser(deepcopy(args["data"]))
                 self._set_message(msg, None)
 
 
 def get_payload(ctx: DiddyKongRacingContext):
     if ctx.sync_ready:
         ctx.startup = True
-        payload = json.dumps({
+        payload = dumps({
                 "items": [get_item_value(item.item) for item in ctx.items_received],
                 "playerNames": [name for (i, name) in ctx.player_names.items() if i != 0],
                 "messages": [message for (i, message) in ctx.messages.items() if i != 0],
             })
     else:
         ctx.startup = False
-        payload = json.dumps({
+        payload = dumps({
                 "items": [],
                 "playerNames": [name for (i, name) in ctx.player_names.items() if i != 0],
                 "messages": [message for (i, message) in ctx.messages.items() if i != 0],
@@ -182,7 +181,7 @@ def get_payload(ctx: DiddyKongRacingContext):
 
 
 def get_slot_payload(ctx: DiddyKongRacingContext):
-    payload = json.dumps({
+    payload = dumps({
             "slot_player": ctx.slot_data["player_name"],
             "slot_seed": ctx.slot_data["seed"],
             "slot_victory_condition": ctx.slot_data["victory_condition"],
@@ -260,10 +259,10 @@ async def n64_sync_task(ctx: DiddyKongRacingContext):
             writer.write(b'\n')
 
             try:
-                await asyncio.wait_for(writer.drain(), timeout=1.5)
+                await wait_for(writer.drain(), timeout=1.5)
                 try:
-                    data = await asyncio.wait_for(reader.readline(), timeout=10)
-                    data_decoded = json.loads(data.decode())
+                    data = await wait_for(reader.readline(), timeout=10)
+                    data_decoded = loads(data.decode())
                     reported_version = data_decoded.get('scriptVersion', 0)
                     get_slot_data = data_decoded.get('getSlot', 0)
                     if get_slot_data:
@@ -285,7 +284,7 @@ async def n64_sync_task(ctx: DiddyKongRacingContext):
                                 "Your connection to the Archipelago server will not be accepted."
                             )
                             ctx.version_warning = True
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     logger.debug("Read Timed Out, Reconnecting")
                     error_status = CONNECTION_TIMING_OUT_STATUS
                     writer.close()
@@ -320,7 +319,7 @@ async def n64_sync_task(ctx: DiddyKongRacingContext):
         else:
             try:
                 logger.debug("Attempting to connect to N64")
-                ctx.n64_streams = await asyncio.wait_for(asyncio.open_connection("localhost", 21221), timeout=10)
+                ctx.n64_streams = await wait_for(open_connection("localhost", 21221), timeout=10)
                 ctx.n64_status = CONNECTION_TENTATIVE_STATUS
             except TimeoutError:
                 logger.debug("Connection Timed Out, Trying Again")
@@ -333,15 +332,15 @@ async def n64_sync_task(ctx: DiddyKongRacingContext):
 
 
 def main():
-    Utils.init_logging("Diddy Kong Racing Client")
+    init_logging("Diddy Kong Racing Client")
     parser = get_base_parser()
     args = parser.parse_args()
 
     async def _main():
-        multiprocessing.freeze_support()
+        freeze_support()
 
         ctx = DiddyKongRacingContext(args.connect, args.password)
-        ctx.server_task = asyncio.create_task(server_loop(ctx), name="Server Loop")
+        ctx.server_task = create_task(server_loop(ctx), name="Server Loop")
 
         if gui_enabled:
             ctx.run_gui()
@@ -359,7 +358,7 @@ def main():
 
     colorama.init()
 
-    asyncio.run(_main())
+    run(_main())
     colorama.deinit()
 
 

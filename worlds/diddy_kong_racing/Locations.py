@@ -1,4 +1,6 @@
-import typing
+from __future__ import annotations
+
+from typing import NamedTuple
 
 from BaseClasses import Location
 from .Names import LocationName
@@ -8,8 +10,8 @@ class DiddyKongRacingLocation(Location):
     game: str = "Diddy Kong Racing"
 
 
-class LocationData(typing.NamedTuple):
-    dkr_id: typing.Union[int, None] = 0
+class LocationData(NamedTuple):
+    dkr_id: int | None = 0
 
 
 TIMBERS_ISLAND_LOCATION_TABLE = {

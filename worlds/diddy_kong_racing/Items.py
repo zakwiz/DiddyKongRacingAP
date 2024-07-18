@@ -1,5 +1,6 @@
+from typing import NamedTuple
+
 from BaseClasses import Item
-import typing
 from .Names import ItemName
 
 
@@ -7,7 +8,7 @@ class DiddyKongRacingItem(Item):
     game: str = "Diddy Kong Racing"
 
 
-class ItemData(typing.NamedTuple):
+class ItemData(NamedTuple):
     dkr_id: int
     count: int
 

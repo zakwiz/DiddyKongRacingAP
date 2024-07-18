@@ -1,12 +1,12 @@
-import typing
+from __future__ import annotations
 
 from BaseClasses import Region
-from .Names import RegionName, LocationName, ItemName
+from .Names import ItemName, LocationName, RegionName
 from .Locations import DiddyKongRacingLocation
 from .Rules import DiddyKongRacingRules
 
 
-DIDDY_KONG_RACING_REGIONS: typing.Dict[str, typing.List[str]] = {
+DIDDY_KONG_RACING_REGIONS: dict[str, list[str]] = {
     RegionName.MENU: [],
     RegionName.TIMBERS_ISLAND: [
         LocationName.BRIDGE_BALLOON,
@@ -89,9 +89,9 @@ def create_regions(self) -> None:
     player = self.player
     active_locations = self.location_name_to_id
 
-    if multiworld.worlds[player].options.victory_condition.value == 0:
+    if self.options.victory_condition.value == 0:
         victory_item_location = LocationName.WIZPIG_1
-    elif multiworld.worlds[player].options.victory_condition.value == 1:
+    elif self.options.victory_condition.value == 1:
         victory_item_location = LocationName.WIZPIG_2
     else:
         raise Exception("Unexpected victory condition")

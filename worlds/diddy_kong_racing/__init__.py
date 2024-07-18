@@ -2,16 +2,16 @@ from __future__ import annotations
 
 from multiprocessing import Process
 
+from BaseClasses import Item, ItemClassification, Tutorial
+from worlds.AutoWorld import WebWorld, World
+from worlds.LauncherComponents import Component, components, Type
+
 from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE
 from .Locations import ALL_LOCATION_TABLE
-from .Regions import create_regions, connect_regions
+from .Regions import connect_regions, create_regions
 from .Options import DiddyKongRacingOptions
 from .Rules import DiddyKongRacingRules
 from .Names import ItemName, LocationName
-
-from BaseClasses import ItemClassification, Tutorial, Item
-from ..AutoWorld import World, WebWorld
-from ..LauncherComponents import Component, components, Type
 
 
 def run_client():
