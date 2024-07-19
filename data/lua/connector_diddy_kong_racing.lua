@@ -8,16 +8,17 @@ require('common')
 local socket = require("socket")
 local json = require('json')
 
+-- TODO Update versions
 local SCRIPT_VERSION = 5
 local DKR_VERSION = "v0.2.3"
 
 local player
 local seed
 local victory_condition
-local starting_balloon_count
-local starting_regional_balloon_count
-local starting_wizpig_amulet_piece_count
-local starting_tt_amulet_piece_count
+local starting_balloon_count = 0
+local starting_regional_balloon_count = 0
+local starting_wizpig_amulet_piece_count = 0
+local starting_tt_amulet_piece_count = 0
 local skip_trophy_races
 
 local STATE_OK = "Ok"
@@ -29,8 +30,9 @@ local frame = 0
 
 local slot_loaded = false
 local in_save_file = false
-local init_complete = false
 local in_save_file_counter = 0
+local init_complete = false
+local paused = false
 
 local debug_level_1 = false
 local debug_level_2 = false
@@ -53,6 +55,7 @@ DKR_RAM = {
         IN_SAVE_FILE_1 = 0x214E72,
         IN_SAVE_FILE_2 = 0x214E76,
         IN_SAVE_FILE_3 = 0x21545A,
+        PAUSED = 0x115F79,
         TOTAL_BALLOON_COUNT = 0x1FCBED,
         DINO_DOMAIN_BALLOON_COUNT = 0x1FCBEF,
         SNOWFLAKE_MOUNTAIN_BALLOON_COUNT = 0x1FCBF3,
@@ -666,9 +669,10 @@ function main()
                 receive()
             elseif frame % 10 == 1 then
                 check_if_in_save_file()
-                if not (init_complete) then
+                if not init_complete then
 					initialize_flags()
 				end
+                update_totals_if_paused()
                 dpad_stats()
             end
         elseif current_state == STATE_UNINITIALIZED then
@@ -791,6 +795,56 @@ function set_trophy_flags()
     DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 7, "Skip trophy races")
 end
 
+function update_totals_if_paused()
+    local new_paused = DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.PAUSED, 0, "Check if paused")
+
+    if new_paused and not paused then
+        update_in_game_totals()
+    end
+
+    paused = new_paused
+end
+
+function update_in_game_totals()
+    -- Balloons
+    local timbers_island_balloon_count = get_received_item_count(ITEM_IDS.TIMBERS_ISLAND_BALLOON)
+    local dinos_domain_balloon_count = get_received_item_count(ITEM_IDS.DINO_DOMAIN_BALLOON)
+    local snowflake_mountain_balloon_count = get_received_item_count(ITEM_IDS.SNOWFLAKE_MOUNTAIN_BALLOON)
+    local sherbet_island_balloon_count = get_received_item_count(ITEM_IDS.SHERBET_ISLAND_BALLOON)
+    local dragon_forest_balloon_count = get_received_item_count(ITEM_IDS.DRAGON_FOREST_BALLOON)
+    local future_fun_land_balloon_count = get_received_item_count(ITEM_IDS.FUTURE_FUN_LAND_BALLOON)
+    local total_balloon_count = timbers_island_balloon_count + dinos_domain_balloon_count + snowflake_mountain_balloon_count + sherbet_island_balloon_count + dragon_forest_balloon_count + future_fun_land_balloon_count
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, total_balloon_count + starting_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT, dinos_domain_balloon_count + starting_regional_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT, snowflake_mountain_balloon_count + starting_regional_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT, sherbet_island_balloon_count + starting_regional_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT, dragon_forest_balloon_count + starting_regional_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.FUTURE_FUN_LAND_BALLOON_COUNT, future_fun_land_balloon_count)
+
+    for balloon_item_id, _ in pairs(BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO) do
+        set_boss_1_completion_if_boss_2_unlocked(balloon_item_id)
+    end
+
+    -- Keys
+    for key_item_id, key_door_address_info in pairs(KEY_ITEM_ID_TO_DOOR_ADDRESS_INFO) do
+        if get_received_item_count(key_item_id) == 0 then
+            for _, key_door_ram_address in pairs(key_door_address_info) do
+                DKR_RAMOBJ:clear_flag(key_door_ram_address[BYTE], key_door_ram_address[BIT], "Clear key door flag")
+            end
+        else
+            for _, key_door_ram_address in pairs(key_door_address_info) do
+                DKR_RAMOBJ:set_flag(key_door_ram_address[BYTE], key_door_ram_address[BIT], "Set key door flag")
+            end
+        end
+    end
+
+    -- Amulets
+    local wizpig_amulet_piece_count = get_received_item_count(ITEM_IDS.WIZPIG_AMULET_PIECE)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, math.min(4, wizpig_amulet_piece_count + starting_wizpig_amulet_piece_count))
+    local tt_amulet_piece_count = get_received_item_count(ITEM_IDS.TT_AMULET_PIECE)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TT_AMULET, math.min(4, tt_amulet_piece_count + starting_tt_amulet_piece_count))
+end
+
 function dpad_stats()
     if init_complete then
         local check_controls = joypad.get()
@@ -804,13 +858,13 @@ function dpad_stats()
             print("")
             print("Keys:")
             for _, item in pairs(receive_map) do
-                if item == (ITEM_IDS.FIRE_MOUNTAIN_KEY .. "") then
+                if item == tostring(ITEM_IDS.FIRE_MOUNTAIN_KEY) then
                     print("Fire Mountain")
-                elseif item == (ITEM_IDS.ICICLE_PYRAMID_KEY .. "") then
+                elseif item == tostring(ITEM_IDS.ICICLE_PYRAMID_KEY) then
                     print("Icicle Pyramid")
-                elseif item == (ITEM_IDS.DARKWATER_BEACH_KEY .. "") then
+                elseif item == tostring(ITEM_IDS.DARKWATER_BEACH_KEY) then
                     print("Darkwater Beach")
-                elseif item == (ITEM_IDS.SMOKEY_CASTLE_KEY .. "") then
+                elseif item == tostring(ITEM_IDS.SMOKEY_CASTLE_KEY) then
                     print("Smokey Castle")
                 end
             end
@@ -836,11 +890,11 @@ function get_local_checks()
                         DKR_RAMOBJ:decrement_counter(BALLOON_ITEM_GROUP_TO_COUNT_ADDRESS[check_type], "Decrement region balloon count")
                     end
                 elseif check_type == ITEM_GROUPS.WIZPIG_AMULET_PIECE then
-                    local amulet_piece_count = get_amulet_piece_count(ITEM_IDS.WIZPIG_AMULET_PIECE, starting_wizpig_amulet_piece_count)
-                    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, amulet_piece_count, "Decrement Wizpig amulet piece count")
+                    local wizpig_amulet_piece_count = get_received_item_count(ITEM_IDS.WIZPIG_AMULET_PIECE) + starting_wizpig_amulet_piece_count
+                    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, math.min(4, wizpig_amulet_piece_count), "Decrement Wizpig amulet piece count")
                 elseif check_type == ITEM_GROUPS.TT_AMULET_PIECE then
-                    local amulet_piece_count = get_amulet_piece_count(ITEM_IDS.TT_AMULET_PIECE, starting_tt_amulet_piece_count)
-                    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TT_AMULET, amulet_piece_count, "Decrement T.T. amulet piece count")
+                    local tt_amulet_piece_count = get_received_item_count(ITEM_IDS.TT_AMULET_PIECE) + starting_tt_amulet_piece_count
+                    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TT_AMULET, math.min(4, tt_amulet_piece_count), "Decrement T.T. amulet piece count")
                 elseif check_type == ITEM_GROUPS.KEY and not amm[ITEM_GROUPS.KEY][location_id] then
                     local key_ram_address = AGI_MASTER_MAP[ITEM_GROUPS.KEY][location_id]
                     DKR_RAMOBJ:clear_flag(key_ram_address[BYTE], key_ram_address[BIT], "Clear key flag")
@@ -854,15 +908,15 @@ function get_local_checks()
     return checks
 end
 
-function get_amulet_piece_count(item_id, starting_amulet_piece_count)
-    local collected_amulet_piece_count = 0
+function get_received_item_count(item_id)
+    local received_item_count = 0
     for _, item in pairs(receive_map) do
-        if item == (item_id .. "") then
-            collected_amulet_piece_count = collected_amulet_piece_count + 1
+        if item == tostring(item_id) then
+            received_item_count = received_item_count + 1
         end
     end
 
-    return math.min(4, starting_amulet_piece_count + collected_amulet_piece_count)
+    return received_item_count
 end
 
 function receive()
@@ -997,7 +1051,7 @@ function load_agi()
             print(agi)
         end
 
-        file:write(json.encode(agi).."\n")
+        file:write(json.encode(agi) .. "\n")
         file:write(json.encode(receive_map))
         file:close()
     else
@@ -1028,7 +1082,7 @@ function send_to_dkr_client()
         print("Send Data")
     end
 
-    local message = json.encode(retTable).."\n"
+    local message = json.encode(retTable) .. "\n"
     local response, error = DKR_SOCK:send(message)
     if not response then
         print(error)
@@ -1081,11 +1135,7 @@ function process_agi_item(item_list)
                 if item_id ~= ITEM_IDS.TIMBERS_ISLAND_BALLOON then
                     DKR_RAMOBJ:increment_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id], "Increment region balloon count")
 
-                    if BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[item_id]
-                            and DKR_RAMOBJ:get_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id], "Check if boss 1 should be unlocked") == 8 then
-                        local boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[item_id]
-                        DKR_RAMOBJ:set_flag(boss_1_completion_address[BYTE], boss_1_completion_address[BIT], "Set boss 1 completion")
-                    end
+                    set_boss_1_completion_if_boss_2_unlocked(item_id)
                 end
             elseif item_id == ITEM_IDS.WIZPIG_AMULET_PIECE and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, "Check if Wizpig amulet is already complete") < 4 then
                 DKR_RAMOBJ:increment_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, "Increment Wizpig amulet piece count")
@@ -1100,6 +1150,14 @@ function process_agi_item(item_list)
             receive_map[tostring(ap_id)] = tostring(item_id)
             saving_agi()
         end
+    end
+end
+
+function set_boss_1_completion_if_boss_2_unlocked(item_id)
+    if BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[item_id]
+            and DKR_RAMOBJ:get_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id], "Check if boss 1 should be unlocked") >= 8 then
+        local boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[item_id]
+        DKR_RAMOBJ:set_flag(boss_1_completion_address[BYTE], boss_1_completion_address[BIT], "Set boss 1 completion")
     end
 end
 
