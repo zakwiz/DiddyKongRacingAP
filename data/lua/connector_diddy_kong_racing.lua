@@ -886,7 +886,8 @@ function get_local_checks()
                     DKR_RAMOBJ:decrement_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, "Decrement total balloon count")
 
                     if check_type ~= ITEM_GROUPS.TIMBERS_ISLAND_BALLOON then
-                        DKR_RAMOBJ:decrement_counter(BALLOON_ITEM_GROUP_TO_COUNT_ADDRESS[check_type], "Decrement region balloon count")
+                        local regional_balloon_count = get_received_item_count(ITEM_IDS[check_type]) + starting_regional_balloon_count
+                        DKR_RAMOBJ:set_counter(BALLOON_ITEM_GROUP_TO_COUNT_ADDRESS[check_type], math.min(8, regional_balloon_count), "Decrement region balloon count")
                     end
                 elseif check_type == ITEM_GROUPS.WIZPIG_AMULET_PIECE then
                     local wizpig_amulet_piece_count = get_received_item_count(ITEM_IDS.WIZPIG_AMULET_PIECE) + starting_wizpig_amulet_piece_count
@@ -1131,8 +1132,8 @@ function process_agi_item(item_list)
                 end
                 DKR_RAMOBJ:increment_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, "Increment total balloon count")
 
-                if item_id ~= ITEM_IDS.TIMBERS_ISLAND_BALLOON then
-                    DKR_RAMOBJ:increment_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id], "Increment region balloon count")
+                if item_id ~= ITEM_IDS.TIMBERS_ISLAND_BALLOON and DKR_RAMOBJ:get_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id], "Check if already at max regional balloons") < 8 then
+                    DKR_RAMOBJ:increment_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id], "Increment regional balloon count")
 
                     set_boss_1_completion_if_boss_2_unlocked(item_id)
                 end
@@ -1154,7 +1155,7 @@ end
 
 function set_boss_1_completion_if_boss_2_unlocked(item_id)
     if BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[item_id]
-            and DKR_RAMOBJ:get_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id], "Check if boss 1 should be unlocked") >= 8 then
+            and DKR_RAMOBJ:get_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id], "Check if boss 1 should be unlocked") == 8 then
         local boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[item_id]
         DKR_RAMOBJ:set_flag(boss_1_completion_address[BYTE], boss_1_completion_address[BIT], "Set boss 1 completion")
     end
