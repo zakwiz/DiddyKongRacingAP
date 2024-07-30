@@ -114,8 +114,11 @@ class DiddyKongRacingRules:
         return self.has_total_balloon_count(state, 16)
 
     def can_access_future_fun_land(self, state: CollectionState) -> bool:
-        return (self.has_total_balloon_count(state, 37)
-                and self.wizpig_1(state))
+        return (self.wizpig_1(state) and
+                (self.world.options.skip_trophy_races or
+                 (self.tricky_2(state) and self.bluey_2(state) and self.bubbler_2(state) and self.smokey_2(state))
+                 )
+                )
 
     def balloon_bridge(self, state: CollectionState) -> bool:
         return True
