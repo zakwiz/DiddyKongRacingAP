@@ -151,9 +151,3 @@ class DiddyKongRacingWorld(World):
         }
 
         return dkr_options
-
-    # For the universal tracker, doesn't get called in standard gen
-    @staticmethod
-    def interpret_slot_data(slot_data: dict[str, any]) -> dict[str, any]:
-        # Returning slot_data so it regens, giving it back in multiworld.re_gen_passthrough
-        return slot_data
