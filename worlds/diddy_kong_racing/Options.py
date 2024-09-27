@@ -15,6 +15,26 @@ class VictoryCondition(Choice):
     default = option_beat_wizpig_1
 
 
+class ShuffleWizpigAmulet(Toggle):
+    """Shuffle the 4 Wizpig amulet pieces into the item pool"""
+    display_name = "Shuffle Wizpig amulet"
+
+
+class ShuffleTTAmulet(Toggle):
+    """Shuffle the 4 T.T. amulet pieces into the item pool"""
+    display_name = "Shuffle T.T. amulet"
+
+
+class ShuffleDoorRequirements(Toggle):
+    """The balloon requirements to open all numbered doors will be shuffled"""
+    display_name = "Shuffle door requirements"
+
+
+class SkipTrophyRaces(DefaultOnToggle):
+    """Start with all 1st place trophies, so you only need to beat Wizpig 1 to unlock Future Fun Land"""
+    display_name = "Skip trophy races"
+
+
 class StartingBalloonCount(Range):
     """Start with golden balloons, speeding up game progression and reducing the number of checks required for Wizpig 2"""
     display_name = "Starting balloon count"
@@ -50,28 +70,14 @@ class StartingTTAmuletPieceCount(Range):
     default = range_start
 
 
-class ShuffleWizpigAmulet(Toggle):
-    """Shuffle the 4 Wizpig amulet pieces into the item pool"""
-    display_name = "Shuffle Wizpig amulet"
-
-
-class ShuffleTTAmulet(Toggle):
-    """Shuffle the 4 T.T. amulet pieces into the item pool"""
-    display_name = "Shuffle T.T. amulet"
-
-
-class SkipTrophyRaces(DefaultOnToggle):
-    """Start with all 1st place trophies, so you only need to beat Wizpig 1 to unlock Future Fun Land"""
-    display_name = "Skip trophy races"
-
-
 @dataclass
 class DiddyKongRacingOptions(PerGameCommonOptions):
     victory_condition: VictoryCondition
+    shuffle_wizpig_amulet: ShuffleWizpigAmulet
+    shuffle_tt_amulet: ShuffleTTAmulet
+    shuffle_door_requirements: ShuffleDoorRequirements
+    skip_trophy_races: SkipTrophyRaces
     starting_balloon_count: StartingBalloonCount
     starting_regional_balloon_count: StartingRegionalBalloonCount
     starting_wizpig_amulet_piece_count: StartingWizpigAmuletPieceCount
     starting_tt_amulet_piece_count: StartingTTAmuletPieceCount
-    shuffle_wizpig_amulet: ShuffleWizpigAmulet
-    shuffle_tt_amulet: ShuffleTTAmulet
-    skip_trophy_races: SkipTrophyRaces

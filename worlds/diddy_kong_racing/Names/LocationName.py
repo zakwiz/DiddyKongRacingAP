@@ -33,11 +33,11 @@ CRESCENT_ISLAND_1 = "SI: Crescent Island 1"
 CRESCENT_ISLAND_2 = "SI: Crescent Island 2"
 PIRATE_LAGOON_1 = "SI: Pirate Lagoon 1"
 PIRATE_LAGOON_2 = "SI: Pirate Lagoon 2"
+TREASURE_CAVES_1 = "SI: Treasure Caves 1"
+TREASURE_CAVES_2 = "SI: Treasure Caves 2"
 DARKWATER_BEACH_KEY = "SI: Darkwater Beach Key"
 DARKWATER_BEACH = "SI: Darkwater Beach"
 BUBBLER_2 = "SI: Bubbler 2"
-TREASURE_CAVES_1 = "SI: Treasure Caves 1"
-TREASURE_CAVES_2 = "SI: Treasure Caves 2"
 WINDMILL_PLAINS_1 = "DF: Windmill Plains 1"
 WINDMILL_PLAINS_2 = "DF: Windmill Plains 2"
 GREENWOOD_VILLAGE_1 = "DF: Greenwood Village 1"
@@ -59,3 +59,95 @@ SPACEPORT_ALPHA_2 = "FFL: Spaceport Alpha 2"
 STAR_CITY_1 = "FFL: Star City 1"
 STAR_CITY_2 = "FFL: Star City 2"
 WIZPIG_2 = "Wizpig 2"
+
+WORLD_1_UNLOCK = "World 1 Unlock"
+WORLD_2_UNLOCK = "World 2 Unlock"
+WORLD_3_UNLOCK = "World 3 Unlock"
+WORLD_4_UNLOCK = "World 4 Unlock"
+RACE_1_1_UNLOCK = "Race 1-1 Unlock"
+RACE_1_2_UNLOCK = "Race 1-2 Unlock"
+RACE_2_1_UNLOCK = "Race 2-1 Unlock"
+RACE_2_2_UNLOCK = "Race 2-2 Unlock"
+RACE_3_1_UNLOCK = "Race 3-1 Unlock"
+RACE_3_2_UNLOCK = "Race 3-2 Unlock"
+RACE_4_1_UNLOCK = "Race 4-1 Unlock"
+RACE_4_2_UNLOCK = "Race 4-2 Unlock"
+RACE_5_1_UNLOCK = "Race 5-1 Unlock"
+RACE_5_2_UNLOCK = "Race 5-2 Unlock"
+RACE_6_1_UNLOCK = "Race 6-1 Unlock"
+RACE_6_2_UNLOCK = "Race 6-2 Unlock"
+RACE_7_1_UNLOCK = "Race 7-1 Unlock"
+RACE_7_2_UNLOCK = "Race 7-2 Unlock"
+RACE_8_1_UNLOCK = "Race 8-1 Unlock"
+RACE_8_2_UNLOCK = "Race 8-2 Unlock"
+RACE_9_1_UNLOCK = "Race 9-1 Unlock"
+RACE_9_2_UNLOCK = "Race 9-2 Unlock"
+RACE_10_1_UNLOCK = "Race 10-1 Unlock"
+RACE_10_2_UNLOCK = "Race 10-2 Unlock"
+RACE_11_1_UNLOCK = "Race 11-1 Unlock"
+RACE_11_2_UNLOCK = "Race 11-2 Unlock"
+RACE_12_1_UNLOCK = "Race 12-1 Unlock"
+RACE_12_2_UNLOCK = "Race 12-2 Unlock"
+RACE_13_1_UNLOCK = "Race 13-1 Unlock"
+RACE_13_2_UNLOCK = "Race 13-2 Unlock"
+RACE_14_1_UNLOCK = "Race 14-1 Unlock"
+RACE_14_2_UNLOCK = "Race 14-2 Unlock"
+RACE_15_1_UNLOCK = "Race 15-1 Unlock"
+RACE_15_2_UNLOCK = "Race 15-2 Unlock"
+RACE_16_1_UNLOCK = "Race 16-1 Unlock"
+RACE_16_2_UNLOCK = "Race 16-2 Unlock"
+RACE_17_1_UNLOCK = "Race 17-1 Unlock"
+RACE_17_2_UNLOCK = "Race 17-2 Unlock"
+RACE_18_1_UNLOCK = "Race 18-1 Unlock"
+RACE_18_2_UNLOCK = "Race 18-2 Unlock"
+RACE_19_1_UNLOCK = "Race 19-1 Unlock"
+RACE_19_2_UNLOCK = "Race 19-2 Unlock"
+RACE_20_1_UNLOCK = "Race 20-1 Unlock"
+RACE_20_2_UNLOCK = "Race 20-2 Unlock"
+
+DOOR_UNLOCK_LOCATIONS = [
+    WORLD_1_UNLOCK,
+    WORLD_2_UNLOCK,
+    WORLD_3_UNLOCK,
+    WORLD_4_UNLOCK,
+    RACE_1_1_UNLOCK,
+    RACE_1_2_UNLOCK,
+    RACE_2_1_UNLOCK,
+    RACE_2_2_UNLOCK,
+    RACE_3_1_UNLOCK,
+    RACE_3_2_UNLOCK,
+    RACE_4_1_UNLOCK,
+    RACE_4_2_UNLOCK,
+    RACE_5_1_UNLOCK,
+    RACE_5_2_UNLOCK,
+    RACE_6_1_UNLOCK,
+    RACE_6_2_UNLOCK,
+    RACE_7_1_UNLOCK,
+    RACE_7_2_UNLOCK,
+    RACE_8_1_UNLOCK,
+    RACE_8_2_UNLOCK,
+    RACE_9_1_UNLOCK,
+    RACE_9_2_UNLOCK,
+    RACE_10_1_UNLOCK,
+    RACE_10_2_UNLOCK,
+    RACE_11_1_UNLOCK,
+    RACE_11_2_UNLOCK,
+    RACE_12_1_UNLOCK,
+    RACE_12_2_UNLOCK,
+    RACE_13_1_UNLOCK,
+    RACE_13_2_UNLOCK,
+    RACE_14_1_UNLOCK,
+    RACE_14_2_UNLOCK,
+    RACE_15_1_UNLOCK,
+    RACE_15_2_UNLOCK,
+    RACE_16_1_UNLOCK,
+    RACE_16_2_UNLOCK,
+    RACE_17_1_UNLOCK,
+    RACE_17_2_UNLOCK,
+    RACE_18_1_UNLOCK,
+    RACE_18_2_UNLOCK,
+    RACE_19_1_UNLOCK,
+    RACE_19_2_UNLOCK,
+    RACE_20_1_UNLOCK,
+    RACE_20_2_UNLOCK
+]

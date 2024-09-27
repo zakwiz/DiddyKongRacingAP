@@ -34,7 +34,6 @@ AMULET_TABLE = {
     ItemName.TT_AMULET_PIECE: ItemData(1616011, 4)
 }
 
-
 ALL_ITEM_TABLE = {
     **BALLOON_TABLE,
     **KEY_TABLE,

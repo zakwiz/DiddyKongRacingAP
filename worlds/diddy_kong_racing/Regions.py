@@ -108,11 +108,13 @@ def create_regions(self) -> None:
 
 def create_region(multiworld, player: int, active_locations, name: str, locations, victory_item_location) -> Region:
     region = Region(name, player, multiworld)
-    if locations:
+    if name == RegionName.MENU:
+        region.add_locations({location: None for location in LocationName.DOOR_UNLOCK_LOCATIONS})
+    elif locations:
         if victory_item_location in locations:
             region.add_locations({victory_item_location: None})
 
-        location_to_id = {loc: active_locations.get(loc, 0) for loc in locations if active_locations.get(loc, None)}
+        location_to_id = {location: active_locations.get(location, 0) for location in locations if active_locations.get(location, None)}
         region.add_locations(location_to_id, DiddyKongRacingLocation)
 
     return region

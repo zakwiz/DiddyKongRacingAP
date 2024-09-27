@@ -14,11 +14,13 @@ local DKR_VERSION = "v0.2.6"
 local player
 local seed
 local victory_condition
+local shuffle_door_requirements
+local door_unlock_requirements
+local skip_trophy_races
 local starting_balloon_count = 0
 local starting_regional_balloon_count = 0
 local starting_wizpig_amulet_piece_count = 0
 local starting_tt_amulet_piece_count = 0
-local skip_trophy_races
 
 local STATE_OK = "Ok"
 local STATE_TENTATIVELY_CONNECTED = "Tentatively Connected"
@@ -49,6 +51,33 @@ local BYTE = "byte"
 local BIT = "bit"
 local NAME = "name"
 
+local door_open_states = {
+    DINO_DOMAIN = false,
+    SNOWFLAKE_MOUNTAIN = false,
+    SHERBET_ISLAND = false,
+    DRAGON_FOREST = false,
+    ANCIENT_LAKE = false,
+    FOSSIL_CANYON = false,
+    JUNGLE_FALLS = false,
+    HOT_TOP_VOLCANO = false,
+    EVERFROST_PEAK = false,
+    WALRUS_COVE = false,
+    SNOWBALL_VALLEY = false,
+    FROSTY_VILLAGE = false,
+    WHALE_BAY = false,
+    CRESCENT_ISLAND = false,
+    PIRATE_LAGOON = false,
+    TREASURE_CAVES = false,
+    WINDMILL_PLAINS = false,
+    GREENWOOD_VILLAGE = false,
+    BOULDER_CANYON = false,
+    HAUNTED_WOODS = false,
+    SPACEDUST_ALLEY = false,
+    DARKMOON_CAVERNS = false,
+    SPACEPORT_ALPHA = false,
+    STAR_CITY = false
+}
+
 DKR_RAM = {
     ADDRESS = {
         IN_SAVE_FILE_1 = 0x214E72,
@@ -61,6 +90,8 @@ DKR_RAM = {
         SHERBET_ISLAND_BALLOON_COUNT = 0x1FCBF1,
         DRAGON_FOREST_BALLOON_COUNT = 0x1FCBF5,
         FUTURE_FUN_LAND_BALLOON_COUNT = 0x1FCBF7,
+        TIMBERS_ISLAND_BALLOONS_AND_DOORS_1 = 0x1FCAE8,
+        TIMBERS_ISLAND_BALLOONS_AND_DOORS_2 = 0x1FCAE9,
         DINO_DOMAIN_DOORS_1 = 0x1FCB18,
         DINO_DOMAIN_DOORS_2 = 0x1FCB19,
         SNOWFLAKE_MOUNTAIN_DOORS_1 = 0x1FCB48,
@@ -69,6 +100,8 @@ DKR_RAM = {
         SHERBET_ISLAND_DOORS_2 = 0x1FCB21,
         DRAGON_FOREST_DOORS_1 = 0x1FCAF0,
         DRAGON_FOREST_DOORS_2 = 0x1FCAF1,
+        FUTURE_FUN_LAND_DOORS_1 = 0x1FCB74,
+        FUTURE_FUN_LAND_DOORS_2 = 0x1FCB75,
         BOSS_COMPLETION_1 = 0x1FC9DC,
         BOSS_COMPLETION_2 = 0x1FC9DD,
         WIZPIG_AMULET = 0x1FC9E7,
@@ -76,8 +109,6 @@ DKR_RAM = {
         TROPHIES_1 = 0x1FC9DE,
         TROPHIES_2 = 0x1FC9DF,
         KEYS = 0x1FC9D9,
-        OVERWORLD_BALLOONS_1 = 0x1FCAE8,
-        OVERWORLD_BALLOONS_2 = 0x1FCAE9,
         -- Dino Domain
         ANCIENT_LAKE = 0x1FCAFF,
         FOSSIL_CANYON = 0x1FCAF7,
@@ -217,40 +248,203 @@ local KEY_ITEM_ID_TO_DOOR_ADDRESS_INFO = {
     }
 }
 
+local DOOR_TO_ADDRESS_INFO = {
+    DINO_DOMAIN = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
+            [BIT] = 0
+        },
+        {
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
+            [BIT] = 1
+        }
+    },
+    SNOWFLAKE_MOUNTAIN = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
+            [BIT] = 5
+        },
+        {
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
+            [BIT] = 7
+        }
+    },
+    SHERBET_ISLAND = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
+            [BIT] = 4
+        },
+        {
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_1,
+            [BIT] = 5
+        }
+    },
+    DRAGON_FOREST = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_1,
+            [BIT] = 1
+        },
+        {
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_1,
+            [BIT] = 0
+        }
+    },
+    ANCIENT_LAKE = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.DINO_DOMAIN_DOORS_2,
+            [BIT] = 2
+        }
+    },
+    FOSSIL_CANYON = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.DINO_DOMAIN_DOORS_2,
+            [BIT] = 1
+        }
+    },
+    JUNGLE_FALLS = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.DINO_DOMAIN_DOORS_2,
+            [BIT] = 3
+        }
+    },
+    HOT_TOP_VOLCANO = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.DINO_DOMAIN_DOORS_2,
+            [BIT] = 6
+        }
+    },
+    EVERFROST_PEAK = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_DOORS_2,
+            [BIT] = 3
+        }
+    },
+    WALRUS_COVE = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_DOORS_2,
+            [BIT] = 5
+        }
+    },
+    SNOWBALL_VALLEY = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_DOORS_2,
+            [BIT] = 2
+        }
+    },
+    FROSTY_VILLAGE = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_DOORS_2,
+            [BIT] = 1
+        }
+    },
+    WHALE_BAY = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.SHERBET_ISLAND_DOORS_2,
+            [BIT] = 0
+        }
+    },
+    CRESCENT_ISLAND = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.SHERBET_ISLAND_DOORS_2,
+            [BIT] = 1
+        }
+    },
+    PIRATE_LAGOON = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.SHERBET_ISLAND_DOORS_2,
+            [BIT] = 2
+        }
+    },
+    TREASURE_CAVES = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.SHERBET_ISLAND_DOORS_2,
+            [BIT] = 3
+        }
+    },
+    WINDMILL_PLAINS = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.DRAGON_FOREST_DOORS_2,
+            [BIT] = 2
+        }
+    },
+    GREENWOOD_VILLAGE = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.DRAGON_FOREST_DOORS_2,
+            [BIT] = 0
+        }
+    },
+    BOULDER_CANYON = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.DRAGON_FOREST_DOORS_2,
+            [BIT] = 3
+        }
+    },
+    HAUNTED_WOODS = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.DRAGON_FOREST_DOORS_2,
+            [BIT] = 4
+        }
+    },
+    SPACEDUST_ALLEY = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.FUTURE_FUN_LAND_DOORS_2,
+            [BIT] = 1
+        }
+    },
+    DARKMOON_CAVERNS = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.FUTURE_FUN_LAND_DOORS_2,
+            [BIT] = 0
+        }
+    },
+    SPACEPORT_ALPHA = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.FUTURE_FUN_LAND_DOORS_2,
+            [BIT] = 2
+        }
+    },
+    STAR_CITY = {
+        {
+            [BYTE] = DKR_RAM.ADDRESS.FUTURE_FUN_LAND_DOORS_2,
+            [BIT] = 3
+        }
+    }
+}
+
 local AGI_MASTER_MAP = {
     [ITEM_GROUPS.TIMBERS_ISLAND_BALLOON] = {
         ["1616100"] = {
-            [BYTE] = DKR_RAM.ADDRESS.OVERWORLD_BALLOONS_1,
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_1,
             [BIT] = 2,
             [NAME] = "Bridge Balloon"
         },
         ["1616101"] = {
-            [BYTE] = DKR_RAM.ADDRESS.OVERWORLD_BALLOONS_1,
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_1,
             [BIT] = 6,
             [NAME] = "Waterfall Balloon"
         },
         ["1616102"] = {
-            [BYTE] = DKR_RAM.ADDRESS.OVERWORLD_BALLOONS_2,
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
             [BIT] = 6,
             [NAME] = "River Balloon"
         },
         ["1616103"] = {
-            [BYTE] = DKR_RAM.ADDRESS.OVERWORLD_BALLOONS_2,
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
             [BIT] = 2,
             [NAME] = "Ocean Balloon"
         },
         ["1616104"] = {
-            [BYTE] = DKR_RAM.ADDRESS.OVERWORLD_BALLOONS_2,
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
             [BIT] = 3,
             [NAME] = "Taj Car Race"
         },
         ["1616105"] = {
-            [BYTE] = DKR_RAM.ADDRESS.OVERWORLD_BALLOONS_1,
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_1,
             [BIT] = 3,
             [NAME] = "Taj Hovercraft Race"
         },
         ["1616106"] = {
-            [BYTE] = DKR_RAM.ADDRESS.OVERWORLD_BALLOONS_1,
+            [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_1,
             [BIT] = 4,
             [NAME] = "Taj Plane Race"
         }
@@ -671,8 +865,18 @@ function main()
                 if not init_complete then
 					initialize_flags()
 				end
-                update_totals_if_paused()
-                dpad_stats()
+
+                if init_complete then
+                    if shuffle_door_requirements then
+                        update_door_open_states()
+                    end
+                    update_totals_if_paused()
+                    dpad_stats()
+                end
+            end
+
+            if init_complete and shuffle_door_requirements then
+                force_doors()
             end
         elseif current_state == STATE_UNINITIALIZED then
             if  frame % 60 == 1 then
@@ -813,12 +1017,12 @@ function update_in_game_totals()
     local dragon_forest_balloon_count = get_received_item_count(ITEM_IDS.DRAGON_FOREST_BALLOON)
     local future_fun_land_balloon_count = get_received_item_count(ITEM_IDS.FUTURE_FUN_LAND_BALLOON)
     local total_balloon_count = timbers_island_balloon_count + dinos_domain_balloon_count + snowflake_mountain_balloon_count + sherbet_island_balloon_count + dragon_forest_balloon_count + future_fun_land_balloon_count
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, total_balloon_count + starting_balloon_count)
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT, dinos_domain_balloon_count + starting_regional_balloon_count)
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT, snowflake_mountain_balloon_count + starting_regional_balloon_count)
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT, sherbet_island_balloon_count + starting_regional_balloon_count)
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT, dragon_forest_balloon_count + starting_regional_balloon_count)
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.FUTURE_FUN_LAND_BALLOON_COUNT, future_fun_land_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, total_balloon_count + starting_balloon_count, "Set total balloon count on pause")
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT, dinos_domain_balloon_count + starting_regional_balloon_count, "Set Dino Domain balloon count on pause")
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT, snowflake_mountain_balloon_count + starting_regional_balloon_count, "Set Snowflake Mountain balloon count on pause")
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT, sherbet_island_balloon_count + starting_regional_balloon_count, "Set Sherbet Island count on pause")
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT, dragon_forest_balloon_count + starting_regional_balloon_count, "Set Dragon Forest balloon count on pause")
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.FUTURE_FUN_LAND_BALLOON_COUNT, future_fun_land_balloon_count, "Set Future Fun Land balloon count on pause")
 
     for balloon_item_id, _ in pairs(BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO) do
         set_boss_1_completion_if_boss_2_unlocked(balloon_item_id)
@@ -844,28 +1048,78 @@ function update_in_game_totals()
     DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TT_AMULET, math.min(4, tt_amulet_piece_count + starting_tt_amulet_piece_count))
 end
 
-function dpad_stats()
-    if init_complete then
-        local check_controls = joypad.get()
+function update_door_open_states()
+    total_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, "Get total balloon count to update door open states")
+    door_open_states.DINO_DOMAIN = total_balloon_count >= door_unlock_requirements[1]
+    door_open_states.SNOWFLAKE_MOUNTAIN = total_balloon_count >= door_unlock_requirements[2]
+    door_open_states.SHERBET_ISLAND = total_balloon_count >= door_unlock_requirements[3]
+    door_open_states.DRAGON_FOREST = total_balloon_count >= door_unlock_requirements[4]
 
-        if check_controls and check_controls['P1 DPad U'] then
-            print("----------------")
-            print("Dino Domain balloons: " .. DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT))
-            print("Snowflake Mountain balloons: " .. DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT))
-            print("Sherbet Island balloons: " .. DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT))
-            print("Dragon Forest balloons: " .. DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT))
-            print("")
-            print("Keys:")
-            for _, item in pairs(receive_map) do
-                if item == tostring(ITEM_IDS.FIRE_MOUNTAIN_KEY) then
-                    print("Fire Mountain")
-                elseif item == tostring(ITEM_IDS.ICICLE_PYRAMID_KEY) then
-                    print("Icicle Pyramid")
-                elseif item == tostring(ITEM_IDS.DARKWATER_BEACH_KEY) then
-                    print("Darkwater Beach")
-                elseif item == tostring(ITEM_IDS.SMOKEY_CASTLE_KEY) then
-                    print("Smokey Castle")
-                end
+    door_open_states.ANCIENT_LAKE = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[5], door_unlock_requirements[6], AGI_MASTER_MAP[ITEM_GROUPS.DINO_DOMAIN_BALLOON]["1616200"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.DINO_DOMAIN_BALLOON])
+    door_open_states.FOSSIL_CANYON = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[7], door_unlock_requirements[8], AGI_MASTER_MAP[ITEM_GROUPS.DINO_DOMAIN_BALLOON]["1616202"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.DINO_DOMAIN_BALLOON])
+    door_open_states.JUNGLE_FALLS = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[9], door_unlock_requirements[10], AGI_MASTER_MAP[ITEM_GROUPS.DINO_DOMAIN_BALLOON]["1616204"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.DINO_DOMAIN_BALLOON])
+    door_open_states.HOT_TOP_VOLCANO = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[11], door_unlock_requirements[12], AGI_MASTER_MAP[ITEM_GROUPS.DINO_DOMAIN_BALLOON]["1616206"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.DINO_DOMAIN_BALLOON])
+    door_open_states.EVERFROST_PEAK = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[13], door_unlock_requirements[14], AGI_MASTER_MAP[ITEM_GROUPS.SNOWFLAKE_MOUNTAIN_BALLOON]["1616300"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.SNOWFLAKE_MOUNTAIN_BALLOON])
+    door_open_states.WALRUS_COVE = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[15], door_unlock_requirements[16], AGI_MASTER_MAP[ITEM_GROUPS.SNOWFLAKE_MOUNTAIN_BALLOON]["1616302"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.SNOWFLAKE_MOUNTAIN_BALLOON])
+    door_open_states.SNOWBALL_VALLEY = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[17], door_unlock_requirements[18], AGI_MASTER_MAP[ITEM_GROUPS.SNOWFLAKE_MOUNTAIN_BALLOON]["1616304"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.SNOWFLAKE_MOUNTAIN_BALLOON])
+    door_open_states.FROSTY_VILLAGE = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[19], door_unlock_requirements[20], AGI_MASTER_MAP[ITEM_GROUPS.SNOWFLAKE_MOUNTAIN_BALLOON]["1616306"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.SNOWFLAKE_MOUNTAIN_BALLOON])
+    door_open_states.WHALE_BAY = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[21], door_unlock_requirements[22], AGI_MASTER_MAP[ITEM_GROUPS.SHERBET_ISLAND_BALLOON]["1616400"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.SHERBET_ISLAND_BALLOON])
+    door_open_states.CRESCENT_ISLAND = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[23], door_unlock_requirements[24], AGI_MASTER_MAP[ITEM_GROUPS.SHERBET_ISLAND_BALLOON]["1616402"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.SHERBET_ISLAND_BALLOON])
+    door_open_states.PIRATE_LAGOON = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[25], door_unlock_requirements[26], AGI_MASTER_MAP[ITEM_GROUPS.SHERBET_ISLAND_BALLOON]["1616404"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.SHERBET_ISLAND_BALLOON])
+    door_open_states.TREASURE_CAVES = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[27], door_unlock_requirements[28], AGI_MASTER_MAP[ITEM_GROUPS.SHERBET_ISLAND_BALLOON]["1616406"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.SHERBET_ISLAND_BALLOON])
+    door_open_states.WINDMILL_PLAINS = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[29], door_unlock_requirements[30], AGI_MASTER_MAP[ITEM_GROUPS.DRAGON_FOREST_BALLOON]["1616500"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.DRAGON_FOREST_BALLOON])
+    door_open_states.GREENWOOD_VILLAGE = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[31], door_unlock_requirements[32], AGI_MASTER_MAP[ITEM_GROUPS.DRAGON_FOREST_BALLOON]["1616502"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.DRAGON_FOREST_BALLOON])
+    door_open_states.BOULDER_CANYON = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[33], door_unlock_requirements[34], AGI_MASTER_MAP[ITEM_GROUPS.DRAGON_FOREST_BALLOON]["1616504"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.DRAGON_FOREST_BALLOON])
+    door_open_states.HAUNTED_WOODS = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[35], door_unlock_requirements[36], AGI_MASTER_MAP[ITEM_GROUPS.DRAGON_FOREST_BALLOON]["1616506"], BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[ITEM_IDS.DRAGON_FOREST_BALLOON])
+    door_open_states.SPACEDUST_ALLEY = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[37], door_unlock_requirements[38], AGI_MASTER_MAP[ITEM_GROUPS.FUTURE_FUN_LAND_BALLOON]["1616600"])
+    door_open_states.DARKMOON_CAVERNS = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[39], door_unlock_requirements[40], AGI_MASTER_MAP[ITEM_GROUPS.FUTURE_FUN_LAND_BALLOON]["1616602"])
+    door_open_states.SPACEPORT_ALPHA = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[41], door_unlock_requirements[42], AGI_MASTER_MAP[ITEM_GROUPS.FUTURE_FUN_LAND_BALLOON]["1616604"])
+    door_open_states.STAR_CITY = get_new_race_door_open_state(total_balloon_count, door_unlock_requirements[43], door_unlock_requirements[44], AGI_MASTER_MAP[ITEM_GROUPS.FUTURE_FUN_LAND_BALLOON]["1616606"])
+end
+
+function get_new_race_door_open_state(total_balloon_count, race_1_door_unlock_requirement, race_2_door_unlock_requirement, race_1_completion_address, boss_1_completion_address)
+    return total_balloon_count >= race_2_door_unlock_requirement
+            or total_balloon_count >= race_1_door_unlock_requirement
+            and (boss_1_completion_address and not DKR_RAMOBJ:check_flag(boss_1_completion_address[BYTE], boss_1_completion_address[BIT], "Check boss 1 completion for door status check")
+            or not DKR_RAMOBJ:check_flag(race_1_completion_address[BYTE], race_1_completion_address[BIT], "Check race 1 location for door status check"))
+end
+
+function force_doors()
+    for door_name, door_address_info_list in pairs(DOOR_TO_ADDRESS_INFO) do
+        for _, door_address_info in pairs(door_address_info_list) do
+            force_door(door_open_states[door_name], door_address_info[BYTE], door_address_info[BIT], door_name)
+        end
+    end
+end
+
+function force_door(is_open, byte, bit, door_name)
+    if is_open then
+        DKR_RAMOBJ:set_flag(byte, bit, "Force " .. door_name .. " door open")
+    else
+        DKR_RAMOBJ:clear_flag(byte, bit, "Force " .. door_name .. " door open")
+    end
+end
+
+function dpad_stats()
+    local check_controls = joypad.get()
+
+    if check_controls and check_controls['P1 DPad U'] then
+        print("----------------")
+        print("Dino Domain balloons: " .. DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT))
+        print("Snowflake Mountain balloons: " .. DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT))
+        print("Sherbet Island balloons: " .. DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT))
+        print("Dragon Forest balloons: " .. DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT))
+        print("")
+        print("Keys:")
+        for _, item in pairs(receive_map) do
+            if item == tostring(ITEM_IDS.FIRE_MOUNTAIN_KEY) then
+                print("Fire Mountain")
+            elseif item == tostring(ITEM_IDS.ICICLE_PYRAMID_KEY) then
+                print("Icicle Pyramid")
+            elseif item == tostring(ITEM_IDS.DARKWATER_BEACH_KEY) then
+                print("Darkwater Beach")
+            elseif item == tostring(ITEM_IDS.SMOKEY_CASTLE_KEY) then
+                print("Smokey Castle")
             end
         end
     end
@@ -1010,6 +1264,18 @@ function process_slot(block)
         victory_condition = block["slot_victory_condition"]
     end
 
+    if block["slot_shuffle_door_requirements"] and block["slot_shuffle_door_requirements"] ~= "" then
+        shuffle_door_requirements = block["slot_shuffle_door_requirements"]
+    end
+
+    if block["slot_door_unlock_requirements"] and block["slot_door_unlock_requirements"] ~= "" then
+        door_unlock_requirements = block["slot_door_unlock_requirements"]
+    end
+
+    if block["slot_skip_trophy_races"] and block["slot_skip_trophy_races"] ~= "false" then
+        skip_trophy_races = true
+    end
+
     if block["slot_starting_balloon_count"] and block["slot_starting_balloon_count"] ~= "" then
         starting_balloon_count = block["slot_starting_balloon_count"]
     end
@@ -1024,10 +1290,6 @@ function process_slot(block)
 
     if block["slot_starting_tt_amulet_piece_count"] and block["slot_starting_tt_amulet_piece_count"] ~= "" then
         starting_tt_amulet_piece_count = block["slot_starting_tt_amulet_piece_count"]
-    end
-
-    if block["slot_skip_trophy_races"] and block["slot_skip_trophy_races"] ~= "false" then
-        skip_trophy_races = true
     end
 
     if seed then
