@@ -1264,8 +1264,8 @@ function process_slot(block)
         victory_condition = block["slot_victory_condition"]
     end
 
-    if block["slot_shuffle_door_requirements"] and block["slot_shuffle_door_requirements"] ~= "" then
-        shuffle_door_requirements = block["slot_shuffle_door_requirements"]
+    if block["slot_shuffle_door_requirements"] and block["slot_shuffle_door_requirements"] ~= "false" then
+        shuffle_door_requirements = true
     end
 
     if block["slot_door_unlock_requirements"] and block["slot_door_unlock_requirements"] ~= "" then
