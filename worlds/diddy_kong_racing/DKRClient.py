@@ -40,7 +40,7 @@ logger.info(network_data_package["games"].keys())
 dkr_loc_name_to_id = network_data_package["games"]["Diddy Kong Racing"]["location_name_to_id"]
 dkr_itm_name_to_id = network_data_package["games"]["Diddy Kong Racing"]["item_name_to_id"]
 
-script_version: int = 9
+script_version: int = 10
 
 
 def get_item_value(ap_id):
