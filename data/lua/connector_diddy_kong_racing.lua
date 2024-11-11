@@ -1016,6 +1016,8 @@ function check_if_in_save_file()
         if in_save_file_1 and in_save_file_2 and in_save_file_3 then
             if in_save_file_counter == 6 then
                 print("Entered save file")
+                print("D-PAD UP to see collected regional balloons and keys")
+                print("D-PAD RIGHT if door requirements are shuffled to see open uncompleted doors")
                 print("----------------")
                 in_save_file = true
             else
