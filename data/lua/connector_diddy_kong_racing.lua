@@ -10,8 +10,8 @@ local json = require('json')
 
 local REQUIRED_BIZHAWK_VERSION = "2.9.1"
 
-local SCRIPT_VERSION = 10
-local DKR_VERSION = "v0.3.1"
+local APWORLD_VERSION = "v0.3.1"
+local LUA_VERSION = 10
 
 local player
 local seed
@@ -945,7 +945,7 @@ function main()
         return
     end
 
-    print("Diddy Kong Racing Archipelago Version " .. DKR_VERSION)
+    print("Diddy Kong Racing Archipelago Version " .. APWORLD_VERSION)
     print("----------------")
     server, error = socket.bind("localhost", 21221)
     DKR_RAMOBJ = DKR_RAM:new(nil)
@@ -1550,7 +1550,7 @@ end
 
 function send_to_dkr_client()
     local retTable = {}
-    retTable["scriptVersion"] = SCRIPT_VERSION
+    retTable["scriptVersion"] = LUA_VERSION
     retTable["playerName"] = player
     retTable["locations"] = all_location_checks("AMM")
     retTable["gameComplete"] = is_game_complete()

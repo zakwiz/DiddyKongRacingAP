@@ -40,7 +40,8 @@ logger.info(network_data_package["games"].keys())
 dkr_loc_name_to_id = network_data_package["games"]["Diddy Kong Racing"]["location_name_to_id"]
 dkr_itm_name_to_id = network_data_package["games"]["Diddy Kong Racing"]["item_name_to_id"]
 
-script_version: int = 10
+apworld_version: str = "v0.3.1"
+expected_lua_version: int = 10
 
 
 def get_item_value(ap_id):
@@ -109,7 +110,14 @@ class DiddyKongRacingContext(CommonContext):
 
     def on_package(self, cmd, args):
         if cmd == 'Connected':
-            self.slot_data = args.get('slot_data', None)
+            self.slot_data = args.get('slot_data')
+            generated_apworld_version = self.slot_data["apworld_version"]
+
+            if apworld_version != generated_apworld_version:
+                error_message = "Your Diddy Kong Racing apworld version (" + apworld_version + ") does not match the generated world's apworld version (" + generated_apworld_version + ")."
+                logger.error(error_message)
+                raise Exception(error_message)
+
             logger.info("Please open Diddy Kong Racing and load connector_diddy_kong_racing.lua")
             self.n64_sync_task = create_task(n64_sync_task(self), name="N64 Sync")
         elif cmd == 'Print':
@@ -265,11 +273,11 @@ async def n64_sync_task(ctx: DiddyKongRacingContext):
                 try:
                     data = await wait_for(reader.readline(), timeout=10)
                     data_decoded = loads(data.decode())
-                    reported_version = data_decoded.get('scriptVersion', 0)
+                    reported_lua_version = data_decoded.get('scriptVersion', 0)
                     get_slot_data = data_decoded.get('getSlot', 0)
                     if get_slot_data:
                         ctx.sendSlot = True
-                    elif reported_version >= script_version:
+                    elif reported_lua_version >= expected_lua_version:
                         if ctx.game is not None and 'locations' in data_decoded:
                             # Not just a keep alive ping, parse
                             async_start(parse_payload(data_decoded, ctx))
@@ -281,7 +289,7 @@ async def n64_sync_task(ctx: DiddyKongRacingContext):
                     else:
                         if not ctx.version_warning:
                             logger.warning(
-                                f"Your Lua script is version {reported_version}, expected {script_version}. "
+                                f"Your Lua script is version {reported_lua_version}, expected {expected_lua_version}. "
                                 "Please update to the latest version. "
                                 "Your connection to the Archipelago server will not be accepted."
                             )

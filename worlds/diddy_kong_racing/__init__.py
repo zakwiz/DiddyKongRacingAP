@@ -39,6 +39,7 @@ class DiddyKongRacingWorld(World):
     """Diddy Kong Racing is a kart racing game with a story mode, complete with bosses and hidden collectibles."""
 
     game = "Diddy Kong Racing"
+    apworld_version = "v0.3.1"
     web = DiddyKongRacingWeb()
     topology_preset = True
     item_name_to_id = {}
@@ -150,6 +151,7 @@ class DiddyKongRacingWorld(World):
             door_unlock_requirements = get_door_unlock_requirements(self)
 
         dkr_options: dict[str, any] = {
+            "apworld_version": self.apworld_version,
             "player_name": self.multiworld.player_name[self.player],
             "seed": self.random.randint(12212, 69996),
             "victory_condition": self.options.victory_condition.value,
