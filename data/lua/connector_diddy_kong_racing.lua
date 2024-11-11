@@ -35,10 +35,6 @@ local in_save_file_counter = 0
 local init_complete = false
 local paused = false
 
-local debug_level_1 = false
-local debug_level_2 = false
-local debug_level_3 = false
-
 local DKR_SOCK
 local DKR_RAMOBJ
 
@@ -751,94 +747,36 @@ function DKR_RAM:is_file_loaded()
     return self:check_flag(DKR_RAM.ADDRESS.FILE_LOADED, 0, "File loaded check")
 end
 
-function DKR_RAM:check_flag(byte, _bit, fromFuncDebug)
-    if debug_level_2 then
-        print(fromFuncDebug)
-    end
-
-    if not byte then
-        print("check_flag: null found in " .. fromFuncDebug)
-    end
-
+function DKR_RAM:check_flag(byte, _bit)
     local currentValue = mainmemory.readbyte(byte)
-    if bit.check(currentValue, _bit) then
-        return true
-    else
-        return false
-    end
+
+    return bit.check(currentValue, _bit)
 end
 
-function DKR_RAM:clear_flag(byte, _bit, fromFuncDebug)
-    if debug_level_2 then
-        print(fromFuncDebug)
-    end
-
-    if not byte then
-        print("clear_flag: null found in " .. fromFuncDebug)
-    end
-
+function DKR_RAM:clear_flag(byte, _bit)
     local currentValue = mainmemory.readbyte(byte)
     mainmemory.writebyte(byte, bit.clear(currentValue, _bit))
 end
 
-function DKR_RAM:set_flag(byte, _bit, fromFuncDebug)
-    if debug_level_2 then
-        print(fromFuncDebug)
-    end
-    if not byte then
-        print("set_flag: null found in " .. fromFuncDebug)
-    end
-
+function DKR_RAM:set_flag(byte, _bit)
     local currentValue = mainmemory.readbyte(byte)
     mainmemory.writebyte(byte, bit.set(currentValue, _bit))
 end
 
-function DKR_RAM:get_counter(byte, fromFuncDebug)
-    if debug_level_2 then
-        print(fromFuncDebug)
-    end
-
-    if not byte then
-        print("get_counter: null found in " .. fromFuncDebug)
-    end
-
+function DKR_RAM:get_counter(byte)
     return mainmemory.readbyte(byte)
 end
 
-function DKR_RAM:set_counter(byte, value, fromFuncDebug)
-    if debug_level_2 then
-        print(fromFuncDebug)
-    end
-
-    if not byte then
-        print("set_counter: null found in " .. fromFuncDebug)
-    end
-
+function DKR_RAM:set_counter(byte, value)
     return mainmemory.writebyte(byte, value)
 end
 
-function DKR_RAM:increment_counter(byte, fromFuncDebug)
-    if debug_level_2 then
-        print(fromFuncDebug)
-    end
-
-    if not byte then
-        print("increment_counter: null found in " .. fromFuncDebug)
-    end
-
+function DKR_RAM:increment_counter(byte)
     local currentValue = mainmemory.readbyte(byte)
     mainmemory.writebyte(byte, currentValue + 1)
 end
 
-function DKR_RAM:decrement_counter(byte, fromFuncDebug)
-    if debug_level_2 then
-        print(fromFuncDebug)
-    end
-
-    if not byte then
-        print("decrement_counter: null found in " .. fromFuncDebug)
-    end
-
+function DKR_RAM:decrement_counter(byte)
     local currentValue = mainmemory.readbyte(byte)
     mainmemory.writebyte(byte, currentValue - 1)
 end
@@ -900,9 +838,9 @@ function main()
 end
 
 function check_if_in_save_file()
-    local in_save_file_1 = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.IN_SAVE_FILE_1, "Check if in a save file") ~= 0
-    local in_save_file_2 = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.IN_SAVE_FILE_2, "Check if in a save file") ~= 0
-    local in_save_file_3 = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.IN_SAVE_FILE_3, "Check if in a save file") ~= 0
+    local in_save_file_1 = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.IN_SAVE_FILE_1) ~= 0
+    local in_save_file_2 = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.IN_SAVE_FILE_2) ~= 0
+    local in_save_file_3 = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.IN_SAVE_FILE_3) ~= 0
 
     if in_save_file then
         if not (in_save_file_1 and in_save_file_2 and in_save_file_3) then
@@ -929,7 +867,7 @@ function initialize_flags()
     if slot_loaded and in_save_file then
         all_location_checks("AMM")
 
-        if not DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.STAR_CITY, 0, "Check if flags have been initialized") then
+        if not DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.STAR_CITY, 0) then
             set_races_as_visited()
 
             if starting_balloon_count > 0 and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT) == 0 then
@@ -961,45 +899,45 @@ function initialize_flags()
 end
 
 function set_races_as_visited()
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.ANCIENT_LAKE, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.FOSSIL_CANYON, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.JUNGLE_FALLS, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.HOT_TOP_VOLCANO, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.EVERFROST_PEAK, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.WALRUS_COVE, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.SNOWBALL_VALLEY, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.FROSTY_VILLAGE, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.WHALE_BAY, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.CRESCENT_ISLAND, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.PIRATE_LAGOON, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TREASURE_CAVES, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.WINDMILL_PLAINS, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.GREENWOOD_VILLAGE, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.BOULDER_CANYON, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.HAUNTED_WOODS, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.SPACEDUST_ALLEY, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.DARKMOON_CAVERNS, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.SPACEPORT_ALPHA, 0, "Set races as visited")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.STAR_CITY, 0, "Set races as visited")
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.ANCIENT_LAKE, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.FOSSIL_CANYON, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.JUNGLE_FALLS, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.HOT_TOP_VOLCANO, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.EVERFROST_PEAK, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.WALRUS_COVE, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.SNOWBALL_VALLEY, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.FROSTY_VILLAGE, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.WHALE_BAY, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.CRESCENT_ISLAND, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.PIRATE_LAGOON, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TREASURE_CAVES, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.WINDMILL_PLAINS, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.GREENWOOD_VILLAGE, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.BOULDER_CANYON, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.HAUNTED_WOODS, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.SPACEDUST_ALLEY, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.DARKMOON_CAVERNS, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.SPACEPORT_ALPHA, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.STAR_CITY, 0)
 end
 
 function set_trophy_flags()
     -- Dino Domain
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 0, "Skip trophy races")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 1, "Skip trophy races")
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 0)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 1)
     -- Snowflake Mountain
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 4, "Skip trophy races")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 5, "Skip trophy races")
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 4)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 5)
     -- Sherbet Island
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 2, "Skip trophy races")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 3, "Skip trophy races")
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 2)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 3)
     -- Dragon Forest
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 6, "Skip trophy races")
-    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 7, "Skip trophy races")
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 6)
+    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.TROPHIES_2, 7)
 end
 
 function update_totals_if_paused()
-    local new_paused = DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.PAUSED, 0, "Check if paused")
+    local new_paused = DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.PAUSED, 0)
 
     if new_paused and not paused then
         update_in_game_totals()
@@ -1017,12 +955,12 @@ function update_in_game_totals()
     local dragon_forest_balloon_count = get_received_item_count(ITEM_IDS.DRAGON_FOREST_BALLOON)
     local future_fun_land_balloon_count = get_received_item_count(ITEM_IDS.FUTURE_FUN_LAND_BALLOON)
     local total_balloon_count = timbers_island_balloon_count + dinos_domain_balloon_count + snowflake_mountain_balloon_count + sherbet_island_balloon_count + dragon_forest_balloon_count + future_fun_land_balloon_count
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, total_balloon_count + starting_balloon_count, "Set total balloon count on pause")
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT, dinos_domain_balloon_count + starting_regional_balloon_count, "Set Dino Domain balloon count on pause")
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT, snowflake_mountain_balloon_count + starting_regional_balloon_count, "Set Snowflake Mountain balloon count on pause")
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT, sherbet_island_balloon_count + starting_regional_balloon_count, "Set Sherbet Island count on pause")
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT, dragon_forest_balloon_count + starting_regional_balloon_count, "Set Dragon Forest balloon count on pause")
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.FUTURE_FUN_LAND_BALLOON_COUNT, future_fun_land_balloon_count, "Set Future Fun Land balloon count on pause")
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, total_balloon_count + starting_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT, dinos_domain_balloon_count + starting_regional_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT, snowflake_mountain_balloon_count + starting_regional_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT, sherbet_island_balloon_count + starting_regional_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT, dragon_forest_balloon_count + starting_regional_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.FUTURE_FUN_LAND_BALLOON_COUNT, future_fun_land_balloon_count)
 
     for balloon_item_id, _ in pairs(BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO) do
         set_boss_1_completion_if_boss_2_unlocked(balloon_item_id)
@@ -1032,11 +970,11 @@ function update_in_game_totals()
     for key_item_id, key_door_address_info in pairs(KEY_ITEM_ID_TO_DOOR_ADDRESS_INFO) do
         if get_received_item_count(key_item_id) == 0 then
             for _, key_door_ram_address in pairs(key_door_address_info) do
-                DKR_RAMOBJ:clear_flag(key_door_ram_address[BYTE], key_door_ram_address[BIT], "Clear key door flag")
+                DKR_RAMOBJ:clear_flag(key_door_ram_address[BYTE], key_door_ram_address[BIT])
             end
         else
             for _, key_door_ram_address in pairs(key_door_address_info) do
-                DKR_RAMOBJ:set_flag(key_door_ram_address[BYTE], key_door_ram_address[BIT], "Set key door flag")
+                DKR_RAMOBJ:set_flag(key_door_ram_address[BYTE], key_door_ram_address[BIT])
             end
         end
     end
@@ -1049,7 +987,7 @@ function update_in_game_totals()
 end
 
 function update_door_open_states()
-    total_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, "Get total balloon count to update door open states")
+    total_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT)
     door_open_states.DINO_DOMAIN = total_balloon_count >= door_unlock_requirements[1]
     door_open_states.SNOWFLAKE_MOUNTAIN = total_balloon_count >= door_unlock_requirements[2]
     door_open_states.SHERBET_ISLAND = total_balloon_count >= door_unlock_requirements[3]
@@ -1080,8 +1018,8 @@ end
 function get_new_race_door_open_state(total_balloon_count, race_1_door_unlock_requirement, race_2_door_unlock_requirement, race_1_completion_address, boss_1_completion_address)
     return total_balloon_count >= race_2_door_unlock_requirement
             or total_balloon_count >= race_1_door_unlock_requirement
-            and (boss_1_completion_address and not DKR_RAMOBJ:check_flag(boss_1_completion_address[BYTE], boss_1_completion_address[BIT], "Check boss 1 completion for door status check")
-            or not DKR_RAMOBJ:check_flag(race_1_completion_address[BYTE], race_1_completion_address[BIT], "Check race 1 location for door status check"))
+            and (boss_1_completion_address and not DKR_RAMOBJ:check_flag(boss_1_completion_address[BYTE], boss_1_completion_address[BIT])
+            or not DKR_RAMOBJ:check_flag(race_1_completion_address[BYTE], race_1_completion_address[BIT]))
 end
 
 function force_doors()
@@ -1094,9 +1032,9 @@ end
 
 function force_door(is_open, byte, bit, door_name)
     if is_open then
-        DKR_RAMOBJ:set_flag(byte, bit, "Force " .. door_name .. " door open")
+        DKR_RAMOBJ:set_flag(byte, bit)
     else
-        DKR_RAMOBJ:clear_flag(byte, bit, "Force " .. door_name .. " door open")
+        DKR_RAMOBJ:clear_flag(byte, bit)
     end
 end
 
@@ -1133,25 +1071,25 @@ function get_local_checks()
                 checks[check_type] = {}
             end
 
-            checks[check_type][location_id] = DKR_RAMOBJ:check_flag(table[BYTE], table[BIT], "Check item flag: " .. table[NAME])
+            checks[check_type][location_id] = DKR_RAMOBJ:check_flag(table[BYTE], table[BIT])
 
             if previous_checks and checks[check_type][location_id] ~= previous_checks[check_type][location_id] then
                 if BALLOON_ITEM_GROUP_TO_COUNT_ADDRESS[check_type] then
-                    DKR_RAMOBJ:decrement_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, "Decrement total balloon count")
+                    DKR_RAMOBJ:decrement_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT)
 
                     if check_type ~= ITEM_GROUPS.TIMBERS_ISLAND_BALLOON then
                         local regional_balloon_count = get_received_item_count(ITEM_IDS[check_type]) + starting_regional_balloon_count
-                        DKR_RAMOBJ:set_counter(BALLOON_ITEM_GROUP_TO_COUNT_ADDRESS[check_type], math.min(8, regional_balloon_count), "Decrement region balloon count")
+                        DKR_RAMOBJ:set_counter(BALLOON_ITEM_GROUP_TO_COUNT_ADDRESS[check_type], math.min(8, regional_balloon_count))
                     end
                 elseif check_type == ITEM_GROUPS.WIZPIG_AMULET_PIECE then
                     local wizpig_amulet_piece_count = get_received_item_count(ITEM_IDS.WIZPIG_AMULET_PIECE) + starting_wizpig_amulet_piece_count
-                    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, math.min(4, wizpig_amulet_piece_count), "Decrement Wizpig amulet piece count")
+                    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, math.min(4, wizpig_amulet_piece_count))
                 elseif check_type == ITEM_GROUPS.TT_AMULET_PIECE then
                     local tt_amulet_piece_count = get_received_item_count(ITEM_IDS.TT_AMULET_PIECE) + starting_tt_amulet_piece_count
-                    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TT_AMULET, math.min(4, tt_amulet_piece_count), "Decrement T.T. amulet piece count")
+                    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TT_AMULET, math.min(4, tt_amulet_piece_count))
                 elseif check_type == ITEM_GROUPS.KEY and not amm[ITEM_GROUPS.KEY][location_id] then
                     local key_ram_address = AGI_MASTER_MAP[ITEM_GROUPS.KEY][location_id]
-                    DKR_RAMOBJ:clear_flag(key_ram_address[BYTE], key_ram_address[BIT], "Clear key flag")
+                    DKR_RAMOBJ:clear_flag(key_ram_address[BYTE], key_ram_address[BIT])
                 end
             end
         end
@@ -1197,25 +1135,13 @@ function receive()
             return
         end
 
-        if debug_level_3 then
-            print("Processing Block")
-        end
-
         process_block(json.decode(response))
-
-        if debug_level_3 then
-            print("Finish")
-        end
     end
 end
 
 function get_slot_data()
     local retTable = {}
     retTable["getSlot"] = true
-
-    if debug_level_2 then
-        print("Encoding getSlot")
-    end
 
     local message = json.encode(retTable) .. "\n"
     DKR_SOCK:send(message)
@@ -1238,20 +1164,10 @@ function get_slot_data()
         return
     end
 
-    if debug_level_2 then
-        print("Processing Slot Data")
-    end
-
     process_slot(json.decode(response))
 end
 
 function process_slot(block)
-    if debug_level_3 then
-        print("slot_data")
-        print(block)
-        print("EO_slot_data")
-    end
-
     if block["slot_player"] and block["slot_player"] ~= "" then
         player = block["slot_player"]
     end
@@ -1308,19 +1224,10 @@ function load_agi()
         agi = all_location_checks("AGI")
         file = io.open("DKR_" .. player .. "_" .. seed .. ".AGI", "w")
 
-        if debug_level_2 then
-            print("Writing AGI File from LoadAGI")
-            print(agi)
-        end
-
         file:write(json.encode(agi) .. "\n")
         file:write(json.encode(receive_map))
         file:close()
     else
-        if debug_level_2 then
-            print("Loading AGI File")
-        end
-
         agi = json.decode(file:read("l"))
         receive_map = json.decode(file:read("l"))
         file:close()
@@ -1340,10 +1247,6 @@ function send_to_dkr_client()
         retTable["sync_ready"] = "true"
     end
 
-    if debug_level_3 then
-        print("Send Data")
-    end
-
     local message = json.encode(retTable) .. "\n"
     local response, error = DKR_SOCK:send(message)
     if not response then
@@ -1360,7 +1263,7 @@ end
 function is_game_complete()
     if victory_condition and in_save_file then
         local victory_condition_address = VICTORY_CONDITION_TO_ADDRESS[victory_condition]
-        if DKR_RAM:check_flag(victory_condition_address[BYTE], victory_condition_address[BIT], "Check victory condition") then
+        if DKR_RAM:check_flag(victory_condition_address[BYTE], victory_condition_address[BIT]) then
             return "true"
         end
     end
@@ -1379,33 +1282,26 @@ function process_block(block)
     if next(block["items"]) then
         process_agi_item((block["items"]))
     end
-
-    if debug_level_3 then
-        print(block)
-    end
 end
 
 function process_agi_item(item_list)
     for ap_id, item_id in pairs(item_list) do
         if not receive_map[tostring(ap_id)] then
             if BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id] then
-                if debug_level_1 then
-                    print("Balloon Obtained")
-                end
-                DKR_RAMOBJ:increment_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, "Increment total balloon count")
+                DKR_RAMOBJ:increment_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT)
 
-                if item_id ~= ITEM_IDS.TIMBERS_ISLAND_BALLOON and DKR_RAMOBJ:get_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id], "Check if already at max regional balloons") < 8 then
-                    DKR_RAMOBJ:increment_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id], "Increment regional balloon count")
+                if item_id ~= ITEM_IDS.TIMBERS_ISLAND_BALLOON and DKR_RAMOBJ:get_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id]) < 8 then
+                    DKR_RAMOBJ:increment_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id])
 
                     set_boss_1_completion_if_boss_2_unlocked(item_id)
                 end
-            elseif item_id == ITEM_IDS.WIZPIG_AMULET_PIECE and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, "Check if Wizpig amulet is already complete") < 4 then
-                DKR_RAMOBJ:increment_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, "Increment Wizpig amulet piece count")
-            elseif item_id == ITEM_IDS.TT_AMULET_PIECE and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TT_AMULET, "Check if T.T. amulet is already complete") < 4 then
-                DKR_RAMOBJ:increment_counter(DKR_RAM.ADDRESS.TT_AMULET, "Increment T.T. amulet piece count")
+            elseif item_id == ITEM_IDS.WIZPIG_AMULET_PIECE and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET) < 4 then
+                DKR_RAMOBJ:increment_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET)
+            elseif item_id == ITEM_IDS.TT_AMULET_PIECE and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TT_AMULET) < 4 then
+                DKR_RAMOBJ:increment_counter(DKR_RAM.ADDRESS.TT_AMULET)
             elseif KEY_ITEM_ID_TO_DOOR_ADDRESS_INFO[item_id] then
                 for _, key_door_ram_address in pairs(KEY_ITEM_ID_TO_DOOR_ADDRESS_INFO[item_id]) do
-                    DKR_RAMOBJ:set_flag(key_door_ram_address[BYTE], key_door_ram_address[BIT], "Set key door flag")
+                    DKR_RAMOBJ:set_flag(key_door_ram_address[BYTE], key_door_ram_address[BIT])
                 end
             end
 
@@ -1417,33 +1313,18 @@ end
 
 function set_boss_1_completion_if_boss_2_unlocked(item_id)
     if BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[item_id]
-            and DKR_RAMOBJ:get_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id], "Check if boss 1 should be unlocked") == 8 then
+            and DKR_RAMOBJ:get_counter(BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id]) == 8 then
         local boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_COMPLETION_1_INFO[item_id]
-        DKR_RAMOBJ:set_flag(boss_1_completion_address[BYTE], boss_1_completion_address[BIT], "Set boss 1 completion")
+        DKR_RAMOBJ:set_flag(boss_1_completion_address[BYTE], boss_1_completion_address[BIT])
     end
 end
 
 function saving_agi()
     local file = io.open("DKR_" .. player .. "_" .. seed .. ".AGI", "w")
 
-    if debug_level_2 then
-        print("Writing AGI File from Saving")
-        print(agi)
-        print(receive_map)
-    end
-
     file:write(json.encode(agi) .. "\n")
-
-    if debug_level_2 then
-        print("Writing Received_Map")
-    end
-
     file:write(json.encode(receive_map))
     file:close()
-
-    if debug_level_1 then
-        print("AGI Table Saved")
-    end
 end
 
 function all_location_checks(type)
