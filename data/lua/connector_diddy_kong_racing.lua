@@ -8,6 +8,8 @@ require('common')
 local socket = require("socket")
 local json = require('json')
 
+local REQUIRED_BIZHAWK_VERSION = "2.9.1"
+
 local SCRIPT_VERSION = 10
 local DKR_VERSION = "v0.3.1"
 
@@ -936,7 +938,10 @@ function DKR_RAM:decrement_counter(byte)
 end
 
 function main()
-    if not checkBizHawkVersion() then
+    local bizhawk_version = client.getversion()
+    if bizhawk_version ~= REQUIRED_BIZHAWK_VERSION then
+        print("Incorrect BizHawk version: " .. bizhawk_version)
+        print("Please use version " .. REQUIRED_BIZHAWK_VERSION .. " instead")
         return
     end
 
