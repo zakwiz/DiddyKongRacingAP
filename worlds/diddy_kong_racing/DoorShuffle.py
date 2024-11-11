@@ -98,27 +98,27 @@ door_unlock_location_to_requirement = {
 
 
 def shuffle_door_unlock_items(self) -> None:
-    race_2_unlock_to_race_1_unlock = {
-        ItemName.ANCIENT_LAKE_2_UNLOCK: ItemName.ANCIENT_LAKE_1_UNLOCK,
-        ItemName.FOSSIL_CANYON_2_UNLOCK: ItemName.FOSSIL_CANYON_1_UNLOCK,
-        ItemName.JUNGLE_FALLS_2_UNLOCK: ItemName.JUNGLE_FALLS_1_UNLOCK,
-        ItemName.HOT_TOP_VOLCANO_2_UNLOCK: ItemName.HOT_TOP_VOLCANO_1_UNLOCK,
-        ItemName.EVERFROST_PEAK_2_UNLOCK: ItemName.EVERFROST_PEAK_1_UNLOCK,
-        ItemName.WALRUS_COVE_2_UNLOCK: ItemName.WALRUS_COVE_1_UNLOCK,
-        ItemName.SNOWBALL_VALLEY_2_UNLOCK: ItemName.SNOWBALL_VALLEY_1_UNLOCK,
-        ItemName.FROSTY_VILLAGE_2_UNLOCK: ItemName.FROSTY_VILLAGE_1_UNLOCK,
-        ItemName.WHALE_BAY_2_UNLOCK: ItemName.WHALE_BAY_1_UNLOCK,
-        ItemName.CRESCENT_ISLAND_2_UNLOCK: ItemName.CRESCENT_ISLAND_1_UNLOCK,
-        ItemName.PIRATE_LAGOON_2_UNLOCK: ItemName.PIRATE_LAGOON_1_UNLOCK,
-        ItemName.TREASURE_CAVES_2_UNLOCK: ItemName.TREASURE_CAVES_1_UNLOCK,
-        ItemName.WINDMILL_PLAINS_2_UNLOCK: ItemName.WINDMILL_PLAINS_1_UNLOCK,
-        ItemName.GREENWOOD_VILLAGE_2_UNLOCK: ItemName.GREENWOOD_VILLAGE_1_UNLOCK,
-        ItemName.BOULDER_CANYON_2_UNLOCK: ItemName.BOULDER_CANYON_1_UNLOCK,
-        ItemName.HAUNTED_WOODS_2_UNLOCK: ItemName.HAUNTED_WOODS_1_UNLOCK,
-        ItemName.SPACEDUST_ALLEY_2_UNLOCK: ItemName.SPACEDUST_ALLEY_1_UNLOCK,
-        ItemName.DARKMOON_CAVERNS_2_UNLOCK: ItemName.DARKMOON_CAVERNS_1_UNLOCK,
-        ItemName.SPACEPORT_ALPHA_2_UNLOCK: ItemName.SPACEPORT_ALPHA_1_UNLOCK,
-        ItemName.STAR_CITY_2_UNLOCK: ItemName.STAR_CITY_1_UNLOCK
+    race_1_unlock_to_race_2_unlock = {
+        ItemName.ANCIENT_LAKE_1_UNLOCK: ItemName.ANCIENT_LAKE_2_UNLOCK,
+        ItemName.FOSSIL_CANYON_1_UNLOCK: ItemName.FOSSIL_CANYON_2_UNLOCK,
+        ItemName.JUNGLE_FALLS_1_UNLOCK: ItemName.JUNGLE_FALLS_2_UNLOCK,
+        ItemName.HOT_TOP_VOLCANO_1_UNLOCK: ItemName.HOT_TOP_VOLCANO_2_UNLOCK,
+        ItemName.EVERFROST_PEAK_1_UNLOCK: ItemName.EVERFROST_PEAK_2_UNLOCK,
+        ItemName.WALRUS_COVE_1_UNLOCK: ItemName.WALRUS_COVE_2_UNLOCK,
+        ItemName.SNOWBALL_VALLEY_1_UNLOCK: ItemName.SNOWBALL_VALLEY_2_UNLOCK,
+        ItemName.FROSTY_VILLAGE_1_UNLOCK: ItemName.FROSTY_VILLAGE_2_UNLOCK,
+        ItemName.WHALE_BAY_1_UNLOCK: ItemName.WHALE_BAY_2_UNLOCK,
+        ItemName.CRESCENT_ISLAND_1_UNLOCK: ItemName.CRESCENT_ISLAND_2_UNLOCK,
+        ItemName.PIRATE_LAGOON_1_UNLOCK: ItemName.PIRATE_LAGOON_2_UNLOCK,
+        ItemName.TREASURE_CAVES_1_UNLOCK: ItemName.TREASURE_CAVES_2_UNLOCK,
+        ItemName.WINDMILL_PLAINS_1_UNLOCK: ItemName.WINDMILL_PLAINS_2_UNLOCK,
+        ItemName.GREENWOOD_VILLAGE_1_UNLOCK: ItemName.GREENWOOD_VILLAGE_2_UNLOCK,
+        ItemName.BOULDER_CANYON_1_UNLOCK: ItemName.BOULDER_CANYON_2_UNLOCK,
+        ItemName.HAUNTED_WOODS_1_UNLOCK: ItemName.HAUNTED_WOODS_2_UNLOCK,
+        ItemName.SPACEDUST_ALLEY_1_UNLOCK: ItemName.SPACEDUST_ALLEY_2_UNLOCK,
+        ItemName.DARKMOON_CAVERNS_1_UNLOCK: ItemName.DARKMOON_CAVERNS_2_UNLOCK,
+        ItemName.SPACEPORT_ALPHA_1_UNLOCK: ItemName.SPACEPORT_ALPHA_2_UNLOCK,
+        ItemName.STAR_CITY_1_UNLOCK: ItemName.STAR_CITY_2_UNLOCK
     }
 
     dino_domain_race_1_unlocks = (
@@ -153,63 +153,33 @@ def shuffle_door_unlock_items(self) -> None:
     )
 
     available_doors = [
-        ItemName.SPACEDUST_ALLEY_2_UNLOCK,
-        ItemName.DARKMOON_CAVERNS_2_UNLOCK,
-        ItemName.SPACEPORT_ALPHA_2_UNLOCK,
-        ItemName.STAR_CITY_2_UNLOCK
+        ItemName.DINO_DOMAIN_UNLOCK,
+        ItemName.SNOWFLAKE_MOUNTAIN_UNLOCK,
+        ItemName.SHERBET_ISLAND_UNLOCK,
+        ItemName.DRAGON_FOREST_UNLOCK
     ]
 
-    dino_domain_race_1_unlock_count = 0
-    snowflake_mountain_race_1_unlock_count = 0
-    sherbet_island_race_1_unlock_count = 0
-    dragon_forest_race_1_unlock_count = 0
-    future_fun_land_race_1_unlock_count = 0
+    race_2_unlock_count = 0
 
-    for location, _ in sorted(door_unlock_location_to_requirement.items(), key=lambda x: x[1],
-                              reverse=True):
+    for location, requirement in sorted(door_unlock_location_to_requirement.items(), key=lambda x: x[1]):
         self.random.shuffle(available_doors)
         item = available_doors.pop()
         self.place_locked_item(location, self.create_event_item(item))
 
-        if item in race_2_unlock_to_race_1_unlock:
-            available_doors.append(race_2_unlock_to_race_1_unlock[item])
-        elif item in dino_domain_race_1_unlocks:
-            dino_domain_race_1_unlock_count += 1
-            if dino_domain_race_1_unlock_count == 4:
-                available_doors.append(ItemName.DINO_DOMAIN_UNLOCK)
-        elif item in snowflake_mountain_race_1_unlocks:
-            snowflake_mountain_race_1_unlock_count += 1
-            if snowflake_mountain_race_1_unlock_count == 4:
-                available_doors.append(ItemName.SNOWFLAKE_MOUNTAIN_UNLOCK)
-        elif item in sherbet_island_race_1_unlocks:
-            sherbet_island_race_1_unlock_count += 1
-            if sherbet_island_race_1_unlock_count == 4:
-                available_doors.append(ItemName.SHERBET_ISLAND_UNLOCK)
-        elif item in dragon_forest_race_1_unlocks:
-            dragon_forest_race_1_unlock_count += 1
-            if dragon_forest_race_1_unlock_count == 4:
-                available_doors.append(ItemName.DRAGON_FOREST_UNLOCK)
-        elif item in future_fun_land_race_1_unlocks:
-            future_fun_land_race_1_unlock_count += 1
-            if future_fun_land_race_1_unlock_count == 4:
-                available_doors.extend([
-                    ItemName.ANCIENT_LAKE_2_UNLOCK,
-                    ItemName.FOSSIL_CANYON_2_UNLOCK,
-                    ItemName.JUNGLE_FALLS_2_UNLOCK,
-                    ItemName.HOT_TOP_VOLCANO_2_UNLOCK,
-                    ItemName.EVERFROST_PEAK_2_UNLOCK,
-                    ItemName.WALRUS_COVE_2_UNLOCK,
-                    ItemName.SNOWBALL_VALLEY_2_UNLOCK,
-                    ItemName.FROSTY_VILLAGE_2_UNLOCK,
-                    ItemName.WHALE_BAY_2_UNLOCK,
-                    ItemName.CRESCENT_ISLAND_2_UNLOCK,
-                    ItemName.PIRATE_LAGOON_2_UNLOCK,
-                    ItemName.TREASURE_CAVES_2_UNLOCK,
-                    ItemName.WINDMILL_PLAINS_2_UNLOCK,
-                    ItemName.GREENWOOD_VILLAGE_2_UNLOCK,
-                    ItemName.BOULDER_CANYON_2_UNLOCK,
-                    ItemName.HAUNTED_WOODS_2_UNLOCK
-                ])
+        if item == ItemName.DINO_DOMAIN_UNLOCK:
+            available_doors.extend(dino_domain_race_1_unlocks)
+        elif item == ItemName.SNOWFLAKE_MOUNTAIN_UNLOCK:
+            available_doors.extend(snowflake_mountain_race_1_unlocks)
+        elif item == ItemName.SHERBET_ISLAND_UNLOCK:
+            available_doors.extend(sherbet_island_race_1_unlocks)
+        elif item == ItemName.DRAGON_FOREST_UNLOCK:
+            available_doors.extend(dragon_forest_race_1_unlocks)
+        elif item in race_1_unlock_to_race_2_unlock:
+            available_doors.append(race_1_unlock_to_race_2_unlock[item])
+        else:
+            race_2_unlock_count += 1
+            if race_2_unlock_count == 16:
+                available_doors.extend(future_fun_land_race_1_unlocks)
 
 
 def place_vanilla_door_unlock_items(self) -> None:
