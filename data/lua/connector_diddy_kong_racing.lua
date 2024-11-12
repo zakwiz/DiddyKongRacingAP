@@ -47,7 +47,6 @@ local previous_checks
 
 local BYTE = "BYTE"
 local BIT = "BIT"
-local NAME = "NAME"
 local RACE_1_DOOR_UNLOCK_REQUIREMENT_INDEX = "RACE_1_DOOR_UNLOCK_REQUIREMENT_INDEX"
 local RACE_2_DOOR_UNLOCK_REQUIREMENT_INDEX = "RACE_2_DOOR_UNLOCK_REQUIREMENT_INDEX"
 local RACE_1_COMPLETION_ADDRESS = "RACE_1_COMPLETION_ADDRESS"
@@ -442,330 +441,269 @@ local DOOR_TO_ADDRESS_INFO = {
 
 local AGI_MASTER_MAP = {
     [ITEM_GROUPS.TIMBERS_ISLAND_BALLOON] = {
-        ["1616100"] = {
+        ["1616100"] = { -- Bridge Balloon
             [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_1,
-            [BIT] = 2,
-            [NAME] = "Bridge Balloon"
+            [BIT] = 2
         },
-        ["1616101"] = {
+        ["1616101"] = { -- Waterfall Balloon
             [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_1,
-            [BIT] = 6,
-            [NAME] = "Waterfall Balloon"
+            [BIT] = 6
         },
-        ["1616102"] = {
+        ["1616102"] = { -- River Balloon
             [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
-            [BIT] = 6,
-            [NAME] = "River Balloon"
+            [BIT] = 6
         },
-        ["1616103"] = {
+        ["1616103"] = { -- Ocean Balloon
             [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
-            [BIT] = 2,
-            [NAME] = "Ocean Balloon"
+            [BIT] = 2
         },
-        ["1616104"] = {
+        ["1616104"] = { -- Taj Car Race
             [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
-            [BIT] = 3,
-            [NAME] = "Taj Car Race"
+            [BIT] = 3
         },
-        ["1616105"] = {
+        ["1616105"] = { -- Taj Hovercraft Race
             [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_1,
-            [BIT] = 3,
-            [NAME] = "Taj Hovercraft Race"
+            [BIT] = 3
         },
-        ["1616106"] = {
+        ["1616106"] = { -- Taj Plane Race
             [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_1,
-            [BIT] = 4,
-            [NAME] = "Taj Plane Race"
+            [BIT] = 4
         }
     },
     [ITEM_GROUPS.DINO_DOMAIN_BALLOON] = {
-        ["1616200"] = {
+        ["1616200"] = { -- Ancient Lake 1
             [BYTE] = DKR_RAM.ADDRESS.ANCIENT_LAKE,
-            [BIT] = 1,
-            [NAME] = "Ancient Lake 1"
+            [BIT] = 1
         },
-        ["1616201"] = {
+        ["1616201"] = { -- Ancient Lake 2
             [BYTE] = DKR_RAM.ADDRESS.ANCIENT_LAKE,
-            [BIT] = 2,
-            [NAME] = "Ancient Lake 2"
+            [BIT] = 2
         },
-        ["1616202"] = {
+        ["1616202"] = { -- Fossil Canyon 1
             [BYTE] = DKR_RAM.ADDRESS.FOSSIL_CANYON,
-            [BIT] = 1,
-            [NAME] = "Fossil Canyon 1"
+            [BIT] = 1
         },
-        ["1616203"] = {
+        ["1616203"] = { -- Fossil Canyon 2
             [BYTE] = DKR_RAM.ADDRESS.FOSSIL_CANYON,
-            [BIT] = 2,
-            [NAME] = "Fossil Canyon 2"
+            [BIT] = 2
         },
-        ["1616204"] = {
+        ["1616204"] = { -- Jungle Falls 1
             [BYTE] = DKR_RAM.ADDRESS.JUNGLE_FALLS,
-            [BIT] = 1,
-            [NAME] = "Jungle Falls 1"
+            [BIT] = 1
         },
-        ["1616205"] = {
+        ["1616205"] = { -- Jungle Falls 2
             [BYTE] = DKR_RAM.ADDRESS.JUNGLE_FALLS,
-            [BIT] = 2,
-            [NAME] = "Jungle Falls 2"
+            [BIT] = 2
         },
-        ["1616206"] = {
+        ["1616206"] = { -- Hot Top Volcano 1
             [BYTE] = DKR_RAM.ADDRESS.HOT_TOP_VOLCANO,
-            [BIT] = 1,
-            [NAME] = "Hot Top Volcano 1"
+            [BIT] = 1
         },
-        ["1616207"] = {
+        ["1616207"] = { -- Hot Top Volcano 2
             [BYTE] = DKR_RAM.ADDRESS.HOT_TOP_VOLCANO,
-            [BIT] = 2,
-            [NAME] = "Hot Top Volcano 2"
+            [BIT] = 2
         }
     },
     [ITEM_GROUPS.SNOWFLAKE_MOUNTAIN_BALLOON] = {
-        ["1616300"] = {
+        ["1616300"] = { -- Everfrost Peak 1
             [BYTE] = DKR_RAM.ADDRESS.EVERFROST_PEAK,
-            [BIT] = 1,
-            [NAME] = "Everfrost Peak 1"
+            [BIT] = 1
         },
-        ["1616301"] = {
+        ["1616301"] = { -- Everfrost Peak 2
             [BYTE] = DKR_RAM.ADDRESS.EVERFROST_PEAK,
-            [BIT] = 2,
-            [NAME] = "Everfrost Peak 2"
+            [BIT] = 2
         },
-        ["1616302"] = {
+        ["1616302"] = { -- Walrus Cove 1
             [BYTE] = DKR_RAM.ADDRESS.WALRUS_COVE,
-            [BIT] = 1,
-            [NAME] = "Walrus Cove 1"
+            [BIT] = 1
         },
-        ["1616303"] = {
+        ["1616303"] = { -- Walrus Cove 2
             [BYTE] = DKR_RAM.ADDRESS.WALRUS_COVE,
-            [BIT] = 2,
-            [NAME] = "Walrus Cove 2"
+            [BIT] = 2
         },
-        ["1616304"] = {
+        ["1616304"] = { -- Snowball Valley 1
             [BYTE] = DKR_RAM.ADDRESS.SNOWBALL_VALLEY,
-            [BIT] = 1,
-            [NAME] = "Snowball Valley 1"
+            [BIT] = 1
         },
-        ["1616305"] = {
+        ["1616305"] = { -- Snowball Valley 2
             [BYTE] = DKR_RAM.ADDRESS.SNOWBALL_VALLEY,
-            [BIT] = 2,
-            [NAME] = "Snowball Valley 2"
+            [BIT] = 2
         },
-        ["1616306"] = {
+        ["1616306"] = { -- Frosty Village 1
             [BYTE] = DKR_RAM.ADDRESS.FROSTY_VILLAGE,
-            [BIT] = 1,
-            [NAME] = "Frosty Village 1"
+            [BIT] = 1
         },
-        ["1616307"] = {
+        ["1616307"] = { -- Frosty Village 2
             [BYTE] = DKR_RAM.ADDRESS.FROSTY_VILLAGE,
-            [BIT] = 2,
-            [NAME] = "Frosty Village 2"
+            [BIT] = 2
         }
     },
     [ITEM_GROUPS.SHERBET_ISLAND_BALLOON] = {
-        ["1616400"] = {
+        ["1616400"] = { -- Whale Bay 1
             [BYTE] = DKR_RAM.ADDRESS.WHALE_BAY,
-            [BIT] = 1,
-            [NAME] = "Whale Bay 1"
+            [BIT] = 1
         },
-        ["1616401"] = {
+        ["1616401"] = { -- Whale Bay 2
             [BYTE] = DKR_RAM.ADDRESS.WHALE_BAY,
-            [BIT] = 2,
-            [NAME] = "Whale Bay 2"
+            [BIT] = 2
         },
-        ["1616402"] = {
+        ["1616402"] = { -- Crescent Island 1
             [BYTE] = DKR_RAM.ADDRESS.CRESCENT_ISLAND,
-            [BIT] = 1,
-            [NAME] = "Crescent Island 1"
+            [BIT] = 1
         },
-        ["1616403"] = {
+        ["1616403"] = { -- Crescent Island 2
             [BYTE] = DKR_RAM.ADDRESS.CRESCENT_ISLAND,
-            [BIT] = 2,
-            [NAME] = "Crescent Island 2"
+            [BIT] = 2
         },
-        ["1616404"] = {
+        ["1616404"] = { -- Pirate Lagoon 1
             [BYTE] = DKR_RAM.ADDRESS.PIRATE_LAGOON,
-            [BIT] = 1,
-            [NAME] = "Pirate Lagoon 1"
+            [BIT] = 1
         },
-        ["1616405"] = {
+        ["1616405"] = { -- Pirate Lagoon 2
             [BYTE] = DKR_RAM.ADDRESS.PIRATE_LAGOON,
-            [BIT] = 2,
-            [NAME] = "Pirate Lagoon 2"
+            [BIT] = 2
         },
-        ["1616406"] = {
+        ["1616406"] = { -- Treasure Caves 1
             [BYTE] = DKR_RAM.ADDRESS.TREASURE_CAVES,
-            [BIT] = 1,
-            [NAME] = "Treasure Caves 1"
+            [BIT] = 1
         },
-        ["1616407"] = {
+        ["1616407"] = { -- Treasure Caves 2
             [BYTE] = DKR_RAM.ADDRESS.TREASURE_CAVES,
-            [BIT] = 2,
-            [NAME] = "Treasure Caves 2"
+            [BIT] = 2
         }
     },
     [ITEM_GROUPS.DRAGON_FOREST_BALLOON] = {
-        ["1616500"] = {
+        ["1616500"] = { -- Windmill Plains 1
             [BYTE] = DKR_RAM.ADDRESS.WINDMILL_PLAINS,
-            [BIT] = 1,
-            [NAME] = "Windmill Plains 1"
+            [BIT] = 1
         },
-        ["1616501"] = {
+        ["1616501"] = { -- Windmill Plains 2
             [BYTE] = DKR_RAM.ADDRESS.WINDMILL_PLAINS,
-            [BIT] = 2,
-            [NAME] = "Windmill Plains 2"
+            [BIT] = 2
         },
-        ["1616502"] = {
+        ["1616502"] = { -- Greenwood Village 1
             [BYTE] = DKR_RAM.ADDRESS.GREENWOOD_VILLAGE,
-            [BIT] = 1,
-            [NAME] = "Greenwood Village 1"
+            [BIT] = 1
         },
-        ["1616503"] = {
+        ["1616503"] = { -- Greenwood Village 2
             [BYTE] = DKR_RAM.ADDRESS.GREENWOOD_VILLAGE,
-            [BIT] = 2,
-            [NAME] = "Greenwood Village 2"
+            [BIT] = 2
         },
-        ["1616504"] = {
+        ["1616504"] = { -- Boulder Canyon 1
             [BYTE] = DKR_RAM.ADDRESS.BOULDER_CANYON,
-            [BIT] = 1,
-            [NAME] = "Boulder Canyon 1"
+            [BIT] = 1
         },
-        ["1616505"] = {
+        ["1616505"] = { -- Boulder Canyon 2
             [BYTE] = DKR_RAM.ADDRESS.BOULDER_CANYON,
-            [BIT] = 2,
-            [NAME] = "Boulder Canyon 2"
+            [BIT] = 2
         },
-        ["1616506"] = {
+        ["1616506"] = { -- Haunted Woods 1
             [BYTE] = DKR_RAM.ADDRESS.HAUNTED_WOODS,
-            [BIT] = 1,
-            [NAME] = "Haunted Woods 1"
+            [BIT] = 1
         },
-        ["1616507"] = {
+        ["1616507"] = { -- Haunted Woods 2
             [BYTE] = DKR_RAM.ADDRESS.HAUNTED_WOODS,
-            [BIT] = 2,
-            [NAME] = "Haunted Woods 2"
+            [BIT] = 2
         }
     },
     [ITEM_GROUPS.FUTURE_FUN_LAND_BALLOON] = {
-        ["1616600"] = {
+        ["1616600"] = { -- Spacedust Alley 1
             [BYTE] = DKR_RAM.ADDRESS.SPACEDUST_ALLEY,
-            [BIT] = 1,
-            [NAME] = "Spacedust Alley 1"
+            [BIT] = 1
         },
-        ["1616601"] = {
+        ["1616601"] = { -- Spacedust Alley 2
             [BYTE] = DKR_RAM.ADDRESS.SPACEDUST_ALLEY,
-            [BIT] = 2,
-            [NAME] = "Spacedust Alley 2"
+            [BIT] = 2
         },
-        ["1616602"] = {
+        ["1616602"] = { -- Darkmoon Caverns 1
             [BYTE] = DKR_RAM.ADDRESS.DARKMOON_CAVERNS,
-            [BIT] = 1,
-            [NAME] = "Darkmoon Caverns 1"
+            [BIT] = 1
         },
-        ["1616603"] = {
+        ["1616603"] = { -- Darkmoon Caverns 2
             [BYTE] = DKR_RAM.ADDRESS.DARKMOON_CAVERNS,
-            [BIT] = 2,
-            [NAME] = "Darkmoon Caverns 2"
+            [BIT] = 2
         },
-        ["1616604"] = {
+        ["1616604"] = { -- Spaceport Alpha 1
             [BYTE] = DKR_RAM.ADDRESS.SPACEPORT_ALPHA,
-            [BIT] = 1,
-            [NAME] = "Spaceport Alpha 1"
+            [BIT] = 1
         },
-        ["1616605"] = {
+        ["1616605"] = { -- Spaceport Alpha 2
             [BYTE] = DKR_RAM.ADDRESS.SPACEPORT_ALPHA,
-            [BIT] = 2,
-            [NAME] = "Spaceport Alpha 2"
+            [BIT] = 2
         },
-        ["1616606"] = {
+        ["1616606"] = { -- Star City 1
             [BYTE] = DKR_RAM.ADDRESS.STAR_CITY,
-            [BIT] = 1,
-            [NAME] = "Star City 1"
+            [BIT] = 1
         },
-        ["1616607"] = {
+        ["1616607"] = { -- Star City 2
             [BYTE] = DKR_RAM.ADDRESS.STAR_CITY,
-            [BIT] = 2,
-            [NAME] = "Star City 2"
+            [BIT] = 2
         }
     },
     [ITEM_GROUPS.KEY] = {
-        ["1616208"] = {
+        ["1616208"] = { -- Fire Mountain Key
             [BYTE] = DKR_RAM.ADDRESS.KEYS,
-            [BIT] = 1,
-            [NAME] = "Fire Mountain Key"
+            [BIT] = 1
         },
-        ["1616308"] = {
+        ["1616308"] = { -- Icicle Pyramid Key
             [BYTE] = DKR_RAM.ADDRESS.KEYS,
-            [BIT] = 3,
-            [NAME] = "Icicle Pyramid Key"
+            [BIT] = 3
         },
-        ["1616408"] = {
+        ["1616408"] = { -- Darkwater Beach Key
             [BYTE] = DKR_RAM.ADDRESS.KEYS,
-            [BIT] = 2,
-            [NAME] = "Darkwater Beach Key"
+            [BIT] = 2
         },
-        ["1616508"] = {
+        ["1616508"] = { -- Smokey Castle Key
             [BYTE] = DKR_RAM.ADDRESS.KEYS,
-            [BIT] = 4,
-            [NAME] = "Smokey Castle Key"
+            [BIT] = 4
         },
     },
     [ITEM_GROUPS.WIZPIG_AMULET_PIECE] = {
-        ["1616210"] = {
+        ["1616210"] = { -- Tricky 2
             [BYTE] = DKR_RAM.ADDRESS.BOSS_COMPLETION_2,
-            [BIT] = 7,
-            [NAME] = "Tricky 2"
+            [BIT] = 7
         },
-        ["1616310"] = {
+        ["1616310"] = { -- Bluey 2
             [BYTE] = DKR_RAM.ADDRESS.BOSS_COMPLETION_1,
-            [BIT] = 1,
-            [NAME] = "Bluey 2"
+            [BIT] = 1
         },
-        ["1616410"] = {
+        ["1616410"] = { -- Bubbler 2
             [BYTE] = DKR_RAM.ADDRESS.BOSS_COMPLETION_1,
-            [BIT] = 0,
-            [NAME] = "Bubbler 2"
+            [BIT] = 0
         },
-        ["1616510"] = {
+        ["1616510"] = { -- Smokey 2
             [BYTE] = DKR_RAM.ADDRESS.BOSS_COMPLETION_1,
-            [BIT] = 2,
-            [NAME] = "Smokey 2"
+            [BIT] = 2
         },
     },
     [ITEM_GROUPS.TT_AMULET_PIECE] = {
-        ["1616209"] = {
+        ["1616209"] = { -- Fire Mountain
             [BYTE] = DKR_RAM.ADDRESS.FIRE_MOUNTAIN,
-            [BIT] = 1,
-            [NAME] = "Fire Mountain"
+            [BIT] = 1
         },
-        ["1616309"] = {
+        ["1616309"] = { -- Icicle Pyramid
             [BYTE] = DKR_RAM.ADDRESS.ICICLE_PYRAMID,
-            [BIT] = 1,
-            [NAME] = "Icicle Pyramid"
+            [BIT] = 1
         },
-        ["1616409"] = {
+        ["1616409"] = { -- Darkwater Beach
             [BYTE] = DKR_RAM.ADDRESS.DARKWATER_BEACH,
-            [BIT] = 1,
-            [NAME] = "Darkwater Beach"
+            [BIT] = 1
         },
-        ["1616509"] = {
+        ["1616509"] = { -- Smokey Castle
             [BYTE] = DKR_RAM.ADDRESS.SMOKEY_CASTLE,
-            [BIT] = 1,
-            [NAME] = "Smokey Castle"
+            [BIT] = 1
         },
     }
 }
 
 local VICTORY_CONDITION_TO_ADDRESS = {
-    [0] = {
+    [0] = { -- Wizpig 1
         [BYTE] = DKR_RAM.ADDRESS.BOSS_COMPLETION_2,
-        [BIT] = 0,
-        [NAME] = "Wizpig 1"
+        [BIT] = 0
     },
-    [1] = {
+    [1] = { -- Wizpig 2
         [BYTE] = DKR_RAM.ADDRESS.BOSS_COMPLETION_2,
-        [BIT] = 5,
-        [NAME] = "Wizpig 2"
+        [BIT] = 5
     }
 }
 
