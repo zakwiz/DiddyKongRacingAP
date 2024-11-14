@@ -1177,7 +1177,7 @@ function dpad_stats()
                 print("Smokey Castle")
             end
             print("----------------")
-        elseif shuffle_door_requirements and check_controls['P1 DPad R'] then
+        elseif next(door_unlock_requirements) ~= nil and check_controls['P1 DPad R'] then
             total_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT)
             dinos_domain_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT)
             snowflake_mountain_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT)
