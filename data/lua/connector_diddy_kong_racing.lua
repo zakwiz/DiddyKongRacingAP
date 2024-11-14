@@ -10,8 +10,8 @@ local json = require('json')
 
 local REQUIRED_BIZHAWK_VERSION = "2.9.1"
 
-local APWORLD_VERSION = "v0.3.1"
-local LUA_VERSION = 10
+local APWORLD_VERSION = "v0.4.0"
+local LUA_VERSION = 11
 
 local player
 local seed

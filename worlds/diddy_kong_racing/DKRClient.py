@@ -40,8 +40,8 @@ logger.info(network_data_package["games"].keys())
 dkr_loc_name_to_id = network_data_package["games"]["Diddy Kong Racing"]["location_name_to_id"]
 dkr_itm_name_to_id = network_data_package["games"]["Diddy Kong Racing"]["item_name_to_id"]
 
-apworld_version: str = "v0.3.1"
-expected_lua_version: int = 10
+apworld_version: str = "v0.4.0"
+expected_lua_version: int = 11
 
 
 def get_item_value(ap_id):
