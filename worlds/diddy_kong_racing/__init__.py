@@ -147,7 +147,7 @@ class DiddyKongRacingWorld(World):
 
     def fill_slot_data(self) -> dict[str, any]:
         door_unlock_requirements = []
-        if self.options.shuffle_door_requirements or self.options.door_requirement_distribution != 0:
+        if self.options.shuffle_door_requirements or self.options.door_requirement_progression != 0:
             door_unlock_requirements = get_door_unlock_requirements(self)
 
         dkr_options: dict[str, any] = {
