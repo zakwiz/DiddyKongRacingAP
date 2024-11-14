@@ -1,6 +1,7 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable
 
 from BaseClasses import CollectionState
+from .DoorShuffle import get_requirement_for_location, vanilla_door_unlock_info_list
 from .Names import ItemName, LocationName
 from worlds.generic.Rules import set_rule
 
@@ -96,52 +97,9 @@ class DiddyKongRacingRules:
             LocationName.BUBBLER_2: lambda state: self.bubbler_2(state),
             LocationName.SMOKEY_2: lambda state: self.smokey_2(state)
         }
-        self.door_unlock_rules = {
-            LocationName.WORLD_1_UNLOCK: lambda state: self.unlock_world_1(state),
-            LocationName.WORLD_2_UNLOCK: lambda state: self.unlock_world_2(state),
-            LocationName.WORLD_3_UNLOCK: lambda state: self.unlock_world_3(state),
-            LocationName.WORLD_4_UNLOCK: lambda state: self.unlock_world_4(state),
-            LocationName.RACE_1_1_UNLOCK: lambda state: self.unlock_race_1_1(state),
-            LocationName.RACE_1_2_UNLOCK: lambda state: self.unlock_race_1_2(state),
-            LocationName.RACE_2_1_UNLOCK: lambda state: self.unlock_race_2_1(state),
-            LocationName.RACE_2_2_UNLOCK: lambda state: self.unlock_race_2_2(state),
-            LocationName.RACE_3_1_UNLOCK: lambda state: self.unlock_race_3_1(state),
-            LocationName.RACE_3_2_UNLOCK: lambda state: self.unlock_race_3_2(state),
-            LocationName.RACE_4_1_UNLOCK: lambda state: self.unlock_race_4_1(state),
-            LocationName.RACE_4_2_UNLOCK: lambda state: self.unlock_race_4_2(state),
-            LocationName.RACE_5_1_UNLOCK: lambda state: self.unlock_race_5_1(state),
-            LocationName.RACE_5_2_UNLOCK: lambda state: self.unlock_race_5_2(state),
-            LocationName.RACE_6_1_UNLOCK: lambda state: self.unlock_race_6_1(state),
-            LocationName.RACE_6_2_UNLOCK: lambda state: self.unlock_race_6_2(state),
-            LocationName.RACE_7_1_UNLOCK: lambda state: self.unlock_race_7_1(state),
-            LocationName.RACE_7_2_UNLOCK: lambda state: self.unlock_race_7_2(state),
-            LocationName.RACE_8_1_UNLOCK: lambda state: self.unlock_race_8_1(state),
-            LocationName.RACE_8_2_UNLOCK: lambda state: self.unlock_race_8_2(state),
-            LocationName.RACE_9_1_UNLOCK: lambda state: self.unlock_race_9_1(state),
-            LocationName.RACE_9_2_UNLOCK: lambda state: self.unlock_race_9_2(state),
-            LocationName.RACE_10_1_UNLOCK: lambda state: self.unlock_race_10_1(state),
-            LocationName.RACE_10_2_UNLOCK: lambda state: self.unlock_race_10_2(state),
-            LocationName.RACE_11_1_UNLOCK: lambda state: self.unlock_race_11_1(state),
-            LocationName.RACE_11_2_UNLOCK: lambda state: self.unlock_race_11_2(state),
-            LocationName.RACE_12_1_UNLOCK: lambda state: self.unlock_race_12_1(state),
-            LocationName.RACE_12_2_UNLOCK: lambda state: self.unlock_race_12_2(state),
-            LocationName.RACE_13_1_UNLOCK: lambda state: self.unlock_race_13_1(state),
-            LocationName.RACE_13_2_UNLOCK: lambda state: self.unlock_race_13_2(state),
-            LocationName.RACE_14_1_UNLOCK: lambda state: self.unlock_race_14_1(state),
-            LocationName.RACE_14_2_UNLOCK: lambda state: self.unlock_race_14_2(state),
-            LocationName.RACE_15_1_UNLOCK: lambda state: self.unlock_race_15_1(state),
-            LocationName.RACE_15_2_UNLOCK: lambda state: self.unlock_race_15_2(state),
-            LocationName.RACE_16_1_UNLOCK: lambda state: self.unlock_race_16_1(state),
-            LocationName.RACE_16_2_UNLOCK: lambda state: self.unlock_race_16_2(state),
-            LocationName.RACE_17_1_UNLOCK: lambda state: self.unlock_race_17_1(state),
-            LocationName.RACE_17_2_UNLOCK: lambda state: self.unlock_race_17_2(state),
-            LocationName.RACE_18_1_UNLOCK: lambda state: self.unlock_race_18_1(state),
-            LocationName.RACE_18_2_UNLOCK: lambda state: self.unlock_race_18_2(state),
-            LocationName.RACE_19_1_UNLOCK: lambda state: self.unlock_race_19_1(state),
-            LocationName.RACE_19_2_UNLOCK: lambda state: self.unlock_race_19_2(state),
-            LocationName.RACE_20_1_UNLOCK: lambda state: self.unlock_race_20_1(state),
-            LocationName.RACE_20_2_UNLOCK: lambda state: self.unlock_race_20_2(state)
-        }
+        self.door_unlock_rules = {}
+        for door_unlock_info in vanilla_door_unlock_info_list:
+            self.door_unlock_rules[door_unlock_info.location] = self.door_unlock(self.world, door_unlock_info.location)
         self.event_rules = {
             LocationName.WIZPIG_1: lambda state: self.wizpig_1(state),
             LocationName.WIZPIG_2: lambda state: self.wizpig_2(state)
@@ -347,138 +305,6 @@ class DiddyKongRacingRules:
     def smokey_2(self, state: CollectionState) -> bool:
         return self.can_access_boss_2(state, ItemName.DRAGON_FOREST_BALLOON)
 
-    def unlock_world_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 1)
-
-    def unlock_world_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 2)
-
-    def unlock_world_3(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 10)
-
-    def unlock_world_4(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 16)
-
-    def unlock_race_1_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 1)
-
-    def unlock_race_1_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 6)
-
-    def unlock_race_2_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 2)
-
-    def unlock_race_2_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 7)
-
-    def unlock_race_3_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 3)
-
-    def unlock_race_3_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 8)
-
-    def unlock_race_4_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 5)
-
-    def unlock_race_4_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 10)
-
-    def unlock_race_5_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 2)
-
-    def unlock_race_5_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 10)
-
-    def unlock_race_6_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 3)
-
-    def unlock_race_6_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 11)
-
-    def unlock_race_7_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 6)
-
-    def unlock_race_7_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 14)
-
-    def unlock_race_8_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 9)
-
-    def unlock_race_8_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 16)
-
-    def unlock_race_9_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 10)
-
-    def unlock_race_9_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 17)
-
-    def unlock_race_10_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 11)
-
-    def unlock_race_10_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 18)
-
-    def unlock_race_11_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 13)
-
-    def unlock_race_11_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 20)
-
-    def unlock_race_12_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 16)
-
-    def unlock_race_12_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 22)
-
-    def unlock_race_13_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 16)
-
-    def unlock_race_13_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 23)
-
-    def unlock_race_14_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 17)
-
-    def unlock_race_14_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 24)
-
-    def unlock_race_15_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 20)
-
-    def unlock_race_15_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 30)
-
-    def unlock_race_16_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 22)
-
-    def unlock_race_16_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 37)
-
-    def unlock_race_17_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 39)
-
-    def unlock_race_17_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 43)
-
-    def unlock_race_18_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 40)
-
-    def unlock_race_18_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 44)
-
-    def unlock_race_19_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 41)
-
-    def unlock_race_19_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 45)
-
-    def unlock_race_20_1(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 42)
-
-    def unlock_race_20_2(self, state: CollectionState) -> bool:
-        return self.has_total_balloon_count(state, 46)
-
     def wizpig_1(self, state: CollectionState) -> bool:
         num_required_amulet_pieces = 4 - self.world.options.starting_wizpig_amulet_piece_count
 
@@ -489,6 +315,9 @@ class DiddyKongRacingRules:
 
         return (state.has(ItemName.TT_AMULET_PIECE, self.player, num_required_amulet_pieces)
                 and self.has_total_balloon_count(state, 47))
+
+    def door_unlock(self, world, location) -> Callable[[Any], bool]:
+        return lambda state: self.has_total_balloon_count(state, get_requirement_for_location(world, location))
 
     def has_total_balloon_count(self, state: CollectionState, balloon_count: int) -> bool:
         collected_balloon_count = (state.count(ItemName.TIMBERS_ISLAND_BALLOON, self.player)
