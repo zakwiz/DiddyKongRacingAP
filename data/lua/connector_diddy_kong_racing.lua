@@ -1505,8 +1505,11 @@ function process_block(block)
 end
 
 function process_agi_item(item_list)
+    local new_item_received = false
     for ap_id, item_id in pairs(item_list) do
         if not receive_map[tostring(ap_id)] then
+            new_item_received = true
+
             if BALLOON_ITEM_ID_TO_COUNT_ADDRESS[item_id] then
                 DKR_RAMOBJ:increment_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT)
 
@@ -1528,6 +1531,10 @@ function process_agi_item(item_list)
             receive_map[tostring(ap_id)] = tostring(item_id)
             saving_agi()
         end
+    end
+
+    if new_item_received then
+        client.saveram()
     end
 end
 
