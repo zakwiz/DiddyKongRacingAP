@@ -306,14 +306,10 @@ class DiddyKongRacingRules:
         return self.can_access_boss_2(state, ItemName.DRAGON_FOREST_BALLOON)
 
     def wizpig_1(self, state: CollectionState) -> bool:
-        num_required_amulet_pieces = 4 - self.world.options.starting_wizpig_amulet_piece_count
-
-        return state.has(ItemName.WIZPIG_AMULET_PIECE, self.player, num_required_amulet_pieces)
+        return state.has(ItemName.WIZPIG_AMULET_PIECE, self.player, 4)
 
     def wizpig_2(self, state: CollectionState) -> bool:
-        num_required_amulet_pieces = 4 - self.world.options.starting_tt_amulet_piece_count
-
-        return (state.has(ItemName.TT_AMULET_PIECE, self.player, num_required_amulet_pieces)
+        return (state.has(ItemName.TT_AMULET_PIECE, self.player, 4)
                 and self.has_total_balloon_count(state, 47))
 
     def door_unlock(self, world, location) -> Callable[[Any], bool]:
@@ -332,17 +328,13 @@ class DiddyKongRacingRules:
             self.player
         )
 
-        return self.world.options.starting_balloon_count + collected_balloon_count >= balloon_count
+        return collected_balloon_count >= balloon_count
 
     def can_access_boss_1(self, state: CollectionState, regional_balloon_item_name: str):
-        num_required_regional_balloons = max(0, 4 - self.world.options.starting_regional_balloon_count.value)
-
-        return state.has(regional_balloon_item_name, self.player, num_required_regional_balloons)
+        return state.has(regional_balloon_item_name, self.player, 4)
 
     def can_access_boss_2(self, state: CollectionState, regional_balloon_item_name: str):
-        num_required_regional_balloons = max(0, 8 - self.world.options.starting_regional_balloon_count.value)
-
-        return state.has(regional_balloon_item_name, self.player, num_required_regional_balloons)
+        return state.has(regional_balloon_item_name, self.player, 8)
 
     def set_rules(self) -> None:
         for location, rules in self.balloon_rules.items():

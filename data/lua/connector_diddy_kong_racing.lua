@@ -19,10 +19,6 @@ local victory_condition
 local shuffle_door_requirements
 local door_unlock_requirements
 local skip_trophy_races
-local starting_balloon_count = 0
-local starting_regional_balloon_count = 0
-local starting_wizpig_amulet_piece_count = 0
-local starting_tt_amulet_piece_count = 0
 
 local STATE_OK = "Ok"
 local STATE_TENTATIVELY_CONNECTED = "Tentatively Connected"
@@ -972,25 +968,6 @@ function initialize_flags()
         if not DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.STAR_CITY, 0) then
             set_races_as_visited()
 
-            if starting_balloon_count > 0 and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT) == 0 then
-                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, starting_balloon_count)
-            end
-
-            if starting_regional_balloon_count > 0 and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT) == 0 then
-                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT, starting_regional_balloon_count)
-                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT, starting_regional_balloon_count)
-                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT, starting_regional_balloon_count)
-                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT, starting_regional_balloon_count)
-            end
-
-            if starting_wizpig_amulet_piece_count > 0 and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET) == 0 then
-                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, starting_wizpig_amulet_piece_count)
-            end
-
-            if starting_tt_amulet_piece_count > 0 and DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TT_AMULET) == 0 then
-                DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TT_AMULET, starting_tt_amulet_piece_count)
-            end
-
             if skip_trophy_races then
                 set_trophy_flags()
             end
@@ -1057,11 +1034,11 @@ function update_in_game_totals()
     local dragon_forest_balloon_count = get_received_item_count(ITEM_IDS.DRAGON_FOREST_BALLOON)
     local future_fun_land_balloon_count = get_received_item_count(ITEM_IDS.FUTURE_FUN_LAND_BALLOON)
     local total_balloon_count = timbers_island_balloon_count + dinos_domain_balloon_count + snowflake_mountain_balloon_count + sherbet_island_balloon_count + dragon_forest_balloon_count + future_fun_land_balloon_count
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, total_balloon_count + starting_balloon_count)
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT, dinos_domain_balloon_count + starting_regional_balloon_count)
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT, snowflake_mountain_balloon_count + starting_regional_balloon_count)
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT, sherbet_island_balloon_count + starting_regional_balloon_count)
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT, dragon_forest_balloon_count + starting_regional_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT, total_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT, dinos_domain_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT, snowflake_mountain_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT, sherbet_island_balloon_count)
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT, dragon_forest_balloon_count)
     DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.FUTURE_FUN_LAND_BALLOON_COUNT, future_fun_land_balloon_count)
 
     for balloon_item_id, _ in pairs(BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS) do
@@ -1083,9 +1060,9 @@ function update_in_game_totals()
 
     -- Amulets
     local wizpig_amulet_piece_count = get_received_item_count(ITEM_IDS.WIZPIG_AMULET_PIECE)
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, math.min(4, wizpig_amulet_piece_count + starting_wizpig_amulet_piece_count))
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, math.min(4, wizpig_amulet_piece_count))
     local tt_amulet_piece_count = get_received_item_count(ITEM_IDS.TT_AMULET_PIECE)
-    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TT_AMULET, math.min(4, tt_amulet_piece_count + starting_tt_amulet_piece_count))
+    DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TT_AMULET, math.min(4, tt_amulet_piece_count))
 end
 
 function update_door_open_states()
@@ -1330,14 +1307,14 @@ function get_local_checks()
                     DKR_RAMOBJ:decrement_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT)
 
                     if check_type ~= ITEM_GROUPS.TIMBERS_ISLAND_BALLOON then
-                        local regional_balloon_count = get_received_item_count(ITEM_IDS[check_type]) + starting_regional_balloon_count
+                        local regional_balloon_count = get_received_item_count(ITEM_IDS[check_type])
                         DKR_RAMOBJ:set_counter(BALLOON_ITEM_GROUP_TO_COUNT_ADDRESS[check_type], math.min(8, regional_balloon_count))
                     end
                 elseif check_type == ITEM_GROUPS.WIZPIG_AMULET_PIECE then
-                    local wizpig_amulet_piece_count = get_received_item_count(ITEM_IDS.WIZPIG_AMULET_PIECE) + starting_wizpig_amulet_piece_count
+                    local wizpig_amulet_piece_count = get_received_item_count(ITEM_IDS.WIZPIG_AMULET_PIECE)
                     DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET, math.min(4, wizpig_amulet_piece_count))
                 elseif check_type == ITEM_GROUPS.TT_AMULET_PIECE then
-                    local tt_amulet_piece_count = get_received_item_count(ITEM_IDS.TT_AMULET_PIECE) + starting_tt_amulet_piece_count
+                    local tt_amulet_piece_count = get_received_item_count(ITEM_IDS.TT_AMULET_PIECE)
                     DKR_RAMOBJ:set_counter(DKR_RAM.ADDRESS.TT_AMULET, math.min(4, tt_amulet_piece_count))
                 elseif check_type == ITEM_GROUPS.KEY and not amm[ITEM_GROUPS.KEY][location_id] then
                     local key_ram_address = AGI_MASTER_MAP[ITEM_GROUPS.KEY][location_id]
@@ -1447,22 +1424,6 @@ function process_slot(block)
 
     if block["slot_skip_trophy_races"] and block["slot_skip_trophy_races"] ~= "false" then
         skip_trophy_races = true
-    end
-
-    if block["slot_starting_balloon_count"] and block["slot_starting_balloon_count"] ~= "" then
-        starting_balloon_count = block["slot_starting_balloon_count"]
-    end
-
-    if block["slot_starting_regional_balloon_count"] and block["slot_starting_regional_balloon_count"] ~= "" then
-        starting_regional_balloon_count = block["slot_starting_regional_balloon_count"]
-    end
-
-    if block["slot_starting_wizpig_amulet_piece_count"] and block["slot_starting_wizpig_amulet_piece_count"] ~= "" then
-        starting_wizpig_amulet_piece_count = block["slot_starting_wizpig_amulet_piece_count"]
-    end
-
-    if block["slot_starting_tt_amulet_piece_count"] and block["slot_starting_tt_amulet_piece_count"] ~= "" then
-        starting_tt_amulet_piece_count = block["slot_starting_tt_amulet_piece_count"]
     end
 
     if seed then

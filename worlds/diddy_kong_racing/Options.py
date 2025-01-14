@@ -59,41 +59,6 @@ class SkipTrophyRaces(DefaultOnToggle):
     display_name = "Skip trophy races"
 
 
-class StartingBalloonCount(Range):
-    """Start with golden balloons, speeding up game progression and reducing the number of checks required for Wizpig 2"""
-    display_name = "Starting balloon count"
-    range_start = 0
-    range_end = 47
-    default = range_start
-
-
-class StartingRegionalBalloonCount(Range):
-    """
-    Start with regional balloons for each region, allowing earlier boss access and reducing the number of checks required for Wizpig 1.
-    4 regional balloons unlock the first boss race, and 8 unlock the second boss race. This will not affect your total balloon count.
-    """
-    display_name = "Starting regional balloon count"
-    range_start = 0
-    range_end = 8
-    default = range_start
-
-
-class StartingWizpigAmuletPieceCount(Range):
-    """Start with Wizpig amulet pieces"""
-    display_name = "Starting Wizpig amulet piece count"
-    range_start = 0
-    range_end = 4
-    default = range_start
-
-
-class StartingTTAmuletPieceCount(Range):
-    """Start with T.T. amulet pieces"""
-    display_name = "Starting T.T. amulet piece count"
-    range_start = 0
-    range_end = 4
-    default = range_start
-
-
 @dataclass
 class DiddyKongRacingOptions(PerGameCommonOptions):
     victory_condition: VictoryCondition
@@ -103,7 +68,3 @@ class DiddyKongRacingOptions(PerGameCommonOptions):
     maximum_door_requirement: MaximumDoorRequirement
     shuffle_door_requirements: ShuffleDoorRequirements
     skip_trophy_races: SkipTrophyRaces
-    starting_balloon_count: StartingBalloonCount
-    starting_regional_balloon_count: StartingRegionalBalloonCount
-    starting_wizpig_amulet_piece_count: StartingWizpigAmuletPieceCount
-    starting_tt_amulet_piece_count: StartingTTAmuletPieceCount
