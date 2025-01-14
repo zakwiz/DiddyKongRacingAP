@@ -955,7 +955,7 @@ function check_if_in_save_file()
             if in_save_file_counter == 6 then
                 print("Entered save file")
                 print("D-PAD UP to see collected regional balloons and keys")
-                print("D-PAD RIGHT if door requirements are shuffled to see open uncompleted doors")
+                print("D-PAD RIGHT if door requirements are non-vanilla to see open uncompleted doors")
                 print("----------------")
                 in_save_file = true
             else
@@ -1176,6 +1176,9 @@ function dpad_stats()
             if get_received_item_count(ITEM_IDS.SMOKEY_CASTLE_KEY) > 0 then
                 print("Smokey Castle")
             end
+            print("")
+            print("Wizpig amulet pieces: " .. DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET))
+            print("T.T. amulet pieces: " .. DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TT_AMULET))
             print("----------------")
         elseif next(door_unlock_requirements) ~= nil and check_controls['P1 DPad R'] then
             total_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT)
