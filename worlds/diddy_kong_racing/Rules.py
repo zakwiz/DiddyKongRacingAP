@@ -82,10 +82,10 @@ class DiddyKongRacingRules:
             LocationName.STAR_CITY_2: lambda state: self.balloon_star_city_2(state)
         }
         self.key_rules = {
-            LocationName.FIRE_MOUNTAIN_KEY: lambda state: self.balloon_ancient_lake_1(state),
-            LocationName.ICICLE_PYRAMID_KEY: lambda state: self.balloon_snowball_valley_1(state),
-            LocationName.DARKWATER_BEACH_KEY: lambda state: self.balloon_crescent_island_1(state),
-            LocationName.SMOKEY_CASTLE_KEY: lambda state: self.balloon_boulder_canyon_1(state)
+            LocationName.FIRE_MOUNTAIN_KEY: lambda state: self.balloon_ancient_lake_2(state),
+            LocationName.ICICLE_PYRAMID_KEY: lambda state: self.balloon_snowball_valley_2(state),
+            LocationName.DARKWATER_BEACH_KEY: lambda state: self.balloon_crescent_island_2(state),
+            LocationName.SMOKEY_CASTLE_KEY: lambda state: self.balloon_boulder_canyon_2(state)
         }
         self.amulet_rules = {
             LocationName.FIRE_MOUNTAIN: lambda state: self.fire_mountain(state),
