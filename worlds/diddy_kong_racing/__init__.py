@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from multiprocessing import Process
-
 from BaseClasses import Item, ItemClassification, Tutorial
 from worlds.AutoWorld import WebWorld, World
-from worlds.LauncherComponents import Component, components, Type
+from worlds.LauncherComponents import Component, components, launch_subprocess, Type
 
 from .DoorShuffle import get_door_unlock_requirements, place_door_unlock_items, place_vanilla_door_unlock_items, shuffle_door_unlock_items
 from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE
@@ -17,8 +15,7 @@ from .Names import ItemName, LocationName
 
 def run_client():
     from worlds.diddy_kong_racing.DKRClient import main
-    p = Process(target=main)
-    p.start()
+    launch_subprocess(main)
 
 
 components.append(Component("Diddy Kong Racing Client", func=run_client, component_type=Type.CLIENT))

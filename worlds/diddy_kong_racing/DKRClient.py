@@ -4,6 +4,7 @@ from asyncio import create_task, open_connection, run, StreamReader, StreamWrite
 from copy import deepcopy
 from json import dumps, loads
 from multiprocessing import freeze_support
+from sys import argv
 
 # CommonClient import first to trigger ModuleUpdater
 from CommonClient import ClientCommandProcessor, CommonContext, get_base_parser, gui_enabled, logger, server_loop
@@ -340,7 +341,10 @@ async def n64_sync_task(ctx: DiddyKongRacingContext):
 def main():
     init_logging("Diddy Kong Racing Client")
     parser = get_base_parser()
-    args = parser.parse_args()
+    args = argv[1:]
+    if "Diddy Kong Racing Client" in args:
+        args.remove("Diddy Kong Racing Client")
+    args = parser.parse_args(args)
 
     async def _main():
         freeze_support()
