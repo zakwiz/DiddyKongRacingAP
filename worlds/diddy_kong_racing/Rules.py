@@ -320,12 +320,17 @@ class DiddyKongRacingRules:
         return lambda state: self.has_total_balloon_count(state, get_requirement_for_location(world, location))
 
     def has_total_balloon_count(self, state: CollectionState, balloon_count: int) -> bool:
-        collected_balloon_count = (state.count(ItemName.TIMBERS_ISLAND_BALLOON, self.player)
-                                   + state.count(ItemName.DINO_DOMAIN_BALLOON, self.player)
-                                   + state.count(ItemName.SNOWFLAKE_MOUNTAIN_BALLOON, self.player)
-                                   + state.count(ItemName.SHERBET_ISLAND_BALLOON, self.player)
-                                   + state.count(ItemName.DRAGON_FOREST_BALLOON, self.player)
-                                   + state.count(ItemName.FUTURE_FUN_LAND_BALLOON, self.player))
+        collected_balloon_count = state.count_from_list(
+            [
+                ItemName.TIMBERS_ISLAND_BALLOON,
+                ItemName.DINO_DOMAIN_BALLOON,
+                ItemName.SNOWFLAKE_MOUNTAIN_BALLOON,
+                ItemName.SHERBET_ISLAND_BALLOON,
+                ItemName.DRAGON_FOREST_BALLOON,
+                ItemName.FUTURE_FUN_LAND_BALLOON
+            ],
+            self.player
+        )
 
         return self.world.options.starting_balloon_count + collected_balloon_count >= balloon_count
 
