@@ -16,7 +16,6 @@ local LUA_VERSION = 11
 local player
 local seed
 local victory_condition
-local shuffle_door_requirements
 local door_unlock_requirements
 local skip_trophy_races
 
@@ -898,7 +897,7 @@ function main()
 				end
 
                 if init_complete then
-                    if shuffle_door_requirements then
+                    if door_unlock_requirements then
                         update_door_open_states()
                     end
                     update_totals_if_paused()
@@ -906,7 +905,7 @@ function main()
                 end
             end
 
-            if init_complete and shuffle_door_requirements then
+            if init_complete and door_unlock_requirements then
                 force_doors()
             end
         elseif current_state == STATE_UNINITIALIZED then
@@ -1157,7 +1156,7 @@ function dpad_stats()
             print("Wizpig amulet pieces: " .. DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.WIZPIG_AMULET))
             print("T.T. amulet pieces: " .. DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TT_AMULET))
             print("----------------")
-        elseif next(door_unlock_requirements) ~= nil and check_controls['P1 DPad R'] then
+        elseif door_unlock_requirements and check_controls['P1 DPad R'] then
             total_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT)
             dinos_domain_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT)
             snowflake_mountain_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT)
@@ -1414,11 +1413,7 @@ function process_slot(block)
         victory_condition = block["slot_victory_condition"]
     end
 
-    if block["slot_shuffle_door_requirements"] and block["slot_shuffle_door_requirements"] ~= "false" then
-        shuffle_door_requirements = true
-    end
-
-    if block["slot_door_unlock_requirements"] and block["slot_door_unlock_requirements"] ~= "" then
+    if block["slot_door_unlock_requirements"] and next(block["slot_door_unlock_requirements"]) ~= nil then
         door_unlock_requirements = block["slot_door_unlock_requirements"]
     end
 

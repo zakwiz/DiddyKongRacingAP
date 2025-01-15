@@ -194,7 +194,6 @@ def get_slot_payload(ctx: DiddyKongRacingContext):
             "slot_player": ctx.slot_data["player_name"],
             "slot_seed": ctx.slot_data["seed"],
             "slot_victory_condition": ctx.slot_data["victory_condition"],
-            "slot_shuffle_door_requirements": ctx.slot_data["shuffle_door_requirements"],
             "slot_door_unlock_requirements": ctx.slot_data["door_unlock_requirements"],
             "slot_skip_trophy_races": ctx.slot_data["skip_trophy_races"]
         })
