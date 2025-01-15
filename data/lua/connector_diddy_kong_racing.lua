@@ -8,9 +8,8 @@ require('common')
 local socket = require("socket")
 local json = require('json')
 
+local APWORLD_VERSION = "DKRv0.5.0"
 local REQUIRED_BIZHAWK_VERSION = "2.9.1"
-
-local APWORLD_VERSION = "v0.4.0"
 
 local player
 local seed
@@ -886,7 +885,7 @@ function main()
         return
     end
 
-    print("Diddy Kong Racing Archipelago Version " .. APWORLD_VERSION)
+    print("Diddy Kong Racing Archipelago Version: " .. APWORLD_VERSION)
     print("----------------")
     server, error = socket.bind("localhost", 21221)
     DKR_RAMOBJ = DKR_RAM:new(nil)
