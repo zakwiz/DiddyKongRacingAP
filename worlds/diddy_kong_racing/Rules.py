@@ -106,22 +106,23 @@ class DiddyKongRacingRules:
         }
 
     def can_access_dino_domain(self, state: CollectionState) -> bool:
-        return state.has(ItemName.DINO_DOMAIN_UNLOCK, self.player)
+        return self.world.options.open_worlds or state.has(ItemName.DINO_DOMAIN_UNLOCK, self.player)
 
     def can_access_snowflake_mountain(self, state: CollectionState) -> bool:
-        return state.has(ItemName.SNOWFLAKE_MOUNTAIN_UNLOCK, self.player)
+        return self.world.options.open_worlds or state.has(ItemName.SNOWFLAKE_MOUNTAIN_UNLOCK, self.player)
 
     def can_access_sherbet_island(self, state: CollectionState) -> bool:
-        return state.has(ItemName.SHERBET_ISLAND_UNLOCK, self.player)
+        return self.world.options.open_worlds or state.has(ItemName.SHERBET_ISLAND_UNLOCK, self.player)
 
     def can_access_dragon_forest(self, state: CollectionState) -> bool:
-        return state.has(ItemName.DRAGON_FOREST_UNLOCK, self.player)
+        return self.world.options.open_worlds or state.has(ItemName.DRAGON_FOREST_UNLOCK, self.player)
 
     def can_access_future_fun_land(self, state: CollectionState) -> bool:
-        return (self.wizpig_1(state) and
+        return (self.world.options.open_worlds or
+                self.wizpig_1(state) and
                 (self.world.options.skip_trophy_races or
                  (self.tricky_2(state) and self.bluey_2(state) and self.bubbler_2(state) and self.smokey_2(state))
-                 )
+                  )
                 )
 
     def balloon_bridge(self, state: CollectionState) -> bool:

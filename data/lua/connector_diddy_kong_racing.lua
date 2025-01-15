@@ -17,6 +17,7 @@ local player
 local seed
 local victory_condition
 local door_unlock_requirements
+local open_worlds
 local skip_trophy_races
 
 local STATE_OK = "Ok"
@@ -72,6 +73,13 @@ local DOOR_NAMES = {
     DARKMOON_CAVERNS = "DARKMOON_CAVERNS",
     SPACEPORT_ALPHA = "SPACEPORT_ALPHA",
     STAR_CITY = "STAR_CITY"
+}
+
+local WORLD_DOOR_NAMES = {
+    [DOOR_NAMES.DINO_DOMAIN] = true,
+    [DOOR_NAMES.SNOWBALL_VALLEY] = true,
+    [DOOR_NAMES.SHERBET_ISLAND] = true,
+    [DOOR_NAMES.DRAGON_FOREST] = true
 }
 
 local ITEM_GROUPS = {
@@ -144,6 +152,7 @@ DKR_RAM = {
         TROPHIES_1 = 0x1FC9DE,
         TROPHIES_2 = 0x1FC9DF,
         KEYS = 0x1FC9D9,
+        FUTURE_FUN_LAND_FLAGS = 0x1FC9E3,
         -- Dino Domain
         ANCIENT_LAKE = 0x1FCAFF,
         FOSSIL_CANYON = 0x1FCAF7,
@@ -897,7 +906,7 @@ function main()
 				end
 
                 if init_complete then
-                    if door_unlock_requirements then
+                    if door_unlock_requirements or open_worlds then
                         update_door_open_states()
                     end
                     update_totals_if_paused()
@@ -905,7 +914,7 @@ function main()
                 end
             end
 
-            if init_complete and door_unlock_requirements then
+            if init_complete and (door_unlock_requirements or open_worlds) then
                 force_doors()
             end
         elseif current_state == STATE_UNINITIALIZED then
@@ -966,6 +975,10 @@ function initialize_flags()
 
         if not DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.STAR_CITY, 0) then
             set_races_as_visited()
+
+            if open_worlds then
+                DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.FUTURE_FUN_LAND_FLAGS, 0) -- Open Future Fun Land
+            end
 
             if skip_trophy_races then
                 set_trophy_flags()
@@ -1066,44 +1079,47 @@ end
 
 function update_door_open_states()
     total_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.TOTAL_BALLOON_COUNT)
-    dinos_domain_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT)
-    snowflake_mountain_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT)
-    sherbet_island_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT)
-    dragon_forest_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT)
-    dinos_domain_boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[ITEM_IDS.DINO_DOMAIN_BALLOON]
-    snowflake_mountain_boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[ITEM_IDS.SNOWFLAKE_MOUNTAIN_BALLOON]
-    sherbet_island_boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[ITEM_IDS.SHERBET_ISLAND_BALLOON]
-    dragon_forest_boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[ITEM_IDS.DRAGON_FOREST_BALLOON]
 
-    door_open_states[DOOR_NAMES.DINO_DOMAIN] = total_balloon_count >= door_unlock_requirements[1]
-    door_open_states[DOOR_NAMES.SNOWFLAKE_MOUNTAIN] = total_balloon_count >= door_unlock_requirements[2]
-    door_open_states[DOOR_NAMES.SHERBET_ISLAND] = total_balloon_count >= door_unlock_requirements[3]
-    door_open_states[DOOR_NAMES.DRAGON_FOREST] = total_balloon_count >= door_unlock_requirements[4]
+    door_open_states[DOOR_NAMES.DINO_DOMAIN] = open_worlds or total_balloon_count >= door_unlock_requirements[1]
+    door_open_states[DOOR_NAMES.SNOWFLAKE_MOUNTAIN] = open_worlds or total_balloon_count >= door_unlock_requirements[2]
+    door_open_states[DOOR_NAMES.SHERBET_ISLAND] = open_worlds or total_balloon_count >= door_unlock_requirements[3]
+    door_open_states[DOOR_NAMES.DRAGON_FOREST] = open_worlds or total_balloon_count >= door_unlock_requirements[4]
 
-    door_open_states[DOOR_NAMES.ANCIENT_LAKE] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.ANCIENT_LAKE], dinos_domain_boss_1_completion_address)
-    door_open_states[DOOR_NAMES.FOSSIL_CANYON] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.FOSSIL_CANYON], dinos_domain_boss_1_completion_address)
-    door_open_states[DOOR_NAMES.JUNGLE_FALLS] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.JUNGLE_FALLS], dinos_domain_boss_1_completion_address)
-    door_open_states[DOOR_NAMES.HOT_TOP_VOLCANO] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.HOT_TOP_VOLCANO], dinos_domain_boss_1_completion_address)
+    if door_unlock_requirements then
+        dinos_domain_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.DINO_DOMAIN_BALLOON_COUNT)
+        snowflake_mountain_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_BALLOON_COUNT)
+        sherbet_island_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.SHERBET_ISLAND_BALLOON_COUNT)
+        dragon_forest_balloon_count = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.DRAGON_FOREST_BALLOON_COUNT)
+        dinos_domain_boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[ITEM_IDS.DINO_DOMAIN_BALLOON]
+        snowflake_mountain_boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[ITEM_IDS.SNOWFLAKE_MOUNTAIN_BALLOON]
+        sherbet_island_boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[ITEM_IDS.SHERBET_ISLAND_BALLOON]
+        dragon_forest_boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[ITEM_IDS.DRAGON_FOREST_BALLOON]
 
-    door_open_states[DOOR_NAMES.EVERFROST_PEAK] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.EVERFROST_PEAK], snowflake_mountain_boss_1_completion_address)
-    door_open_states[DOOR_NAMES.WALRUS_COVE] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WALRUS_COVE], snowflake_mountain_boss_1_completion_address)
-    door_open_states[DOOR_NAMES.SNOWBALL_VALLEY] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SNOWBALL_VALLEY], snowflake_mountain_boss_1_completion_address)
-    door_open_states[DOOR_NAMES.FROSTY_VILLAGE] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.FROSTY_VILLAGE], snowflake_mountain_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.ANCIENT_LAKE] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.ANCIENT_LAKE], dinos_domain_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.FOSSIL_CANYON] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.FOSSIL_CANYON], dinos_domain_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.JUNGLE_FALLS] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.JUNGLE_FALLS], dinos_domain_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.HOT_TOP_VOLCANO] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.HOT_TOP_VOLCANO], dinos_domain_boss_1_completion_address)
 
-    door_open_states[DOOR_NAMES.WHALE_BAY] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WHALE_BAY], sherbet_island_boss_1_completion_address)
-    door_open_states[DOOR_NAMES.CRESCENT_ISLAND] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.CRESCENT_ISLAND], sherbet_island_boss_1_completion_address)
-    door_open_states[DOOR_NAMES.PIRATE_LAGOON] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.PIRATE_LAGOON], sherbet_island_boss_1_completion_address)
-    door_open_states[DOOR_NAMES.TREASURE_CAVES] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.TREASURE_CAVES], sherbet_island_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.EVERFROST_PEAK] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.EVERFROST_PEAK], snowflake_mountain_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.WALRUS_COVE] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WALRUS_COVE], snowflake_mountain_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.SNOWBALL_VALLEY] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SNOWBALL_VALLEY], snowflake_mountain_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.FROSTY_VILLAGE] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.FROSTY_VILLAGE], snowflake_mountain_boss_1_completion_address)
 
-    door_open_states[DOOR_NAMES.WINDMILL_PLAINS] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WINDMILL_PLAINS], dragon_forest_boss_1_completion_address)
-    door_open_states[DOOR_NAMES.GREENWOOD_VILLAGE] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.GREENWOOD_VILLAGE], dragon_forest_boss_1_completion_address)
-    door_open_states[DOOR_NAMES.BOULDER_CANYON] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.BOULDER_CANYON], dragon_forest_boss_1_completion_address)
-    door_open_states[DOOR_NAMES.HAUNTED_WOODS] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.HAUNTED_WOODS], dragon_forest_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.WHALE_BAY] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WHALE_BAY], sherbet_island_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.CRESCENT_ISLAND] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.CRESCENT_ISLAND], sherbet_island_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.PIRATE_LAGOON] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.PIRATE_LAGOON], sherbet_island_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.TREASURE_CAVES] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.TREASURE_CAVES], sherbet_island_boss_1_completion_address)
 
-    door_open_states[DOOR_NAMES.SPACEDUST_ALLEY] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SPACEDUST_ALLEY])
-    door_open_states[DOOR_NAMES.DARKMOON_CAVERNS] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.DARKMOON_CAVERNS])
-    door_open_states[DOOR_NAMES.SPACEPORT_ALPHA] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SPACEPORT_ALPHA])
-    door_open_states[DOOR_NAMES.STAR_CITY] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.STAR_CITY])
+        door_open_states[DOOR_NAMES.WINDMILL_PLAINS] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WINDMILL_PLAINS], dragon_forest_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.GREENWOOD_VILLAGE] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.GREENWOOD_VILLAGE], dragon_forest_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.BOULDER_CANYON] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.BOULDER_CANYON], dragon_forest_boss_1_completion_address)
+        door_open_states[DOOR_NAMES.HAUNTED_WOODS] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.HAUNTED_WOODS], dragon_forest_boss_1_completion_address)
+
+        door_open_states[DOOR_NAMES.SPACEDUST_ALLEY] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SPACEDUST_ALLEY])
+        door_open_states[DOOR_NAMES.DARKMOON_CAVERNS] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.DARKMOON_CAVERNS])
+        door_open_states[DOOR_NAMES.SPACEPORT_ALPHA] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SPACEPORT_ALPHA])
+        door_open_states[DOOR_NAMES.STAR_CITY] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.STAR_CITY])
+    end
 end
 
 function get_new_race_door_open_state(total_balloon_count, course_info, boss_1_completion_address)
@@ -1115,8 +1131,10 @@ end
 
 function force_doors()
     for door_name, door_address_info_list in pairs(DOOR_TO_ADDRESS_INFO) do
-        for _, door_address_info in pairs(door_address_info_list) do
-            force_door(door_open_states[door_name], door_address_info[BYTE], door_address_info[BIT], door_name)
+        if door_unlock_requirements or WORLD_DOOR_NAMES[door_name] then
+            for _, door_address_info in pairs(door_address_info_list) do
+                force_door(door_open_states[door_name], door_address_info[BYTE], door_address_info[BIT], door_name)
+            end
         end
     end
 end
@@ -1190,6 +1208,7 @@ function dpad_stats()
                     print("DD: Tricky")
                 end
             end
+
             if door_open_states[DOOR_NAMES.SNOWFLAKE_MOUNTAIN] then
                 if door_open_states[DOOR_NAMES.EVERFROST_PEAK] and is_accessible_course_uncompleted(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.EVERFROST_PEAK], snowflake_mountain_boss_1_completion_address) then
                     print("SM: Everfrost Peak")
@@ -1211,6 +1230,7 @@ function dpad_stats()
                     print("SM: Bluey")
                 end
             end
+
             if door_open_states[DOOR_NAMES.SHERBET_ISLAND] then
                 if door_open_states[DOOR_NAMES.WHALE_BAY] and is_accessible_course_uncompleted(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WHALE_BAY], sherbet_island_boss_1_completion_address) then
                     print("SI: Whale Bay")
@@ -1232,6 +1252,7 @@ function dpad_stats()
                     print("SI: Bubbler")
                 end
             end
+
             if door_open_states[DOOR_NAMES.DRAGON_FOREST] then
                 if door_open_states[DOOR_NAMES.WINDMILL_PLAINS] and is_accessible_course_uncompleted(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WINDMILL_PLAINS], dragon_forest_boss_1_completion_address) then
                     print("DF: Windmill Plains")
@@ -1253,27 +1274,28 @@ function dpad_stats()
                     print("DF: Smokey")
                 end
             end
-            if get_received_item_count(ITEM_IDS.WIZPIG_AMULET_PIECE) >= 4 then
-                local wizpig_1_completion_address = VICTORY_CONDITION_TO_ADDRESS[0]
-                if DKR_RAMOBJ:check_flag(wizpig_1_completion_address[BYTE], wizpig_1_completion_address[BIT], "Check Wizpig 1 completion for open uncompleted doors") then
-                    if door_open_states[DOOR_NAMES.SPACEDUST_ALLEY] and is_accessible_course_uncompleted(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SPACEDUST_ALLEY]) then
-                        print("FFL: Spacedust Alley")
-                    end
-                    if door_open_states[DOOR_NAMES.DARKMOON_CAVERNS] and is_accessible_course_uncompleted(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.DARKMOON_CAVERNS]) then
-                        print("FFL: Darkmoon Caverns")
-                    end
-                    if door_open_states[DOOR_NAMES.SPACEPORT_ALPHA] and is_accessible_course_uncompleted(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SPACEPORT_ALPHA]) then
-                        print("FFL: Spaceport Alpha")
-                    end
-                    if door_open_states[DOOR_NAMES.STAR_CITY] and is_accessible_course_uncompleted(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.STAR_CITY]) then
-                        print("FFL: Star City")
-                    end
-                    local wizpig_2_completion_address = VICTORY_CONDITION_TO_ADDRESS[1]
-                    if total_balloon_count >= 47 and get_received_item_count(ITEM_IDS.TT_AMULET_PIECE) >= 4 and not DKR_RAMOBJ:check_flag(wizpig_2_completion_address[BYTE], wizpig_2_completion_address[BIT]) then
-                        print("Wizpig 2")
-                    end
-                else
-                    print("Wizpig 1")
+
+            local wizpig_1_completion_address = VICTORY_CONDITION_TO_ADDRESS[0]
+            if not open_worlds and get_received_item_count(ITEM_IDS.WIZPIG_AMULET_PIECE) >= 4 and not DKR_RAMOBJ:check_flag(wizpig_1_completion_address[BYTE], wizpig_1_completion_address[BIT], "Check Wizpig 1 completion for open uncompleted doors") then
+                print("Wizpig 1")
+            end
+
+            if open_worlds or DKR_RAMOBJ:check_flag(wizpig_1_completion_address[BYTE], wizpig_1_completion_address[BIT], "Check Wizpig 1 completion for open uncompleted doors") then
+                if door_open_states[DOOR_NAMES.SPACEDUST_ALLEY] and is_accessible_course_uncompleted(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SPACEDUST_ALLEY]) then
+                    print("FFL: Spacedust Alley")
+                end
+                if door_open_states[DOOR_NAMES.DARKMOON_CAVERNS] and is_accessible_course_uncompleted(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.DARKMOON_CAVERNS]) then
+                    print("FFL: Darkmoon Caverns")
+                end
+                if door_open_states[DOOR_NAMES.SPACEPORT_ALPHA] and is_accessible_course_uncompleted(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SPACEPORT_ALPHA]) then
+                    print("FFL: Spaceport Alpha")
+                end
+                if door_open_states[DOOR_NAMES.STAR_CITY] and is_accessible_course_uncompleted(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.STAR_CITY]) then
+                    print("FFL: Star City")
+                end
+                local wizpig_2_completion_address = VICTORY_CONDITION_TO_ADDRESS[1]
+                if total_balloon_count >= 47 and get_received_item_count(ITEM_IDS.TT_AMULET_PIECE) >= 4 and not DKR_RAMOBJ:check_flag(wizpig_2_completion_address[BYTE], wizpig_2_completion_address[BIT]) then
+                    print("Wizpig 2")
                 end
             end
             print("----------------")
@@ -1415,6 +1437,10 @@ function process_slot(block)
 
     if block["slot_door_unlock_requirements"] and next(block["slot_door_unlock_requirements"]) ~= nil then
         door_unlock_requirements = block["slot_door_unlock_requirements"]
+    end
+
+    if block["slot_open_worlds"] and block["slot_open_worlds"] ~= "false" then
+        open_worlds = true
     end
 
     if block["slot_skip_trophy_races"] and block["slot_skip_trophy_races"] ~= "false" then

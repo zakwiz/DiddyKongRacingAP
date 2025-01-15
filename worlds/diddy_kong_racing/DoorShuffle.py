@@ -149,34 +149,44 @@ def shuffle_door_unlock_items(self) -> None:
         ItemName.STAR_CITY_1_UNLOCK
     )
 
-    available_doors = [
-        ItemName.DINO_DOMAIN_UNLOCK,
-        ItemName.SNOWFLAKE_MOUNTAIN_UNLOCK,
-        ItemName.SHERBET_ISLAND_UNLOCK,
-        ItemName.DRAGON_FOREST_UNLOCK
-    ]
+    if self.options.open_worlds:
+        available_doors = [
+            *dino_domain_race_1_unlocks,
+            *snowflake_mountain_race_1_unlocks,
+            *sherbet_island_race_1_unlocks,
+            *dragon_forest_race_1_unlocks,
+            *future_fun_land_race_1_unlocks
+        ]
+    else:
+        available_doors = [
+            ItemName.DINO_DOMAIN_UNLOCK,
+            ItemName.SNOWFLAKE_MOUNTAIN_UNLOCK,
+            ItemName.SHERBET_ISLAND_UNLOCK,
+            ItemName.DRAGON_FOREST_UNLOCK
+        ]
 
     race_2_unlock_count = 0
 
     for door_unlock_info, requirement in zip(vanilla_door_unlock_info_sorted_by_requirement, get_door_requirement_progression(self)):
-        self.random.shuffle(available_doors)
-        item = available_doors.pop()
-        self.place_locked_item(door_unlock_info.location, self.create_event_item(item))
+        if not (self.options.open_worlds and door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
+            self.random.shuffle(available_doors)
+            item = available_doors.pop()
+            self.place_locked_item(door_unlock_info.location, self.create_event_item(item))
 
-        if item == ItemName.DINO_DOMAIN_UNLOCK:
-            available_doors.extend(dino_domain_race_1_unlocks)
-        elif item == ItemName.SNOWFLAKE_MOUNTAIN_UNLOCK:
-            available_doors.extend(snowflake_mountain_race_1_unlocks)
-        elif item == ItemName.SHERBET_ISLAND_UNLOCK:
-            available_doors.extend(sherbet_island_race_1_unlocks)
-        elif item == ItemName.DRAGON_FOREST_UNLOCK:
-            available_doors.extend(dragon_forest_race_1_unlocks)
-        elif item in race_1_unlock_to_race_2_unlock:
-            available_doors.append(race_1_unlock_to_race_2_unlock[item])
-        else:
-            race_2_unlock_count += 1
-            if race_2_unlock_count == 16:
-                available_doors.extend(future_fun_land_race_1_unlocks)
+            if item == ItemName.DINO_DOMAIN_UNLOCK:
+                available_doors.extend(dino_domain_race_1_unlocks)
+            elif item == ItemName.SNOWFLAKE_MOUNTAIN_UNLOCK:
+                available_doors.extend(snowflake_mountain_race_1_unlocks)
+            elif item == ItemName.SHERBET_ISLAND_UNLOCK:
+                available_doors.extend(sherbet_island_race_1_unlocks)
+            elif item == ItemName.DRAGON_FOREST_UNLOCK:
+                available_doors.extend(dragon_forest_race_1_unlocks)
+            elif item in race_1_unlock_to_race_2_unlock:
+                available_doors.append(race_1_unlock_to_race_2_unlock[item])
+            elif not self.options.open_worlds:
+                race_2_unlock_count += 1
+                if race_2_unlock_count == 16:
+                    available_doors.extend(future_fun_land_race_1_unlocks)
 
 
 def place_vanilla_door_unlock_items(self) -> None:
@@ -188,18 +198,22 @@ def place_door_unlock_items(self, door_unlock_requirements) -> None:
     filled_door_unlock_locations = set()
 
     for item_door_unlock_info, item_door_unlock_requirement in zip(vanilla_door_unlock_info_list, door_unlock_requirements):
-        for location_door_unlock_info, location_door_unlock_requirement in zip(vanilla_door_unlock_info_sorted_by_requirement, get_door_requirement_progression(self)):
-            location = location_door_unlock_info.location
-            if item_door_unlock_requirement == location_door_unlock_requirement and location not in filled_door_unlock_locations:
-                self.place_locked_item(location, self.create_event_item(item_door_unlock_info.item))
-                filled_door_unlock_locations.add(location)
-                break
+        if not (self.options.open_worlds and item_door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
+            for location_door_unlock_info, location_door_unlock_requirement in zip(vanilla_door_unlock_info_sorted_by_requirement, get_door_requirement_progression(self)):
+                location = location_door_unlock_info.location
+                if item_door_unlock_requirement == location_door_unlock_requirement and location not in filled_door_unlock_locations:
+                    self.place_locked_item(location, self.create_event_item(item_door_unlock_info.item))
+                    filled_door_unlock_locations.add(location)
+                    break
 
 
 def get_door_unlock_requirements(self) -> list[int]:
     door_unlock_requirements = []
     for door_unlock_info in vanilla_door_unlock_info_list:
-        location = self.multiworld.find_item(door_unlock_info.item, self.player).name
-        door_unlock_requirements.append(get_requirement_for_location(self, location))
+        if self.options.open_worlds and door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS:
+            door_unlock_requirements.append(0)
+        else:
+            location = self.multiworld.find_item(door_unlock_info.item, self.player).name
+            door_unlock_requirements.append(get_requirement_for_location(self, location))
 
     return door_unlock_requirements

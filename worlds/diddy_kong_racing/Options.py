@@ -54,6 +54,11 @@ class ShuffleDoorRequirements(Toggle):
     display_name = "Shuffle door requirements"
 
 
+class OpenWorlds(Toggle):
+    """All worlds, including Future Fun Land, will be open from the start"""
+    display_name = "Open worlds"
+
+
 class SkipTrophyRaces(DefaultOnToggle):
     """Start with all 1st place trophies, so you only need to beat Wizpig 1 to unlock Future Fun Land"""
     display_name = "Skip trophy races"
@@ -67,4 +72,5 @@ class DiddyKongRacingOptions(PerGameCommonOptions):
     door_requirement_progression: DoorRequirementProgression
     maximum_door_requirement: MaximumDoorRequirement
     shuffle_door_requirements: ShuffleDoorRequirements
+    open_worlds: OpenWorlds
     skip_trophy_races: SkipTrophyRaces
