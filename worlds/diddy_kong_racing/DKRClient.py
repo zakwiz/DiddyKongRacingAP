@@ -42,7 +42,6 @@ dkr_loc_name_to_id = network_data_package["games"]["Diddy Kong Racing"]["locatio
 dkr_itm_name_to_id = network_data_package["games"]["Diddy Kong Racing"]["item_name_to_id"]
 
 apworld_version: str = "v0.4.0"
-expected_lua_version: int = 11
 
 
 def get_item_value(ap_id):
@@ -270,11 +269,10 @@ async def n64_sync_task(ctx: DiddyKongRacingContext):
                 try:
                     data = await wait_for(reader.readline(), timeout=10)
                     data_decoded = loads(data.decode())
-                    reported_lua_version = data_decoded.get('scriptVersion', 0)
                     get_slot_data = data_decoded.get('getSlot', 0)
                     if get_slot_data:
                         ctx.sendSlot = True
-                    elif reported_lua_version >= expected_lua_version:
+                    else:
                         if ctx.game is not None and 'locations' in data_decoded:
                             # Not just a keep alive ping, parse
                             async_start(parse_payload(data_decoded, ctx))
@@ -283,14 +281,6 @@ async def n64_sync_task(ctx: DiddyKongRacingContext):
                             ctx.auth = data_decoded['playerName']
                             if ctx.awaiting_rom:
                                 await ctx.server_auth(False)
-                    else:
-                        if not ctx.version_warning:
-                            logger.warning(
-                                f"Your Lua script is version {reported_lua_version}, expected {expected_lua_version}. "
-                                "Please update to the latest version. "
-                                "Your connection to the Archipelago server will not be accepted."
-                            )
-                            ctx.version_warning = True
                 except TimeoutError:
                     logger.debug("Read Timed Out, Reconnecting")
                     error_status = CONNECTION_TIMING_OUT_STATUS
