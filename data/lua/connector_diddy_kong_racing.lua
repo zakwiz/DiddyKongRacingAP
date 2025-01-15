@@ -87,30 +87,30 @@ local ITEM_GROUPS = {
 }
 
 local door_open_states = {
-    DINO_DOMAIN = false,
-    SNOWFLAKE_MOUNTAIN = false,
-    SHERBET_ISLAND = false,
-    DRAGON_FOREST = false,
-    ANCIENT_LAKE = false,
-    FOSSIL_CANYON = false,
-    JUNGLE_FALLS = false,
-    HOT_TOP_VOLCANO = false,
-    EVERFROST_PEAK = false,
-    WALRUS_COVE = false,
-    SNOWBALL_VALLEY = false,
-    FROSTY_VILLAGE = false,
-    WHALE_BAY = false,
-    CRESCENT_ISLAND = false,
-    PIRATE_LAGOON = false,
-    TREASURE_CAVES = false,
-    WINDMILL_PLAINS = false,
-    GREENWOOD_VILLAGE = false,
-    BOULDER_CANYON = false,
-    HAUNTED_WOODS = false,
-    SPACEDUST_ALLEY = false,
-    DARKMOON_CAVERNS = false,
-    SPACEPORT_ALPHA = false,
-    STAR_CITY = false
+    [DOOR_NAMES.DINO_DOMAIN] = false,
+    [DOOR_NAMES.SNOWFLAKE_MOUNTAIN] = false,
+    [DOOR_NAMES.SHERBET_ISLAND] = false,
+    [DOOR_NAMES.DRAGON_FOREST] = false,
+    [DOOR_NAMES.ANCIENT_LAKE] = false,
+    [DOOR_NAMES.FOSSIL_CANYON] = false,
+    [DOOR_NAMES.JUNGLE_FALLS] = false,
+    [DOOR_NAMES.HOT_TOP_VOLCANO] = false,
+    [DOOR_NAMES.EVERFROST_PEAK] = false,
+    [DOOR_NAMES.WALRUS_COVE] = false,
+    [DOOR_NAMES.SNOWBALL_VALLEY] = false,
+    [DOOR_NAMES.FROSTY_VILLAGE] = false,
+    [DOOR_NAMES.WHALE_BAY] = false,
+    [DOOR_NAMES.CRESCENT_ISLAND] = false,
+    [DOOR_NAMES.PIRATE_LAGOON] = false,
+    [DOOR_NAMES.TREASURE_CAVES] = false,
+    [DOOR_NAMES.WINDMILL_PLAINS] = false,
+    [DOOR_NAMES.GREENWOOD_VILLAGE] = false,
+    [DOOR_NAMES.BOULDER_CANYON] = false,
+    [DOOR_NAMES.HAUNTED_WOODS] = false,
+    [DOOR_NAMES.SPACEDUST_ALLEY] = false,
+    [DOOR_NAMES.DARKMOON_CAVERNS] = false,
+    [DOOR_NAMES.SPACEPORT_ALPHA] = false,
+    [DOOR_NAMES.STAR_CITY] = false
 }
 
 DKR_RAM = {
@@ -272,7 +272,7 @@ local KEY_ITEM_ID_TO_DOOR_ADDRESS_INFO = {
 }
 
 local DOOR_TO_ADDRESS_INFO = {
-    DINO_DOMAIN = {
+    [DOOR_NAMES.DINO_DOMAIN] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
             [BIT] = 0
@@ -282,7 +282,7 @@ local DOOR_TO_ADDRESS_INFO = {
             [BIT] = 1
         }
     },
-    SNOWFLAKE_MOUNTAIN = {
+    [DOOR_NAMES.SNOWFLAKE_MOUNTAIN] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
             [BIT] = 5
@@ -292,7 +292,7 @@ local DOOR_TO_ADDRESS_INFO = {
             [BIT] = 7
         }
     },
-    SHERBET_ISLAND = {
+    [DOOR_NAMES.SHERBET_ISLAND] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_2,
             [BIT] = 4
@@ -302,7 +302,7 @@ local DOOR_TO_ADDRESS_INFO = {
             [BIT] = 5
         }
     },
-    DRAGON_FOREST = {
+    [DOOR_NAMES.DRAGON_FOREST] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.TIMBERS_ISLAND_BALLOONS_AND_DOORS_1,
             [BIT] = 1
@@ -312,121 +312,121 @@ local DOOR_TO_ADDRESS_INFO = {
             [BIT] = 0
         }
     },
-    ANCIENT_LAKE = {
+    [DOOR_NAMES.ANCIENT_LAKE] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.DINO_DOMAIN_DOORS_2,
             [BIT] = 2
         }
     },
-    FOSSIL_CANYON = {
+    [DOOR_NAMES.FOSSIL_CANYON] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.DINO_DOMAIN_DOORS_2,
             [BIT] = 1
         }
     },
-    JUNGLE_FALLS = {
+    [DOOR_NAMES.JUNGLE_FALLS] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.DINO_DOMAIN_DOORS_2,
             [BIT] = 3
         }
     },
-    HOT_TOP_VOLCANO = {
+    [DOOR_NAMES.HOT_TOP_VOLCANO] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.DINO_DOMAIN_DOORS_2,
             [BIT] = 6
         }
     },
-    EVERFROST_PEAK = {
+    [DOOR_NAMES.EVERFROST_PEAK] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_DOORS_2,
             [BIT] = 3
         }
     },
-    WALRUS_COVE = {
+    [DOOR_NAMES.WALRUS_COVE] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_DOORS_2,
             [BIT] = 5
         }
     },
-    SNOWBALL_VALLEY = {
+    [DOOR_NAMES.SNOWBALL_VALLEY] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_DOORS_2,
             [BIT] = 2
         }
     },
-    FROSTY_VILLAGE = {
+    [DOOR_NAMES.FROSTY_VILLAGE] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.SNOWFLAKE_MOUNTAIN_DOORS_2,
             [BIT] = 1
         }
     },
-    WHALE_BAY = {
+    [DOOR_NAMES.WHALE_BAY] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.SHERBET_ISLAND_DOORS_2,
             [BIT] = 0
         }
     },
-    CRESCENT_ISLAND = {
+    [DOOR_NAMES.CRESCENT_ISLAND] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.SHERBET_ISLAND_DOORS_2,
             [BIT] = 1
         }
     },
-    PIRATE_LAGOON = {
+    [DOOR_NAMES.PIRATE_LAGOON] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.SHERBET_ISLAND_DOORS_2,
             [BIT] = 2
         }
     },
-    TREASURE_CAVES = {
+    [DOOR_NAMES.TREASURE_CAVES] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.SHERBET_ISLAND_DOORS_2,
             [BIT] = 3
         }
     },
-    WINDMILL_PLAINS = {
+    [DOOR_NAMES.WINDMILL_PLAINS] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.DRAGON_FOREST_DOORS_2,
             [BIT] = 2
         }
     },
-    GREENWOOD_VILLAGE = {
+    [DOOR_NAMES.GREENWOOD_VILLAGE] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.DRAGON_FOREST_DOORS_2,
             [BIT] = 0
         }
     },
-    BOULDER_CANYON = {
+    [DOOR_NAMES.BOULDER_CANYON] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.DRAGON_FOREST_DOORS_2,
             [BIT] = 3
         }
     },
-    HAUNTED_WOODS = {
+    [DOOR_NAMES.HAUNTED_WOODS] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.DRAGON_FOREST_DOORS_2,
             [BIT] = 4
         }
     },
-    SPACEDUST_ALLEY = {
+    [DOOR_NAMES.SPACEDUST_ALLEY] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.FUTURE_FUN_LAND_DOORS_2,
             [BIT] = 1
         }
     },
-    DARKMOON_CAVERNS = {
+    [DOOR_NAMES.DARKMOON_CAVERNS] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.FUTURE_FUN_LAND_DOORS_2,
             [BIT] = 0
         }
     },
-    SPACEPORT_ALPHA = {
+    [DOOR_NAMES.SPACEPORT_ALPHA] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.FUTURE_FUN_LAND_DOORS_2,
             [BIT] = 2
         }
     },
-    STAR_CITY = {
+    [DOOR_NAMES.STAR_CITY] = {
         {
             [BYTE] = DKR_RAM.ADDRESS.FUTURE_FUN_LAND_DOORS_2,
             [BIT] = 3
@@ -1075,35 +1075,35 @@ function update_door_open_states()
     sherbet_island_boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[ITEM_IDS.SHERBET_ISLAND_BALLOON]
     dragon_forest_boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[ITEM_IDS.DRAGON_FOREST_BALLOON]
 
-    door_open_states.DINO_DOMAIN = total_balloon_count >= door_unlock_requirements[1]
-    door_open_states.SNOWFLAKE_MOUNTAIN = total_balloon_count >= door_unlock_requirements[2]
-    door_open_states.SHERBET_ISLAND = total_balloon_count >= door_unlock_requirements[3]
-    door_open_states.DRAGON_FOREST = total_balloon_count >= door_unlock_requirements[4]
+    door_open_states[DOOR_NAMES.DINO_DOMAIN] = total_balloon_count >= door_unlock_requirements[1]
+    door_open_states[DOOR_NAMES.SNOWFLAKE_MOUNTAIN] = total_balloon_count >= door_unlock_requirements[2]
+    door_open_states[DOOR_NAMES.SHERBET_ISLAND] = total_balloon_count >= door_unlock_requirements[3]
+    door_open_states[DOOR_NAMES.DRAGON_FOREST] = total_balloon_count >= door_unlock_requirements[4]
 
-    door_open_states.ANCIENT_LAKE = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.ANCIENT_LAKE], dinos_domain_boss_1_completion_address)
-    door_open_states.FOSSIL_CANYON = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.FOSSIL_CANYON], dinos_domain_boss_1_completion_address)
-    door_open_states.JUNGLE_FALLS = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.JUNGLE_FALLS], dinos_domain_boss_1_completion_address)
-    door_open_states.HOT_TOP_VOLCANO = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.HOT_TOP_VOLCANO], dinos_domain_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.ANCIENT_LAKE] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.ANCIENT_LAKE], dinos_domain_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.FOSSIL_CANYON] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.FOSSIL_CANYON], dinos_domain_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.JUNGLE_FALLS] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.JUNGLE_FALLS], dinos_domain_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.HOT_TOP_VOLCANO] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.HOT_TOP_VOLCANO], dinos_domain_boss_1_completion_address)
 
-    door_open_states.EVERFROST_PEAK = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.EVERFROST_PEAK], snowflake_mountain_boss_1_completion_address)
-    door_open_states.WALRUS_COVE = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WALRUS_COVE], snowflake_mountain_boss_1_completion_address)
-    door_open_states.SNOWBALL_VALLEY = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SNOWBALL_VALLEY], snowflake_mountain_boss_1_completion_address)
-    door_open_states.FROSTY_VILLAGE = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.FROSTY_VILLAGE], snowflake_mountain_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.EVERFROST_PEAK] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.EVERFROST_PEAK], snowflake_mountain_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.WALRUS_COVE] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WALRUS_COVE], snowflake_mountain_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.SNOWBALL_VALLEY] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SNOWBALL_VALLEY], snowflake_mountain_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.FROSTY_VILLAGE] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.FROSTY_VILLAGE], snowflake_mountain_boss_1_completion_address)
 
-    door_open_states.WHALE_BAY = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WHALE_BAY], sherbet_island_boss_1_completion_address)
-    door_open_states.CRESCENT_ISLAND = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.CRESCENT_ISLAND], sherbet_island_boss_1_completion_address)
-    door_open_states.PIRATE_LAGOON = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.PIRATE_LAGOON], sherbet_island_boss_1_completion_address)
-    door_open_states.TREASURE_CAVES = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.TREASURE_CAVES], sherbet_island_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.WHALE_BAY] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WHALE_BAY], sherbet_island_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.CRESCENT_ISLAND] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.CRESCENT_ISLAND], sherbet_island_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.PIRATE_LAGOON] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.PIRATE_LAGOON], sherbet_island_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.TREASURE_CAVES] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.TREASURE_CAVES], sherbet_island_boss_1_completion_address)
 
-    door_open_states.WINDMILL_PLAINS = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WINDMILL_PLAINS], dragon_forest_boss_1_completion_address)
-    door_open_states.GREENWOOD_VILLAGE = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.GREENWOOD_VILLAGE], dragon_forest_boss_1_completion_address)
-    door_open_states.BOULDER_CANYON = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.BOULDER_CANYON], dragon_forest_boss_1_completion_address)
-    door_open_states.HAUNTED_WOODS = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.HAUNTED_WOODS], dragon_forest_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.WINDMILL_PLAINS] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.WINDMILL_PLAINS], dragon_forest_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.GREENWOOD_VILLAGE] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.GREENWOOD_VILLAGE], dragon_forest_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.BOULDER_CANYON] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.BOULDER_CANYON], dragon_forest_boss_1_completion_address)
+    door_open_states[DOOR_NAMES.HAUNTED_WOODS] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.HAUNTED_WOODS], dragon_forest_boss_1_completion_address)
 
-    door_open_states.SPACEDUST_ALLEY = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SPACEDUST_ALLEY])
-    door_open_states.DARKMOON_CAVERNS = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.DARKMOON_CAVERNS])
-    door_open_states.SPACEPORT_ALPHA = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SPACEPORT_ALPHA])
-    door_open_states.STAR_CITY = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.STAR_CITY])
+    door_open_states[DOOR_NAMES.SPACEDUST_ALLEY] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SPACEDUST_ALLEY])
+    door_open_states[DOOR_NAMES.DARKMOON_CAVERNS] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.DARKMOON_CAVERNS])
+    door_open_states[DOOR_NAMES.SPACEPORT_ALPHA] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.SPACEPORT_ALPHA])
+    door_open_states[DOOR_NAMES.STAR_CITY] = get_new_race_door_open_state(total_balloon_count, COURSE_NAME_TO_INFO[DOOR_NAMES.STAR_CITY])
 end
 
 function get_new_race_door_open_state(total_balloon_count, course_info, boss_1_completion_address)
