@@ -191,7 +191,8 @@ def shuffle_door_unlock_items(self) -> None:
 
 def place_vanilla_door_unlock_items(self) -> None:
     for door_unlock_info in vanilla_door_unlock_info_list:
-        self.place_locked_item(door_unlock_info.location, self.create_event_item(door_unlock_info.item))
+        if not (self.options.open_worlds and door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
+            self.place_locked_item(door_unlock_info.location, self.create_event_item(door_unlock_info.item))
 
 
 def place_door_unlock_items(self, door_unlock_requirements) -> None:

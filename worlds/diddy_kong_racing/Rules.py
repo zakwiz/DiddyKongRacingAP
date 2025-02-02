@@ -351,8 +351,9 @@ class DiddyKongRacingRules:
             set_rule(amulet_location, rules)
 
         for location, rules in self.door_unlock_rules.items():
-            door_unlock_location = self.world.multiworld.get_location(location, self.player)
-            set_rule(door_unlock_location, rules)
+            if not (self.world.options.open_worlds and location in LocationName.WORLD_UNLOCK_LOCATIONS):
+                door_unlock_location = self.world.multiworld.get_location(location, self.player)
+                set_rule(door_unlock_location, rules)
 
         if self.world.options.victory_condition.value == 0:
             victory_location_name = LocationName.WIZPIG_1

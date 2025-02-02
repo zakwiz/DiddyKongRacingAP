@@ -97,7 +97,7 @@ def create_regions(self) -> None:
         raise Exception("Unexpected victory condition")
 
     multiworld.regions += [
-        create_region(multiworld, player, active_locations, region, locations, victory_item_location)
+        create_region(self, multiworld, player, active_locations, region, locations, victory_item_location)
         for region, locations in DIDDY_KONG_RACING_REGIONS.items()
     ]
 
@@ -106,10 +106,13 @@ def create_regions(self) -> None:
     )
 
 
-def create_region(multiworld, player: int, active_locations, name: str, locations, victory_item_location) -> Region:
+def create_region(self, multiworld, player: int, active_locations, name: str, locations, victory_item_location) -> Region:
     region = Region(name, player, multiworld)
     if name == RegionName.MENU:
         region.add_locations({location: None for location in LocationName.DOOR_UNLOCK_LOCATIONS})
+
+        if not self.options.open_worlds:
+            region.add_locations({location: None for location in LocationName.WORLD_UNLOCK_LOCATIONS})
     elif locations:
         if victory_item_location in locations:
             region.add_locations({victory_item_location: None})
