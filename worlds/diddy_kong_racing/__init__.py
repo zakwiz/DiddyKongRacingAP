@@ -36,7 +36,7 @@ class DiddyKongRacingWorld(World):
     """Diddy Kong Racing is a kart racing game with a story mode, complete with bosses and hidden collectibles."""
 
     game = "Diddy Kong Racing"
-    apworld_version = "DKRv0.5.0"
+    apworld_version = "DKRv0.5.1"
     web = DiddyKongRacingWeb()
     topology_preset = True
     item_name_to_id = {}
