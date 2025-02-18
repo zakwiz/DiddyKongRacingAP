@@ -30,6 +30,7 @@ Double-click `diddy_kong_racing.apworld`, or manually copy it into the `custom_w
 - Run the Archipelago launcher and select Diddy Kong Racing Client.
 - Connect the Archipelago Client with the server.
 - Open Bizhawk (2.9.1+) and open your Diddy Kong Racing ROM.
+- Select a save file.
 - Run the `diddy_kong_racing.lua` script (drag and drop it into Bizhawk).
 
 ## Generating Your World
