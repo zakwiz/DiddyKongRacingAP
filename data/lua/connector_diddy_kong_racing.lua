@@ -8,7 +8,7 @@ require('common')
 local socket = require("socket")
 local json = require('json')
 
-local APWORLD_VERSION = "DKRv0.5.1"
+local APWORLD_VERSION = "DKRv0.5.2"
 local REQUIRED_BIZHAWK_VERSION = "2.9.1"
 
 local player
