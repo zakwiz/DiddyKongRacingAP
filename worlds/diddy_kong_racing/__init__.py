@@ -154,8 +154,8 @@ class DiddyKongRacingWorld(World):
             "victory_condition": self.options.victory_condition.value,
             "shuffle_wizpig_amulet": "true" if self.options.shuffle_wizpig_amulet else "false",
             "shuffle_tt_amulet": "true" if self.options.shuffle_tt_amulet else "false",
-            "door_unlock_requirements": door_unlock_requirements,
             "open_worlds": "true" if self.options.open_worlds else "false",
+            "door_unlock_requirements": door_unlock_requirements,
             "skip_trophy_races": "true" if self.options.skip_trophy_races else "false"
         }
 

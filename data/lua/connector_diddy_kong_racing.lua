@@ -14,8 +14,8 @@ local REQUIRED_BIZHAWK_VERSION = "2.10"
 local player
 local seed
 local victory_condition
-local door_unlock_requirements
 local open_worlds
+local door_unlock_requirements
 local skip_trophy_races
 
 local STATE_OK = "Ok"
@@ -1437,12 +1437,12 @@ function process_slot(block)
         victory_condition = block["slot_victory_condition"]
     end
 
-    if block["slot_door_unlock_requirements"] and next(block["slot_door_unlock_requirements"]) ~= nil then
-        door_unlock_requirements = block["slot_door_unlock_requirements"]
-    end
-
     if block["slot_open_worlds"] and block["slot_open_worlds"] ~= "false" then
         open_worlds = true
+    end
+
+    if block["slot_door_unlock_requirements"] and next(block["slot_door_unlock_requirements"]) ~= nil then
+        door_unlock_requirements = block["slot_door_unlock_requirements"]
     end
 
     if block["slot_skip_trophy_races"] and block["slot_skip_trophy_races"] ~= "false" then
