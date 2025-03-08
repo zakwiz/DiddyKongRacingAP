@@ -125,6 +125,7 @@ DKR_RAM = {
         IN_SAVE_FILE_2 = 0x214E76,
         IN_SAVE_FILE_3 = 0x21545A,
         PAUSED = 0x115F79,
+        CHARACTER_UNLOCKS = 0x0DFD9B,
         TOTAL_BALLOON_COUNT = 0x1FCBED,
         DINO_DOMAIN_BALLOON_COUNT = 0x1FCBEF,
         SNOWFLAKE_MOUNTAIN_BALLOON_COUNT = 0x1FCBF3,
@@ -972,6 +973,9 @@ function initialize_flags()
         all_location_checks("AMM")
 
         if not DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.STAR_CITY, 0) then
+            DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.CHARACTER_UNLOCKS, 0) -- Unlock T.T.
+            DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.CHARACTER_UNLOCKS, 1) -- Unlock Drumstick
+
             set_races_as_visited()
 
             if open_worlds then
