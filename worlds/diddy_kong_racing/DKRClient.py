@@ -76,6 +76,7 @@ class DiddyKongRacingContext(CommonContext):
         self.sendSlot = False
         self.sync_ready = False
         self.startup = False
+        self.current_map = 0
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -225,11 +226,14 @@ async def parse_payload(payload: dict, ctx: DiddyKongRacingContext):
         ctx.finished_game = True
 
     # Locations handling
-    locations = payload['locations']
+    locations = payload["locations"]
+    payload_current_map = payload["currentMap"]
 
     # The Lua JSON library serializes an empty table into a list instead of a dict. Verify types for safety:
     if isinstance(locations, list):
         locations = {}
+    if not isinstance(payload_current_map, int):
+        payload_current_map = 0
 
     if "DEMO" not in locations and ctx.sync_ready:
         if ctx.location_table != locations:
@@ -247,6 +251,18 @@ async def parse_payload(payload: dict, ctx: DiddyKongRacingContext):
                     "locations": updated_locations
                 }])
             ctx.location_table = locations
+
+        # For PopTracker
+        if ctx.current_map != payload_current_map:
+            ctx.current_map = payload_current_map
+            await ctx.send_msgs([{
+                "cmd": "Set",
+                "key": f"Diddy_Kong_Racing_{ctx.team}_{ctx.slot}_map",
+                "default": hex(0),
+                "want_reply": False,
+                "operations": [{"operation": "replace",
+                    "value": hex(payload_current_map)}]
+            }])
 
     # Send Async Data.
     if "sync_ready" in payload:

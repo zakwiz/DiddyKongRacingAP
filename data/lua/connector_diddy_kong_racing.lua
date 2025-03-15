@@ -34,6 +34,7 @@ local slot_loaded = false
 local in_save_file = false
 local in_save_file_counter = 0
 local init_complete = false
+local current_map = 0
 local paused = false
 local force_wizpig_2_door = false
 
@@ -132,6 +133,7 @@ DKR_RAM = {
         IN_SAVE_FILE_3 = 0x21545A,
         PAUSED = 0x115F79,
         CHARACTER_UNLOCKS = 0x0DFD9B,
+        CURRENT_MAP = 0x121167,
         TOTAL_BALLOON_COUNT = 0x1FCBED,
         DINO_DOMAIN_BALLOON_COUNT = 0x1FCBEF,
         SNOWFLAKE_MOUNTAIN_BALLOON_COUNT = 0x1FCBF3,
@@ -905,6 +907,11 @@ function main()
                 or current_state == STATE_INITIAL_CONNECTION_MADE
                 or current_state == STATE_TENTATIVELY_CONNECTED then
             if frame % 60 == 1 then
+                local new_map = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.CURRENT_MAP)
+                if new_map ~= current_map then
+                    current_map = new_map
+                    client.saveram()
+                end
                 receive()
             elseif frame % 10 == 1 then
                 check_if_in_save_file()
@@ -1501,6 +1508,7 @@ function send_to_dkr_client()
     retTable["playerName"] = player
     retTable["locations"] = all_location_checks("AMM")
     retTable["gameComplete"] = is_game_complete()
+    retTable["currentMap"] = current_map
 
     if not in_save_file then
         retTable["sync_ready"] = "false"
