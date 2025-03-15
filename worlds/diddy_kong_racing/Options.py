@@ -59,6 +59,46 @@ class ShuffleDoorRequirements(Toggle):
     display_name = "Shuffle door requirements"
 
 
+class Boss1RegionalBalloons(Range):
+    """The number of regional balloons required to unlock boss race 1 for that region"""
+    display_name = "Boss 1 regional balloons"
+    range_start = 0
+    range_end = 4
+    default = range_end
+
+
+class Boss2RegionalBalloons(Range):
+    """The number of regional balloons required to unlock boss race 2 for that region"""
+    display_name = "Boss 2 regional balloons"
+    range_start = 0
+    range_end = 8
+    default = range_end
+
+
+class Wizpig1AmuletPieces(Range):
+    """The number of Wizpig amulet pieces required to unlock Wizpig race 1"""
+    display_name = "Wizpig 1 amulet pieces"
+    range_start = 0
+    range_end = 4
+    default = range_end
+
+
+class Wizpig2AmuletPieces(Range):
+    """The number of T.T. amulet pieces required to unlock Wizpig race 2, along with the balloon requirement"""
+    display_name = "Wizpig 2 amulet pieces"
+    range_start = 0
+    range_end = 4
+    default = range_end
+
+
+class Wizpig2Balloons(Range):
+    """The number of balloons required to unlock Wizpig race 2, along with the T.T. amulet piece requirement"""
+    display_name = "Wizpig 2 balloons"
+    range_start = 0
+    range_end = 47
+    default = range_end
+
+
 class SkipTrophyRaces(DefaultOnToggle):
     """Start with all 1st place trophies, so you only need to beat Wizpig 1 to unlock Future Fun Land"""
     display_name = "Skip trophy races"
@@ -73,4 +113,9 @@ class DiddyKongRacingOptions(PerGameCommonOptions):
     door_requirement_progression: DoorRequirementProgression
     maximum_door_requirement: MaximumDoorRequirement
     shuffle_door_requirements: ShuffleDoorRequirements
+    boss_1_regional_balloons: Boss1RegionalBalloons
+    boss_2_regional_balloons: Boss2RegionalBalloons
+    wizpig_1_amulet_pieces: Wizpig1AmuletPieces
+    wizpig_2_amulet_pieces: Wizpig2AmuletPieces
+    wizpig_2_balloons: Wizpig2Balloons
     skip_trophy_races: SkipTrophyRaces

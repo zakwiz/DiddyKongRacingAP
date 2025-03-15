@@ -156,6 +156,11 @@ class DiddyKongRacingWorld(World):
             "shuffle_tt_amulet": "true" if self.options.shuffle_tt_amulet else "false",
             "open_worlds": "true" if self.options.open_worlds else "false",
             "door_unlock_requirements": door_unlock_requirements,
+            "boss_1_regional_balloons": self.options.boss_1_regional_balloons.value,
+            "boss_2_regional_balloons": self.options.boss_2_regional_balloons.value,
+            "wizpig_1_amulet_pieces": self.options.wizpig_1_amulet_pieces.value,
+            "wizpig_2_amulet_pieces": self.options.wizpig_2_amulet_pieces.value,
+            "wizpig_2_balloons": self.options.wizpig_2_balloons.value,
             "skip_trophy_races": "true" if self.options.skip_trophy_races else "false"
         }
 

@@ -195,6 +195,11 @@ def get_slot_payload(ctx: DiddyKongRacingContext):
             "slot_victory_condition": ctx.slot_data["victory_condition"],
             "slot_open_worlds": ctx.slot_data["open_worlds"],
             "slot_door_unlock_requirements": ctx.slot_data["door_unlock_requirements"],
+            "slot_boss_1_regional_balloons": ctx.slot_data["boss_1_regional_balloons"],
+            "slot_boss_2_regional_balloons": ctx.slot_data["boss_2_regional_balloons"],
+            "slot_wizpig_1_amulet_pieces": ctx.slot_data["wizpig_1_amulet_pieces"],
+            "slot_wizpig_2_amulet_pieces": ctx.slot_data["wizpig_2_amulet_pieces"],
+            "slot_wizpig_2_balloons": ctx.slot_data["wizpig_2_balloons"],
             "slot_skip_trophy_races": ctx.slot_data["skip_trophy_races"]
         })
     ctx.sendSlot = False
