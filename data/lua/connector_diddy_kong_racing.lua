@@ -896,6 +896,11 @@ function main()
         return
     end
 
+    if gameinfo.getromhash() ~= "0CB115D8716DBBC2922FDA38E533B9FE63BB9670" then
+        print("Incorrect ROM hash, make sure you're running Diddy Kong Racing US 1.0")
+        return
+    end
+
     print("Diddy Kong Racing Archipelago Version: " .. APWORLD_VERSION)
     print("----------------")
     server, error = socket.bind("localhost", 21221)
