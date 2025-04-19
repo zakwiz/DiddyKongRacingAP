@@ -4,9 +4,14 @@
 -- Banjo-Tooie Connector Lua by Mike Jackson (jjjj12212) with the help of Rose (Oktorose),
 -- the OOT Archipelago team, ScriptHawk BT.lua & kaptainkohl for BTrando.lua, modifications from Unalive & HemiJackson
 
-require('common')
+local status, _ = pcall(require, "common")
+if not status then
+    print("ERROR: Missing required Lua dependencies, this Lua script must be placed in the data/lua folder of your Archipelago installation.")
+    return
+end
+
 local socket = require("socket")
-local json = require('json')
+local json = require("json")
 
 local APWORLD_VERSION = "DKRv0.6.0"
 local REQUIRED_BIZHAWK_VERSION = "2.10"
@@ -956,7 +961,7 @@ function main()
                     DKR_SOCK = client
                     DKR_SOCK:settimeout(0)
                 else
-                    print("Connection failed, ensure Diddy Kong Racing Client is running, connected and rerun connector_diddy_kong_racing.lua")
+                    print("ERROR: Connection failed, ensure Diddy Kong Racing Client is running, connected and rerun connector_diddy_kong_racing.lua")
                     print("----------------")
 
                     return
