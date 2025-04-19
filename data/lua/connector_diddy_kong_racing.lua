@@ -918,6 +918,10 @@ function main()
                 or current_state == STATE_TENTATIVELY_CONNECTED then
             if frame % 60 == 1 then
                 local new_map = DKR_RAMOBJ:get_counter(DKR_RAM.ADDRESS.CURRENT_MAP)
+                if new_map == 0x17 then
+                    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.CHARACTER_UNLOCKS, 0) -- Unlock T.T.
+                    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.CHARACTER_UNLOCKS, 1) -- Unlock Drumstick
+                end
                 if new_map ~= current_map then
                     current_map = new_map
                     client.saveram()
@@ -1005,8 +1009,6 @@ function initialize_flags()
         all_location_checks("AMM")
 
         if not DKR_RAMOBJ:check_flag(DKR_RAM.ADDRESS.STAR_CITY, 0) then
-            DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.CHARACTER_UNLOCKS, 0) -- Unlock T.T.
-            DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.CHARACTER_UNLOCKS, 1) -- Unlock Drumstick
             DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.FUTURE_FUN_LAND_FLAGS, 7) -- Skip Wizpig 2 door entry cutscene
 
             set_races_as_visited()
