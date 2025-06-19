@@ -32,6 +32,7 @@ local wizpig_1_amulet_pieces
 local wizpig_2_amulet_pieces
 local wizpig_2_balloons
 local randomize_character_on_map_change
+local power_up_balloon_type
 local skip_trophy_races
 
 local STATE_OK = "Ok"
@@ -654,6 +655,21 @@ function initialize_flags()
             end
         end
 
+        if (power_up_balloon_type ~= 0) then
+            DKR_RAMOBJ:set_ramhack_value(DKR_HACK.SETTINGS + DKR_HACK.CHANGE_BALLOONS, 1)
+
+            local setting_to_value = {
+                [1] = 5,
+                [2] = 6,
+                [3] = 0,
+                [4] = 1,
+                [5] = 2,
+                [6] = 3,
+                [7] = 4
+            }
+            DKR_RAMOBJ:set_ramhack_value(DKR_HACK.SETTINGS + DKR_HACK.BALLOON_TYPE, setting_to_value[power_up_balloon_type])
+        end
+
         set_races_as_visited()
         update_in_game_totals()
 		init_complete = true
@@ -906,6 +922,10 @@ function process_slot(block)
         randomize_character_on_map_change = true
     else
         randomize_character_on_map_change = false
+    end
+
+    if block["slot_power_up_balloon_type"] and block["slot_power_up_balloon_type"] ~= "" then
+        power_up_balloon_type = block["slot_power_up_balloon_type"]
     end
 
     if seed then

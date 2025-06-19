@@ -287,6 +287,7 @@ def get_slot_payload(ctx: DiddyKongRacingContext):
             "slot_wizpig_2_amulet_pieces": ctx.slot_data["wizpig_2_amulet_pieces"],
             "slot_wizpig_2_balloons": ctx.slot_data["wizpig_2_balloons"],
             "slot_randomize_character_on_map_change": ctx.slot_data["randomize_character_on_map_change"],
+            "slot_power_up_balloon_type": ctx.slot_data["power_up_balloon_type"],
             "slot_skip_trophy_races": ctx.slot_data["skip_trophy_races"]
         })
     ctx.sendSlot = False

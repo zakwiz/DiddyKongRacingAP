@@ -165,6 +165,7 @@ class DiddyKongRacingWorld(World):
             "wizpig_2_amulet_pieces": self.options.wizpig_2_amulet_pieces.value,
             "wizpig_2_balloons": self.options.wizpig_2_balloons.value,
             "randomize_character_on_map_change": "true" if self.options.randomize_character_on_map_change else "false",
+            "power_up_balloon_type": self.options.power_up_balloon_type.value,
             "skip_trophy_races": "true" if self.options.skip_trophy_races else "false"
         }
 
