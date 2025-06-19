@@ -99,6 +99,10 @@ class Wizpig2Balloons(Range):
     default = range_end
 
 
+class RandomizeCharacterOnMapChange(Toggle):
+    """Randomly change your character every time the map is changed"""
+    display_name = "Randomize character on map change"
+
 class SkipTrophyRaces(DefaultOnToggle):
     """Start with all 1st place trophies, so you only need to beat Wizpig 1 to unlock Future Fun Land"""
     display_name = "Skip trophy races"
@@ -118,4 +122,5 @@ class DiddyKongRacingOptions(PerGameCommonOptions):
     wizpig_1_amulet_pieces: Wizpig1AmuletPieces
     wizpig_2_amulet_pieces: Wizpig2AmuletPieces
     wizpig_2_balloons: Wizpig2Balloons
+    randomize_character_on_map_change: RandomizeCharacterOnMapChange
     skip_trophy_races: SkipTrophyRaces

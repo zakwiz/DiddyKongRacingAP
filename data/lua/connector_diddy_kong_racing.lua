@@ -31,6 +31,7 @@ local boss_2_regional_balloons
 local wizpig_1_amulet_pieces
 local wizpig_2_amulet_pieces
 local wizpig_2_balloons
+local randomize_character_on_map_change
 local skip_trophy_races
 
 local STATE_OK = "Ok"
@@ -637,6 +638,7 @@ function initialize_flags()
         DKR_RAMOBJ:set_ramhack_value(DKR_HACK.SETTINGS + DKR_HACK.WIZPIG_2_AMULET_PIECES, wizpig_2_amulet_pieces)
         DKR_RAMOBJ:set_ramhack_value(DKR_HACK.SETTINGS + DKR_HACK.WIZPIG_2_BALLOONS, wizpig_2_balloons)
         DKR_RAMOBJ:set_ramhack_value(DKR_HACK.SETTINGS + DKR_HACK.SKIP_TROPHY_RACES, skip_trophy_races and 1 or 0)
+        DKR_RAMOBJ:set_ramhack_value(DKR_HACK.SETTINGS + DKR_HACK.RANDOMIZE_CHARACTER_ON_MAP_CHANGE, randomize_character_on_map_change and 1 or 0)
 
         if door_unlock_requirements then
             for i, requirement in pairs(door_unlock_requirements) do
@@ -898,6 +900,12 @@ function process_slot(block)
         skip_trophy_races = true
     else
         skip_trophy_races = false
+    end
+
+    if block["slot_randomize_character_on_map_change"] and block["slot_randomize_character_on_map_change"] == "true" then
+        randomize_character_on_map_change = true
+    else
+        randomize_character_on_map_change = false
     end
 
     if seed then
