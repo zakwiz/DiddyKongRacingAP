@@ -1,14 +1,19 @@
 from __future__ import annotations
 
-from asyncio import create_task, open_connection, run, StreamReader, StreamWriter, TimeoutError, wait_for
+from asyncio import create_task, open_connection, run, sleep, StreamReader, StreamWriter, TimeoutError, wait_for
+from bsdiff4 import patch
 from copy import deepcopy
+from hashlib import md5
+from io import BufferedReader
 from json import dumps, loads
 from multiprocessing import freeze_support
+from os import path
+from pathlib import Path
 from sys import argv
 
 # CommonClient import first to trigger ModuleUpdater
 from CommonClient import ClientCommandProcessor, CommonContext, get_base_parser, gui_enabled, logger, server_loop
-from Utils import async_start, init_logging
+from Utils import async_start, init_logging, open_filename
 from worlds import network_data_package
 
 SYSTEM_MESSAGE_ID = 0
@@ -41,11 +46,85 @@ logger.info(network_data_package["games"].keys())
 dkr_loc_name_to_id = network_data_package["games"]["Diddy Kong Racing"]["location_name_to_id"]
 dkr_itm_name_to_id = network_data_package["games"]["Diddy Kong Racing"]["item_name_to_id"]
 
-apworld_version: str = "DKRv0.6.1"
+version_number: str = "v0.6.1"
+apworld_version: str = "DKR" + version_number
+patched_rom_filename: str = "Diddy-Kong-Racing-AP-" + version_number + ".z64"
+vanilla_rom_md5: str = "4f0e07f0eeac7e5d7ce3a75461888d03"
+vanilla_swapped_rom_md5: str = "e00c0e6bfb0ce740e3e1c50ba82bc01a"
+patched_rom_md5: str = "f137ca9527a7dbe93f1c30bf205f0e5a"
 
 
 def get_item_value(ap_id):
     return ap_id
+
+async def apply_patch() -> None:
+    fpath = Path(__file__)
+    archipelago_root = None
+    for i in range(0, 5, +1) :
+        if fpath.parents[i].stem == "Archipelago":
+            archipelago_root = Path(__file__).parents[i]
+            break
+
+    patched_rom_path = None
+    if archipelago_root:
+        patched_rom_path = path.join(archipelago_root, patched_rom_filename)
+
+    if not patched_rom_path or get_file_md5(patched_rom_path) != patched_rom_md5:
+        await sleep(0.01)
+        rom = open_filename("Select your Diddy Kong Racing US 1.0 ROM", (("Rom Files", (".z64", ".n64")), ("All Files", "*"),))
+        if not rom:
+            logger.info("ERROR: No ROM selected. Please restart the Diddy Kong Racing client and select your Diddy Kong Racing US 1.0 ROM.")
+            raise Exception
+
+        if not patched_rom_path:
+           base_dir = path.dirname(rom)
+           patched_rom_path = path.join(base_dir, patched_rom_filename)
+
+        patch_rom(rom, patched_rom_path, "Diddy_Kong_Racing.patch")
+
+    if patched_rom_path:
+        logger.info("Patched Diddy Kong Racing is located in " + patched_rom_path)
+        logger.info("Please open Diddy Kong Racing in Bizhawk and run connector_diddy_kong_racing.lua")
+
+def get_file_md5(patched_rom: str) -> str:
+    if path.isfile(patched_rom):
+        patched_rom_file = read_file(patched_rom)
+        return md5(patched_rom_file).hexdigest()
+    else:
+        return ""
+
+def patch_rom(vanilla_rom_path: str, output_path: str, patch_path: str) -> None:
+    rom = read_file(vanilla_rom_path)
+    rom_md5 = md5(rom).hexdigest()
+    if rom_md5 == vanilla_swapped_rom_md5:
+        rom = swap(rom)
+    elif rom_md5 != vanilla_rom_md5:
+        logger.error("ERROR: Unknown ROM selected. Please restart the Diddy Kong Racing client and select your Diddy Kong Racing US 1.0 ROM.")
+        raise Exception
+
+    patch_file = open_file(patch_path).read()
+    write_file(output_path, patch(rom, patch_file))
+
+def read_file(file_path: str) -> bytes:
+    with open(file_path, "rb") as fi:
+        data = fi.read()
+
+    return data
+
+def write_file(file_path: str, data: bytes) -> None:
+    with open(file_path, "wb") as fi:
+        fi.write(data)
+
+def swap(data: bytes) -> bytes:
+    swapped_data = bytearray(b'\0' * len(data))
+    for i in range(0, len(data), 2):
+        swapped_data[i] = data[i + 1]
+        swapped_data[i + 1] = data[i]
+
+    return bytes(swapped_data)
+
+def open_file(resource: str) -> BufferedReader:
+    return open(path.join(Path(__file__).parent, resource), "rb")
 
 
 class DiddyKongRacingCommandProcessor(ClientCommandProcessor):
@@ -108,6 +187,7 @@ class DiddyKongRacingContext(CommonContext):
 
         self.ui = DiddyKongRacingManager(self)
         self.ui_task = create_task(self.ui.async_run(), name="UI")
+        create_task(apply_patch())
 
     def on_package(self, cmd, args):
         if cmd == 'Connected':
@@ -194,7 +274,12 @@ def get_slot_payload(ctx: DiddyKongRacingContext):
             "slot_player": ctx.slot_data["player_name"],
             "slot_seed": ctx.slot_data["seed"],
             "slot_victory_condition": ctx.slot_data["victory_condition"],
+            "slot_shuffle_wizpig_amulet": ctx.slot_data["shuffle_wizpig_amulet"],
+            "slot_shuffle_tt_amulet": ctx.slot_data["shuffle_tt_amulet"],
             "slot_open_worlds": ctx.slot_data["open_worlds"],
+            "slot_door_requirement_progression": ctx.slot_data["door_requirement_progression"],
+            "slot_maximum_door_requirement": ctx.slot_data["maximum_door_requirement"],
+            "slot_shuffle_door_requirements": ctx.slot_data["shuffle_door_requirements"],
             "slot_door_unlock_requirements": ctx.slot_data["door_unlock_requirements"],
             "slot_boss_1_regional_balloons": ctx.slot_data["boss_1_regional_balloons"],
             "slot_boss_2_regional_balloons": ctx.slot_data["boss_2_regional_balloons"],
