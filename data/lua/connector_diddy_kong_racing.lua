@@ -549,55 +549,56 @@ function main()
     DKR_RAMOBJ = DKR_RAM:new(nil)
     hackPointerIndex = DKR_RAMOBJ:dereferencePointer(DKR_HACK.BASE_INDEX)
 
-    while true do
-        frame = frame + 1
-        if current_state == STATE_OK
-                or current_state == STATE_INITIAL_CONNECTION_MADE
-                or current_state == STATE_TENTATIVELY_CONNECTED then
-            if frame % 60 == 1 then
-                local new_map = DKR_RAMOBJ:get_value(DKR_RAM.ADDRESS.CURRENT_MAP)
-                if new_map == 0x17 then
-                    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.CHARACTER_UNLOCKS, 0) -- Unlock T.T.
-                    DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.CHARACTER_UNLOCKS, 1) -- Unlock Drumstick
-                end
-                if new_map ~= current_map then
-                    current_map = new_map
-                    client.saveram()
-                end
-                receive()
-                display_next_message_if_no_message_displayed()
-            elseif frame % 10 == 1 then
-                check_if_in_save_file()
-                if not init_complete then
-					initialize_flags()
-				end
+    event.onframeend(handle_frame)
+end
 
-                if init_complete then
-                    update_totals_if_paused()
-                    dpad_stats()
-                end
+function handle_frame()
+    frame = frame + 1
+    if current_state == STATE_OK
+            or current_state == STATE_INITIAL_CONNECTION_MADE
+            or current_state == STATE_TENTATIVELY_CONNECTED then
+        if frame % 60 == 1 then
+            local new_map = DKR_RAMOBJ:get_value(DKR_RAM.ADDRESS.CURRENT_MAP)
+            if new_map == 0x17 then
+                DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.CHARACTER_UNLOCKS, 0) -- Unlock T.T.
+                DKR_RAMOBJ:set_flag(DKR_RAM.ADDRESS.CHARACTER_UNLOCKS, 1) -- Unlock Drumstick
             end
-        elseif current_state == STATE_UNINITIALIZED then
-            if  frame % 60 == 1 then
-                server:settimeout(2)
-                local client, timeout = server:accept()
+            if new_map ~= current_map then
+                current_map = new_map
+                client.saveram()
+            end
+            receive()
+            display_next_message_if_no_message_displayed()
+        elseif frame % 10 == 1 then
+            check_if_in_save_file()
+            if not init_complete then
+                initialize_flags()
+            end
 
-                if timeout == nil then
-                    print("Initial connection made")
-                    print("----------------")
-
-                    current_state = STATE_INITIAL_CONNECTION_MADE
-                    DKR_SOCK = client
-                    DKR_SOCK:settimeout(0)
-                else
-                    print("ERROR: Connection failed, ensure Diddy Kong Racing Client is running, connected and rerun connector_diddy_kong_racing.lua")
-                    print("----------------")
-
-                    return
-                end
+            if init_complete then
+                update_totals_if_paused()
+                dpad_stats()
             end
         end
-        emu.frameadvance()
+    elseif current_state == STATE_UNINITIALIZED then
+        if  frame % 60 == 1 then
+            server:settimeout(2)
+            local client, timeout = server:accept()
+
+            if timeout == nil then
+                print("Initial connection made")
+                print("----------------")
+
+                current_state = STATE_INITIAL_CONNECTION_MADE
+                DKR_SOCK = client
+                DKR_SOCK:settimeout(0)
+            else
+                print("ERROR: Connection failed, ensure Diddy Kong Racing Client is running, connected and rerun connector_diddy_kong_racing.lua")
+                print("----------------")
+
+                return
+            end
+        end
     end
 end
 
