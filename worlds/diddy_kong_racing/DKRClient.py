@@ -170,11 +170,8 @@ class DiddyKongRacingContext(CommonContext):
 
         return
 
-    def _set_message(self, msg: str, msg_id: int | None):
-        if msg_id is None:
-            self.messages.update({len(self.messages)+1: msg})
-        else:
-            self.messages.update({msg_id: msg})
+    def _set_message(self, msg: dict):
+        self.messages.update({len(self.messages)+1: msg})
 
     def run_gui(self):
         from kvui import GameManager
@@ -201,10 +198,6 @@ class DiddyKongRacingContext(CommonContext):
 
             logger.info("Please open Diddy Kong Racing and load connector_diddy_kong_racing.lua")
             self.n64_sync_task = create_task(n64_sync_task(self), name="N64 Sync")
-        elif cmd == 'Print':
-            msg = args['text']
-            if ': !' not in msg:
-                self._set_message(msg, SYSTEM_MESSAGE_ID)
         elif cmd == "ReceivedItems":
             if not self.startup:
                 for item in args["items"]:
@@ -226,25 +219,27 @@ class DiddyKongRacingContext(CommonContext):
     def on_print_json(self, args: dict):
         if self.ui:
             self.ui.print_json(deepcopy(args["data"]))
-            relevant = args.get("type", None) in {"Hint", "ItemSend"}
-            if relevant:
-                relevant = False
-                item = args["item"]
-                if self.slot_concerns_self(args["receiving"]):
-                    relevant = True 
-                elif self.slot_concerns_self(item.player):
-                    relevant = True
-
-                if relevant:
-                    msg = self.raw_text_parser(deepcopy(args["data"]))
-                    self._set_message(msg, None)
         else:
-            text = self.jsontotextparser(deepcopy(args["data"]))
-            logger.info(text)
-            relevant = args.get("type", None) in {"Hint", "ItemSend"}
-            if relevant:
-                msg = self.raw_text_parser(deepcopy(args["data"]))
-                self._set_message(msg, None)
+            logger.info(self.jsontotextparser(deepcopy(args["data"])))
+
+        if (args.get("type", None) in {"ItemSend"}
+                and (not self.ui or self.slot_concerns_self(args["receiving"]) or self.slot_concerns_self(args["item"].player))):
+            from_player = self.player_names[int(args["data"][0]["text"])]
+            to_player = from_player
+            for data_id, data in enumerate(args["data"]):
+                if data_id != 0 and "type" in data and data["type"] == "player_id":
+                    to_player = self.player_names[int(data["text"])]
+                    break
+            item_id = int(args["data"][2]["text"])
+            item_name = self.item_names.lookup_in_slot(item_id)
+            self._set_message(
+                {
+                    "from_player": from_player,
+                    "to_player": to_player,
+                    "item_name": item_name,
+                    "item_id": item_id
+                }
+            )
 
 
 def get_payload(ctx: DiddyKongRacingContext):

@@ -55,6 +55,8 @@ local hackPointerIndex
 
 local receive_map = {}
 local previous_checks
+local message_queue = {}
+local n64_sent_message_count = 0
 
 local BYTE = "BYTE"
 local BIT = "BIT"
@@ -122,8 +124,8 @@ DKR_HACK = {
     BASE_INDEX = 0x400000,
     ITEMS = 0x0,
     DOOR_COSTS = 0xC,
-    MESSAGE = 0x39,
-    TEXT_QUEUE = 0x7C,
+    MESSAGE_TEXT = 0x41,
+    N64_RECEIVED_MESSAGE_COUNT = 0x7C,
     SETTINGS = 0x7D,
       VICTORY_CONDITION = 0x0,
       OPEN_WORLDS = 0x1,
@@ -141,7 +143,7 @@ DKR_HACK = {
       RANDOMIZE_CHARACTER_ON_MAP_CHANGE = 0xD,
       CHANGE_BALLOONS = 0xE,
       BALLOON_TYPE = 0xF,
-    N64_TEXT_QUEUE = 0x8D,
+    N64_PROCESSED_MESSAGE_COUNT = 0x8D,
     N64_KEYS_LOCATION = 0x8E,
     N64_BALLOON_LOCATIONS = 0x90,
       N64_BALLOON_ID = 0x98,
@@ -151,6 +153,7 @@ DKR_HACK = {
     ROM_MAJOR_VERSION = 0x4A0,
     ROM_MINOR_VERSION = 0x4A2,
     ROM_PATCH_VERSION = 0x4A3,
+    MAX_MESSAGE_BYTES = 50
 }
 
 local ITEM_IDS = {
@@ -562,6 +565,7 @@ function main()
                     client.saveram()
                 end
                 receive()
+                display_next_message_if_no_message_displayed()
             elseif frame % 10 == 1 then
                 check_if_in_save_file()
                 if not init_complete then
@@ -987,6 +991,10 @@ function process_block(block)
     if next(block["items"]) then
         process_item((block["items"]))
     end
+
+    if next(block["messages"]) then
+        process_messages(block["messages"])
+    end
 end
 
 function process_item(item_list)
@@ -1004,6 +1012,62 @@ function process_item(item_list)
     if new_item_received then
         client.saveram()
     end
+end
+
+function process_messages(messages)
+    for _, message in pairs(messages) do
+        if message["to_player"] == player then
+            local message_start
+            if message["from_player"] == player then
+                message_start = "You found"
+            else
+                message_start = "Received"
+            end
+
+            local item_id = message["item_id"]
+            local message_article
+            if  item_id == ITEM_IDS.FIRE_MOUNTAIN_KEY or item_id == ITEM_IDS.ICICLE_PYRAMID_KEY or item_id == ITEM_IDS.DARKWATER_BEACH_KEY or item_id == ITEM_IDS.SMOKEY_CASTLE_KEY then
+                message_article = "the"
+            else
+                message_article = "a"
+            end
+
+            local item_name = message["item_name"]
+            add_message_to_queue(string.format("%s %s %s", message_start, message_article, item_name));
+        end
+    end
+end
+
+function add_message_to_queue(message)
+    table.insert(message_queue, message)
+end
+
+function display_next_message_if_no_message_displayed()
+    local n64_processed_message_count = DKR_RAMOBJ:get_ramhack_value(DKR_HACK.N64_PROCESSED_MESSAGE_COUNT)
+    local n64_received_message_count = DKR_RAMOBJ:get_ramhack_value(DKR_HACK.N64_RECEIVED_MESSAGE_COUNT)
+    if n64_processed_message_count == n64_received_message_count then
+        local displayed_message_id
+        for id, message in pairs(message_queue) do
+            display_message(message)
+            displayed_message_id = id
+            break
+        end
+        if displayed_message_id then
+            table.remove(message_queue, displayed_message_id)
+        end
+    end
+end
+
+function display_message(message)
+    local num_bytes_written = 0
+    local message_length = math.min(string.len(message), DKR_HACK.MAX_MESSAGE_BYTES)
+    for i = 0, message_length - 1 do
+        DKR_RAMOBJ:set_ramhack_value(DKR_HACK.MESSAGE_TEXT + i, message:byte(i + 1));
+        num_bytes_written = num_bytes_written + 1
+    end
+    DKR_RAMOBJ:set_ramhack_value(DKR_HACK.MESSAGE_TEXT + num_bytes_written, 0);
+    n64_sent_message_count = n64_sent_message_count + 1
+    DKR_RAMOBJ:set_ramhack_value(DKR_HACK.N64_RECEIVED_MESSAGE_COUNT, n64_sent_message_count);
 end
 
 main()
