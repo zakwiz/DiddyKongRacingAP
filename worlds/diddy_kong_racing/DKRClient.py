@@ -11,7 +11,7 @@ from CommonClient import ClientCommandProcessor, CommonContext, get_base_parser,
 from Utils import async_start, init_logging
 from worlds import network_data_package
 
-from .ROMPatcher import apply_patch
+from .RomPatcher import apply_patch
 
 SYSTEM_MESSAGE_ID = 0
 
