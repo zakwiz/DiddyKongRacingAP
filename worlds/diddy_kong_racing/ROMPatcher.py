@@ -1,9 +1,10 @@
 import asyncio
 import bsdiff4
 import hashlib
-import io
 import pathlib
 import os
+import sys
+import zipfile
 
 from CommonClient import logger
 from Utils import open_filename
@@ -86,6 +87,14 @@ def swap(data: bytes) -> bytes:
 
     return bytes(swapped_data)
 
+def open_file(resource: str):
+    filename = sys.modules[__name__].__file__
+    apworld_extension = ".apworld"
+    if apworld_extension in filename:
+        zip_path = pathlib.Path(filename[:filename.index(apworld_extension) + len(apworld_extension)])
+        with zipfile.ZipFile(zip_path) as zf:
+            zip_file_path = "diddy_kong_racing/" + resource
 
-def open_file(resource: str) -> io.BufferedReader:
-    return open(os.path.join(pathlib.Path(__file__).parent, resource), "rb")
+            return zf.open(zip_file_path, "r")
+    else:
+        return open(os.path.join(pathlib.Path(__file__).parent, resource), "rb")
