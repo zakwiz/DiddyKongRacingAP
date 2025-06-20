@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from BaseClasses import Region
+from BaseClasses import MultiWorld, Region
+
 from .Names import ItemName, LocationName, RegionName
 from .Locations import DiddyKongRacingLocation
 from .Rules import DiddyKongRacingRules
@@ -106,7 +107,7 @@ def create_regions(self) -> None:
     )
 
 
-def create_region(self, multiworld, player: int, active_locations, name: str, locations, victory_item_location) -> Region:
+def create_region(self, multiworld: MultiWorld, player: int, active_locations, name: str, locations: list[str], victory_item_location: str) -> Region:
     region = Region(name, player, multiworld)
     if name == RegionName.MENU:
         region.add_locations({location: None for location in LocationName.DOOR_UNLOCK_LOCATIONS})

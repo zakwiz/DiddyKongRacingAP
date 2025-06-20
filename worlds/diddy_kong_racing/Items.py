@@ -1,6 +1,7 @@
 from typing import NamedTuple
 
 from BaseClasses import Item
+
 from .Names import ItemName
 
 

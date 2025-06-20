@@ -1,9 +1,10 @@
 from typing import TYPE_CHECKING, Any, Callable
 
 from BaseClasses import CollectionState
+from worlds.generic.Rules import set_rule
+
 from .DoorShuffle import get_requirement_for_location, vanilla_door_unlock_info_list
 from .Names import ItemName, LocationName
-from worlds.generic.Rules import set_rule
 
 
 # I don't know what is going on here, but it works.
@@ -18,9 +19,9 @@ else:
 class DiddyKongRacingRules:
     player: int
     world: DiddyKongRacingWorld
-    balloon_rules = {}
-    key_rules = {}
-    amulet_rules = {}
+    balloon_rules: dict[str, Callable[[object], bool]] = {}
+    key_rules: dict[str, Callable[[object], bool]] = {}
+    amulet_rules: dict[str, Callable[[object], bool]] = {}
 
     def __init__(self, world: DiddyKongRacingWorld) -> None:
         self.player = world.player
@@ -360,7 +361,7 @@ class DiddyKongRacingRules:
         elif self.world.options.victory_condition.value == 1:
             victory_location_name = LocationName.WIZPIG_2
         else:
-            raise Exception("Unexpected victory condition")
+            raise Exception("Unexpected victory condition: " + str(self.world.options.victory_condition.value))
 
         event_item_location = self.world.multiworld.get_location(victory_location_name, self.player)
         set_rule(event_item_location, self.event_rules[victory_location_name])

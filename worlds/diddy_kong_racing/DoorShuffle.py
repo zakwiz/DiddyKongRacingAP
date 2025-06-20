@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import math
 
+from BaseClasses import Location
+
 from .Names import ItemName, LocationName
 
 
 class DoorUnlockInfo:
-    def __init__(self, item, location, requirement):
+    def __init__(self, item: str, location: str, requirement: int):
         self.item = item
         self.location = location
         self.requirement = requirement
@@ -88,10 +90,12 @@ def get_door_requirement_progression(self) -> list[int]:
     return door_requirement_progression
 
 
-def get_requirement_for_location(self, location) -> int:
+def get_requirement_for_location(self, location: Location) -> int:
     for i in range(len(vanilla_door_unlock_info_sorted_by_requirement)):
         if vanilla_door_unlock_info_sorted_by_requirement[i].location == location:
             return get_door_requirement_progression(self)[i]
+
+    raise Exception("Invalid location passed to DoorShuffle.get_requirement_for_location: " + location.name)
 
 
 def shuffle_door_unlock_items(self) -> None:
@@ -195,7 +199,7 @@ def place_vanilla_door_unlock_items(self) -> None:
             self.place_locked_item(door_unlock_info.location, self.create_event_item(door_unlock_info.item))
 
 
-def place_door_unlock_items(self, door_unlock_requirements) -> None:
+def place_door_unlock_items(self, door_unlock_requirements: list[int]) -> None:
     filled_door_unlock_locations = set()
 
     for item_door_unlock_info, item_door_unlock_requirement in zip(vanilla_door_unlock_info_list, door_unlock_requirements):

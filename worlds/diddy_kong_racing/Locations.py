@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import NamedTuple
 
 from BaseClasses import Location
+
 from .Names import LocationName
 
 

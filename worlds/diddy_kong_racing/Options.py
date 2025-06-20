@@ -44,6 +44,7 @@ class DoorRequirementProgression(Choice):
     option_vanilla = 0
     option_linear = 1
     option_exponential = 2
+    default = option_vanilla
 
 
 class MaximumDoorRequirement(Range):

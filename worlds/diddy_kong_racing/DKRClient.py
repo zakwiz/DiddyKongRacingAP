@@ -1,20 +1,17 @@
 from __future__ import annotations
 
-from asyncio import create_task, open_connection, run, sleep, StreamReader, StreamWriter, TimeoutError, wait_for
-from bsdiff4 import patch
-from copy import deepcopy
-from hashlib import md5
-from io import BufferedReader
-from json import dumps, loads
-from multiprocessing import freeze_support
-from os import path
-from pathlib import Path
-from sys import argv
+import asyncio
+import copy
+import json
+import multiprocessing
+import sys
 
 # CommonClient import first to trigger ModuleUpdater
 from CommonClient import ClientCommandProcessor, CommonContext, get_base_parser, gui_enabled, logger, server_loop
-from Utils import async_start, init_logging, open_filename
+from Utils import async_start, init_logging
 from worlds import network_data_package
+
+from .ROMPatcher import apply_patch
 
 SYSTEM_MESSAGE_ID = 0
 
@@ -43,8 +40,8 @@ Payload: client -> lua
 """
 
 logger.info(network_data_package["games"].keys())
-dkr_loc_name_to_id = network_data_package["games"]["Diddy Kong Racing"]["location_name_to_id"]
-dkr_itm_name_to_id = network_data_package["games"]["Diddy Kong Racing"]["item_name_to_id"]
+dkr_loc_name_to_id: dict[str, int] = network_data_package["games"]["Diddy Kong Racing"]["location_name_to_id"]
+dkr_itm_name_to_id: dict[str, int] = network_data_package["games"]["Diddy Kong Racing"]["item_name_to_id"]
 
 version_number: str = "v0.6.1"
 apworld_version: str = "DKR" + version_number
@@ -54,84 +51,11 @@ vanilla_swapped_rom_md5: str = "e00c0e6bfb0ce740e3e1c50ba82bc01a"
 patched_rom_md5: str = "f137ca9527a7dbe93f1c30bf205f0e5a"
 
 
-def get_item_value(ap_id):
-    return ap_id
-
-async def apply_patch() -> None:
-    fpath = Path(__file__)
-    archipelago_root = None
-    for i in range(0, 5, +1) :
-        if fpath.parents[i].stem == "Archipelago":
-            archipelago_root = Path(__file__).parents[i]
-            break
-
-    patched_rom_path = None
-    if archipelago_root:
-        patched_rom_path = path.join(archipelago_root, patched_rom_filename)
-
-    if not patched_rom_path or get_file_md5(patched_rom_path) != patched_rom_md5:
-        await sleep(0.01)
-        rom = open_filename("Select your Diddy Kong Racing US 1.0 ROM", (("Rom Files", (".z64", ".n64")), ("All Files", "*"),))
-        if not rom:
-            logger.info("ERROR: No ROM selected. Please restart the Diddy Kong Racing client and select your Diddy Kong Racing US 1.0 ROM.")
-            raise Exception
-
-        if not patched_rom_path:
-           base_dir = path.dirname(rom)
-           patched_rom_path = path.join(base_dir, patched_rom_filename)
-
-        patch_rom(rom, patched_rom_path, "Diddy_Kong_Racing.patch")
-
-    if patched_rom_path:
-        logger.info("Patched Diddy Kong Racing is located in " + patched_rom_path)
-        logger.info("Please open Diddy Kong Racing in Bizhawk and run connector_diddy_kong_racing.lua")
-
-def get_file_md5(patched_rom: str) -> str:
-    if path.isfile(patched_rom):
-        patched_rom_file = read_file(patched_rom)
-        return md5(patched_rom_file).hexdigest()
-    else:
-        return ""
-
-def patch_rom(vanilla_rom_path: str, output_path: str, patch_path: str) -> None:
-    rom = read_file(vanilla_rom_path)
-    rom_md5 = md5(rom).hexdigest()
-    if rom_md5 == vanilla_swapped_rom_md5:
-        rom = swap(rom)
-    elif rom_md5 != vanilla_rom_md5:
-        logger.error("ERROR: Unknown ROM selected. Please restart the Diddy Kong Racing client and select your Diddy Kong Racing US 1.0 ROM.")
-        raise Exception
-
-    patch_file = open_file(patch_path).read()
-    write_file(output_path, patch(rom, patch_file))
-
-def read_file(file_path: str) -> bytes:
-    with open(file_path, "rb") as fi:
-        data = fi.read()
-
-    return data
-
-def write_file(file_path: str, data: bytes) -> None:
-    with open(file_path, "wb") as fi:
-        fi.write(data)
-
-def swap(data: bytes) -> bytes:
-    swapped_data = bytearray(b'\0' * len(data))
-    for i in range(0, len(data), 2):
-        swapped_data[i] = data[i + 1]
-        swapped_data[i + 1] = data[i]
-
-    return bytes(swapped_data)
-
-def open_file(resource: str) -> BufferedReader:
-    return open(path.join(Path(__file__).parent, resource), "rb")
-
-
 class DiddyKongRacingCommandProcessor(ClientCommandProcessor):
-    def __init__(self, ctx): 
+    def __init__(self, ctx: CommonContext) -> None:
         super().__init__(ctx)
 
-    def _cmd_n64(self):
+    def _cmd_n64(self) -> None:
         """Check N64 Connection State"""
         if isinstance(self.ctx, DiddyKongRacingContext):
             logger.info(f"N64 Status: {self.ctx.n64_status}")
@@ -141,10 +65,10 @@ class DiddyKongRacingContext(CommonContext):
     command_processor = DiddyKongRacingCommandProcessor
     items_handling = 0b111  # full
 
-    def __init__(self, server_address, password):
+    def __init__(self, server_address: str | None, password: str | None) -> None:
         super().__init__(server_address, password)
-        self.game = 'Diddy Kong Racing'
-        self.n64_streams: (StreamReader, StreamWriter) = None  # type: ignore
+        self.game = "Diddy Kong Racing"
+        self.n64_streams: (asyncio.StreamReader, asyncio.StreamWriter) = None  # type: ignore
         self.n64_sync_task = None
         self.n64_status = CONNECTION_INITIAL_STATUS
         self.awaiting_rom = False
@@ -157,7 +81,7 @@ class DiddyKongRacingContext(CommonContext):
         self.startup = False
         self.current_map = 0
 
-    async def server_auth(self, password_requested: bool = False):
+    async def server_auth(self, password_requested: bool = False) -> None:
         if password_requested and not self.password:
             await super(DiddyKongRacingContext, self).server_auth(password_requested)
 
@@ -170,10 +94,10 @@ class DiddyKongRacingContext(CommonContext):
 
         return
 
-    def _set_message(self, msg: dict):
+    def set_message(self, msg: dict) -> None:
         self.messages.update({len(self.messages)+1: msg})
 
-    def run_gui(self):
+    def run_gui(self) -> None:
         from kvui import GameManager
 
         class DiddyKongRacingManager(GameManager):
@@ -183,12 +107,12 @@ class DiddyKongRacingContext(CommonContext):
             base_title = "Archipelago Diddy Kong Racing Client"
 
         self.ui = DiddyKongRacingManager(self)
-        self.ui_task = create_task(self.ui.async_run(), name="UI")
-        create_task(apply_patch())
+        self.ui_task = asyncio.create_task(self.ui.async_run(), name="UI")
+        asyncio.create_task(apply_patch(version_number))
 
-    def on_package(self, cmd, args):
-        if cmd == 'Connected':
-            self.slot_data = args.get('slot_data')
+    def on_package(self, cmd: str, args: dict) -> None:
+        if cmd == "Connected":
+            self.slot_data = args.get("slot_data")
             generated_apworld_version = self.slot_data["apworld_version"]
 
             if apworld_version != generated_apworld_version:
@@ -197,7 +121,7 @@ class DiddyKongRacingContext(CommonContext):
                 raise Exception(error_message)
 
             logger.info("Please open Diddy Kong Racing and load connector_diddy_kong_racing.lua")
-            self.n64_sync_task = create_task(n64_sync_task(self), name="N64 Sync")
+            self.n64_sync_task = asyncio.create_task(n64_sync_task(self), name="N64 Sync")
         elif cmd == "ReceivedItems":
             if not self.startup:
                 for item in args["items"]:
@@ -216,11 +140,11 @@ class DiddyKongRacingContext(CommonContext):
                 logger.info("The above items will be sent when Diddy Kong Racing is loaded.")
                 self.startup = True
 
-    def on_print_json(self, args: dict):
+    def on_print_json(self, args: dict) -> None:
         if self.ui:
-            self.ui.print_json(deepcopy(args["data"]))
+            self.ui.print_json(copy.deepcopy(args["data"]))
         else:
-            logger.info(self.jsontotextparser(deepcopy(args["data"])))
+            logger.info(self.jsontotextparser(copy.deepcopy(args["data"])))
 
         if (args.get("type", None) in {"ItemSend"}
                 and (not self.ui or self.slot_concerns_self(args["receiving"]) or self.slot_concerns_self(args["item"].player))):
@@ -232,7 +156,7 @@ class DiddyKongRacingContext(CommonContext):
                     break
             item_id = int(args["data"][2]["text"])
             item_name = self.item_names.lookup_in_slot(item_id)
-            self._set_message(
+            self.set_message(
                 {
                     "from_player": from_player,
                     "to_player": to_player,
@@ -242,30 +166,119 @@ class DiddyKongRacingContext(CommonContext):
             )
 
 
-def get_payload(ctx: DiddyKongRacingContext):
-    if ctx.sync_ready:
-        ctx.startup = True
-        payload = dumps({
-                "items": [get_item_value(item.item) for item in ctx.items_received],
-                "playerNames": [name for (i, name) in ctx.player_names.items() if i != 0],
-                "messages": [message for (i, message) in ctx.messages.items() if i != 0],
-            })
-    else:
-        ctx.startup = False
-        payload = dumps({
-                "items": [],
-                "playerNames": [name for (i, name) in ctx.player_names.items() if i != 0],
-                "messages": [message for (i, message) in ctx.messages.items() if i != 0],
-            })
+def main() -> None:
+    init_logging("Diddy Kong Racing Client")
+    parser = get_base_parser()
+    args = sys.argv[1:]
+    if "Diddy Kong Racing Client" in args:
+        args.remove("Diddy Kong Racing Client")
+    args = parser.parse_args(args)
 
-    if len(ctx.messages) > 0:
-        ctx.messages = {}
+    async def _main():
+        multiprocessing.freeze_support()
 
-    return payload
+        ctx = DiddyKongRacingContext(args.connect, args.password)
+        ctx.server_task = asyncio.create_task(server_loop(ctx), name="Server Loop")
+
+        if gui_enabled:
+            ctx.run_gui()
+        ctx.run_cli()
+
+        await ctx.exit_event.wait()
+        ctx.server_address = None
+
+        await ctx.shutdown()
+
+        if ctx.n64_sync_task:
+            await ctx.n64_sync_task
+
+    import colorama
+
+    colorama.init()
+
+    asyncio.run(_main())
+    colorama.deinit()
 
 
-def get_slot_payload(ctx: DiddyKongRacingContext):
-    payload = dumps({
+async def n64_sync_task(ctx: DiddyKongRacingContext) -> None:
+    logger.info("Starting n64 connector. Use /n64 for status information.")
+    while not ctx.exit_event.is_set():
+        error_status = None
+        if ctx.n64_streams:
+            (reader, writer) = ctx.n64_streams
+            if ctx.sendSlot:
+                msg = get_slot_payload(ctx).encode()
+            else:
+                msg = get_payload(ctx).encode()
+            writer.write(msg)
+            writer.write(b'\n')
+
+            try:
+                await asyncio.wait_for(writer.drain(), timeout=1.5)
+                try:
+                    data = await asyncio.wait_for(reader.readline(), timeout=10)
+                    data_decoded = json.loads(data.decode())
+                    get_slot_data = data_decoded.get("getSlot", 0)
+                    if get_slot_data:
+                        ctx.sendSlot = True
+                    else:
+                        if ctx.game is not None and "locations" in data_decoded:
+                            # Not just a keep alive ping, parse
+                            async_start(parse_payload(data_decoded, ctx))
+
+                        if not ctx.auth:
+                            ctx.auth = data_decoded["playerName"]
+                            if ctx.awaiting_rom:
+                                await ctx.server_auth(False)
+                except asyncio.TimeoutError:
+                    logger.debug("Read Timed Out, Reconnecting")
+                    error_status = CONNECTION_TIMING_OUT_STATUS
+                    writer.close()
+                    ctx.n64_streams = None
+                except ConnectionResetError:
+                    logger.debug("Read failed due to Connection Lost, Reconnecting")
+                    error_status = CONNECTION_RESET_STATUS
+                    writer.close()
+                    ctx.n64_streams = None
+                except Exception as e:
+                    logger.debug(e)
+            except asyncio.TimeoutError:
+                logger.debug("Connection Timed Out, Reconnecting")
+                error_status = CONNECTION_TIMING_OUT_STATUS
+                writer.close()
+                ctx.n64_streams = None
+            except ConnectionResetError:
+                logger.debug("Connection Lost, Reconnecting")
+                error_status = CONNECTION_RESET_STATUS
+                writer.close()
+                ctx.n64_streams = None
+
+            if ctx.n64_status == CONNECTION_TENTATIVE_STATUS:
+                if not error_status:
+                    logger.info("Successfully Connected to N64")
+                    ctx.n64_status = CONNECTION_CONNECTED_STATUS
+                else:
+                    ctx.n64_status = f"Was tentatively connected but error occurred: {error_status}"
+            elif error_status:
+                ctx.n64_status = error_status
+                logger.info("Lost connection to N64 and attempting to reconnect. Use /n64 for status updates")
+        else:
+            try:
+                logger.debug("Attempting to connect to N64")
+                ctx.n64_streams = await asyncio.wait_for(asyncio.open_connection("localhost", 21221), timeout=10)
+                ctx.n64_status = CONNECTION_TENTATIVE_STATUS
+            except asyncio.TimeoutError:
+                logger.debug("Connection Timed Out, Trying Again")
+                ctx.n64_status = CONNECTION_TIMING_OUT_STATUS
+                continue
+            except ConnectionRefusedError:
+                logger.debug("Connection Refused, Trying Again")
+                ctx.n64_status = CONNECTION_REFUSED_STATUS
+                continue
+
+
+def get_slot_payload(ctx: DiddyKongRacingContext) -> str:
+    payload = json.dumps({
             "slot_player": ctx.slot_data["player_name"],
             "slot_seed": ctx.slot_data["seed"],
             "slot_victory_condition": ctx.slot_data["victory_condition"],
@@ -290,13 +303,35 @@ def get_slot_payload(ctx: DiddyKongRacingContext):
     return payload
 
 
-async def parse_payload(payload: dict, ctx: DiddyKongRacingContext):
+def get_payload(ctx: DiddyKongRacingContext) -> str:
+    if ctx.sync_ready:
+        ctx.startup = True
+        payload = json.dumps({
+                "items": [item.item for item in ctx.items_received],
+                "playerNames": [name for (i, name) in ctx.player_names.items() if i != 0],
+                "messages": [message for (i, message) in ctx.messages.items() if i != 0],
+            })
+    else:
+        ctx.startup = False
+        payload = json.dumps({
+                "items": [],
+                "playerNames": [name for (i, name) in ctx.player_names.items() if i != 0],
+                "messages": [message for (i, message) in ctx.messages.items() if i != 0],
+            })
+
+    if len(ctx.messages) > 0:
+        ctx.messages = {}
+
+    return payload
+
+
+async def parse_payload(payload: dict, ctx: DiddyKongRacingContext) -> None:
     # Refuse to do anything if ROM is detected as changed
-    if ctx.auth and payload['playerName'] != ctx.auth:
+    if ctx.auth and payload["playerName"] != ctx.auth:
         logger.warning("ROM change detected. Disconnecting and reconnecting...")
         ctx.finished_game = False
         ctx.location_table = {}
-        ctx.auth = payload['playerName']
+        ctx.auth = payload["playerName"]
         await ctx.send_connect()
         return
 
@@ -354,116 +389,5 @@ async def parse_payload(payload: dict, ctx: DiddyKongRacingContext):
             ctx.sync_ready = False
 
 
-async def n64_sync_task(ctx: DiddyKongRacingContext):
-    logger.info("Starting n64 connector. Use /n64 for status information.")
-    while not ctx.exit_event.is_set():
-        error_status = None
-        if ctx.n64_streams:
-            (reader, writer) = ctx.n64_streams
-            if ctx.sendSlot:
-                msg = get_slot_payload(ctx).encode()
-            else:
-                msg = get_payload(ctx).encode()
-            writer.write(msg)
-            writer.write(b'\n')
-
-            try:
-                await wait_for(writer.drain(), timeout=1.5)
-                try:
-                    data = await wait_for(reader.readline(), timeout=10)
-                    data_decoded = loads(data.decode())
-                    get_slot_data = data_decoded.get('getSlot', 0)
-                    if get_slot_data:
-                        ctx.sendSlot = True
-                    else:
-                        if ctx.game is not None and 'locations' in data_decoded:
-                            # Not just a keep alive ping, parse
-                            async_start(parse_payload(data_decoded, ctx))
-
-                        if not ctx.auth:
-                            ctx.auth = data_decoded['playerName']
-                            if ctx.awaiting_rom:
-                                await ctx.server_auth(False)
-                except TimeoutError:
-                    logger.debug("Read Timed Out, Reconnecting")
-                    error_status = CONNECTION_TIMING_OUT_STATUS
-                    writer.close()
-                    ctx.n64_streams = None
-                except ConnectionResetError:
-                    logger.debug("Read failed due to Connection Lost, Reconnecting")
-                    error_status = CONNECTION_RESET_STATUS
-                    writer.close()
-                    ctx.n64_streams = None
-                except Exception as e:
-                    logger.debug(e)
-            except TimeoutError:
-                logger.debug("Connection Timed Out, Reconnecting")
-                error_status = CONNECTION_TIMING_OUT_STATUS
-                writer.close()
-                ctx.n64_streams = None
-            except ConnectionResetError:
-                logger.debug("Connection Lost, Reconnecting")
-                error_status = CONNECTION_RESET_STATUS
-                writer.close()
-                ctx.n64_streams = None
-
-            if ctx.n64_status == CONNECTION_TENTATIVE_STATUS:
-                if not error_status:
-                    logger.info("Successfully Connected to N64")
-                    ctx.n64_status = CONNECTION_CONNECTED_STATUS
-                else:
-                    ctx.n64_status = f"Was tentatively connected but error occurred: {error_status}"
-            elif error_status:
-                ctx.n64_status = error_status
-                logger.info("Lost connection to N64 and attempting to reconnect. Use /n64 for status updates")
-        else:
-            try:
-                logger.debug("Attempting to connect to N64")
-                ctx.n64_streams = await wait_for(open_connection("localhost", 21221), timeout=10)
-                ctx.n64_status = CONNECTION_TENTATIVE_STATUS
-            except TimeoutError:
-                logger.debug("Connection Timed Out, Trying Again")
-                ctx.n64_status = CONNECTION_TIMING_OUT_STATUS
-                continue
-            except ConnectionRefusedError:
-                logger.debug("Connection Refused, Trying Again")
-                ctx.n64_status = CONNECTION_REFUSED_STATUS
-                continue
-
-
-def main():
-    init_logging("Diddy Kong Racing Client")
-    parser = get_base_parser()
-    args = argv[1:]
-    if "Diddy Kong Racing Client" in args:
-        args.remove("Diddy Kong Racing Client")
-    args = parser.parse_args(args)
-
-    async def _main():
-        freeze_support()
-
-        ctx = DiddyKongRacingContext(args.connect, args.password)
-        ctx.server_task = create_task(server_loop(ctx), name="Server Loop")
-
-        if gui_enabled:
-            ctx.run_gui()
-        ctx.run_cli()
-
-        await ctx.exit_event.wait()
-        ctx.server_address = None
-
-        await ctx.shutdown()
-
-        if ctx.n64_sync_task:
-            await ctx.n64_sync_task
-
-    import colorama
-
-    colorama.init()
-
-    run(_main())
-    colorama.deinit()
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from BaseClasses import Item, ItemClassification, Tutorial
+from typing import Any
+
+from BaseClasses import Item, ItemClassification, MultiWorld, Tutorial
 from worlds.AutoWorld import WebWorld, World
 from worlds.LauncherComponents import Component, components, launch_subprocess, Type
 
@@ -51,7 +53,7 @@ class DiddyKongRacingWorld(World):
     options_dataclass = DiddyKongRacingOptions
     options: DiddyKongRacingOptions
 
-    def __init__(self, world, player) -> None:
+    def __init__(self, world: MultiWorld, player: int) -> None:
         self.slot_data = []
         super(DiddyKongRacingWorld, self).__init__(world, player)
 
@@ -142,12 +144,12 @@ class DiddyKongRacingWorld(World):
     def place_locked_item(self, location_name: str, item: Item) -> None:
         self.multiworld.get_location(location_name, self.player).place_locked_item(item)
 
-    def fill_slot_data(self) -> dict[str, any]:
+    def fill_slot_data(self) -> dict[str, Any]:
         door_unlock_requirements = []
         if self.options.shuffle_door_requirements or self.options.door_requirement_progression != 0:
             door_unlock_requirements = get_door_unlock_requirements(self)
 
-        dkr_options: dict[str, any] = {
+        dkr_options: dict[str, Any] = {
             "apworld_version": self.apworld_version,
             "player_name": self.multiworld.player_name[self.player],
             "seed": self.random.randint(12212, 69996),
@@ -172,5 +174,5 @@ class DiddyKongRacingWorld(World):
         return dkr_options
 
     # For Universal Tracker, doesn't get called in standard generation
-    def interpret_slot_data(self, slot_data: dict[str, any]) -> None:
+    def interpret_slot_data(self, slot_data: dict[str, Any]) -> None:
         place_door_unlock_items(self, slot_data["door_unlock_requirements"])
