@@ -13,7 +13,7 @@ end
 socket = require("socket")
 json = require("json")
 
-APWORLD_VERSION = "DKRv0.6.1"
+APWORLD_VERSION = "DKRv1.0.0"
 REQUIRED_BIZHAWK_VERSION = "2.10"
 
 STATE_OK = "Ok"
