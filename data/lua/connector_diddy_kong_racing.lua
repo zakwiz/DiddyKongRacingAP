@@ -13,8 +13,9 @@ end
 socket = require("socket")
 json = require("json")
 
-APWORLD_VERSION = "DKRv1.0.0"
 REQUIRED_BIZHAWK_VERSION = "2.10"
+PATCHED_ROM_HASH = "9F7973245892CEC7F6E011D1B081ACA9BCF351F8"
+APWORLD_VERSION = "DKRv1.0.0"
 
 STATE_OK = "Ok"
 STATE_TENTATIVELY_CONNECTED = "Tentatively Connected"
@@ -508,7 +509,7 @@ function main()
         return
     end
 
-    if gameinfo.getromhash() ~= "960691CF5E2A81C0D8293C9904F02FC90C603CB1" then
+    if gameinfo.getromhash() ~= PATCHED_ROM_HASH then
         print("Incorrect ROM hash, make sure you're running the correct patched Diddy Kong Racing ROM")
         return
     end
