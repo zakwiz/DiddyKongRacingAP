@@ -26,7 +26,8 @@ frame = 0
 slot_loaded = false
 in_save_file = false
 in_save_file_counter = 0
-init_complete = false
+rom_hack_init_complete = false
+save_file_init_complete = false
 current_map = 0
 paused = false
 
@@ -546,12 +547,13 @@ function handle_frame()
     else
         if frame % 10 == 1 then
             check_if_in_save_file()
-            if not init_complete then
-                initialize_ram_values()
+            if slot_loaded and in_save_file and not save_file_init_complete then
+                set_races_as_visited()
+                save_file_init_complete = true
             end
 
-            if init_complete then
-                update_totals_if_paused()
+            if save_file_init_complete and rom_hack_init_complete then
+                update_in_game_totals()
                 dpad_stats()
             end
         end
@@ -599,58 +601,6 @@ function check_if_in_save_file()
             end
         end
     end
-end
-
-function initialize_ram_values()
-    if slot_loaded and in_save_file then
-        RomHack:set_value(RomHack.SETTINGS + RomHack.VICTORY_CONDITION, victory_condition)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.OPEN_WORLDS, open_worlds and 1 or 0)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.SHUFFLE_WIZPIG_AMULET, shuffle_wizpig_amulet and 1 or 0)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.SHUFFLE_TT_AMULET, shuffle_tt_amulet and 1 or 0)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.DOOR_PROGRESSION, door_requirement_progression)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.MAX_DOOR_REQUIREMENT, maximum_door_requirement)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.SHUFFLE_DOOR_REQUIREMENTS, shuffle_door_requirements and 1 or 0)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.BOSS_1_REGIONAL_BALLOONS, boss_1_regional_balloons)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.BOSS_2_REGIONAL_BALLOONS, boss_2_regional_balloons)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.WIZPIG_1_AMULET_PIECES, wizpig_1_amulet_pieces)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.WIZPIG_2_AMULET_PIECES, wizpig_2_amulet_pieces)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.WIZPIG_2_BALLOONS, wizpig_2_balloons)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.SKIP_TROPHY_RACES, skip_trophy_races and 1 or 0)
-        RomHack:set_value(RomHack.SETTINGS + RomHack.RANDOMIZE_CHARACTER_ON_MAP_CHANGE, randomize_character_on_map_change and 1 or 0)
-
-        if door_unlock_requirements then
-            for i, requirement in pairs(door_unlock_requirements) do
-                local romhack_door_offset
-                if i < 5 then
-                    -- Convert from 1-indexed to 0-indexed
-                    romhack_door_offset = i - 1
-                else
-                    -- Skip Future Fun Land door cost
-                    romhack_door_offset = i
-                end
-                RomHack:set_value(RomHack.DOOR_COSTS + romhack_door_offset, requirement)
-            end
-        end
-
-        if (power_up_balloon_type ~= 0) then
-            RomHack:set_value(RomHack.SETTINGS + RomHack.CHANGE_BALLOONS, 1)
-
-            local setting_to_value = {
-                [1] = 5,
-                [2] = 6,
-                [3] = 0,
-                [4] = 1,
-                [5] = 2,
-                [6] = 3,
-                [7] = 4
-            }
-            RomHack:set_value(RomHack.SETTINGS + RomHack.POWER_UP_BALLOON_TYPE, setting_to_value[power_up_balloon_type])
-        end
-
-        set_races_as_visited()
-        update_in_game_totals()
-		init_complete = true
-	end
 end
 
 function set_races_as_visited()
@@ -823,12 +773,61 @@ function process_slot(slot)
     end
 
     if seed then
+        pass_settings_to_romhack()
         slot_loaded = true
     else
         return false
     end
 
     return true
+end
+
+function pass_settings_to_romhack()
+    RomHack:set_value(RomHack.SETTINGS + RomHack.VICTORY_CONDITION, victory_condition)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.OPEN_WORLDS, open_worlds and 1 or 0)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.SHUFFLE_WIZPIG_AMULET, shuffle_wizpig_amulet and 1 or 0)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.SHUFFLE_TT_AMULET, shuffle_tt_amulet and 1 or 0)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.DOOR_PROGRESSION, door_requirement_progression)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.MAX_DOOR_REQUIREMENT, maximum_door_requirement)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.SHUFFLE_DOOR_REQUIREMENTS, shuffle_door_requirements and 1 or 0)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.BOSS_1_REGIONAL_BALLOONS, boss_1_regional_balloons)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.BOSS_2_REGIONAL_BALLOONS, boss_2_regional_balloons)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.WIZPIG_1_AMULET_PIECES, wizpig_1_amulet_pieces)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.WIZPIG_2_AMULET_PIECES, wizpig_2_amulet_pieces)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.WIZPIG_2_BALLOONS, wizpig_2_balloons)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.SKIP_TROPHY_RACES, skip_trophy_races and 1 or 0)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.RANDOMIZE_CHARACTER_ON_MAP_CHANGE, randomize_character_on_map_change and 1 or 0)
+
+    if door_unlock_requirements then
+        for i, requirement in pairs(door_unlock_requirements) do
+            local romhack_door_offset
+            if i < 5 then
+                -- Convert from 1-indexed to 0-indexed
+                romhack_door_offset = i - 1
+            else
+                -- Skip Future Fun Land door cost
+                romhack_door_offset = i
+            end
+            RomHack:set_value(RomHack.DOOR_COSTS + romhack_door_offset, requirement)
+        end
+    end
+
+    if (power_up_balloon_type ~= 0) then
+        RomHack:set_value(RomHack.SETTINGS + RomHack.CHANGE_BALLOONS, 1)
+
+        local setting_to_value = {
+            [1] = 5,
+            [2] = 6,
+            [3] = 0,
+            [4] = 1,
+            [5] = 2,
+            [6] = 3,
+            [7] = 4
+        }
+        RomHack:set_value(RomHack.SETTINGS + RomHack.POWER_UP_BALLOON_TYPE, setting_to_value[power_up_balloon_type])
+    end
+
+    rom_hack_init_complete = true
 end
 
 function send_request_to_client()
