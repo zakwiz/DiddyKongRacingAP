@@ -496,6 +496,25 @@ ITEM_TO_LOCATION_ADDRESSES = {
     }
 }
 
+local BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS = {
+    [ITEM_IDS.DINO_DOMAIN_BALLOON] = {
+        [BYTE] = Ram.ADDRESS.BOSS_COMPLETION_2,
+        [BIT] = 1
+    },
+    [ITEM_IDS.SNOWFLAKE_MOUNTAIN_BALLOON] = {
+        [BYTE] = Ram.ADDRESS.BOSS_COMPLETION_2,
+        [BIT] = 3
+    },
+    [ITEM_IDS.SHERBET_ISLAND_BALLOON] = {
+        [BYTE] = Ram.ADDRESS.BOSS_COMPLETION_2,
+        [BIT] = 2
+    },
+    [ITEM_IDS.DRAGON_FOREST_BALLOON] = {
+        [BYTE] = Ram.ADDRESS.BOSS_COMPLETION_2,
+        [BIT] = 4
+    }
+}
+
 VICTORY_CONDITION_TO_ADDRESS = {
     [0] = { -- Wizpig 1
         [BYTE] = Ram.ADDRESS.BOSS_COMPLETION_2,
@@ -921,19 +940,23 @@ function process_client_response(response)
 end
 
 function process_items(items)
-    local new_item_received = false
+    local new_item_received_item_ids = {}
     for ap_id, item_id in pairs(items) do
         local ap_id_string = tostring(ap_id)
         if not receive_map[ap_id_string] then
             receive_map[ap_id_string] = tostring(item_id)
-            new_item_received = true
+            new_item_received_item_ids[item_id] = true
 
             local index = ITEM_ID_TO_ROMHACK_ITEM_INDEX[item_id]
-            local item_count = RomHack:increment_counter(RomHack.RECEIVED_ITEM_COUNTS + index)
+            RomHack:increment_counter(RomHack.RECEIVED_ITEM_COUNTS + index)
         end
     end
 
-    if new_item_received then
+    if next(new_item_received_item_ids) ~= nil then
+        for item_id, _ in pairs(new_item_received_item_ids) do
+            set_boss_1_completion_if_boss_2_unlocked(item_id)
+        end
+
         client.saveram()
     end
 end
@@ -1011,6 +1034,18 @@ function update_in_game_totals()
     for item_id, romhack_item_index in pairs(ITEM_ID_TO_ROMHACK_ITEM_INDEX) do
         local received_item_count = get_received_item_count(item_id)
         RomHack:set_value(RomHack.RECEIVED_ITEM_COUNTS + romhack_item_index, received_item_count)
+    end
+
+    set_boss_1_completion_if_boss_2_unlocked(ITEM_IDS.DINO_DOMAIN_BALLOON)
+    set_boss_1_completion_if_boss_2_unlocked(ITEM_IDS.SNOWFLAKE_MOUNTAIN_BALLOON)
+    set_boss_1_completion_if_boss_2_unlocked(ITEM_IDS.SHERBET_ISLAND_BALLOON)
+    set_boss_1_completion_if_boss_2_unlocked(ITEM_IDS.DRAGON_FOREST_BALLOON)
+end
+
+function set_boss_1_completion_if_boss_2_unlocked(item_id)
+    if BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[item_id] and get_received_item_count(item_id) >= boss_2_regional_balloons then
+        local boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[item_id]
+        Ram:set_flag(boss_1_completion_address[BYTE], boss_1_completion_address[BIT])
     end
 end
 
