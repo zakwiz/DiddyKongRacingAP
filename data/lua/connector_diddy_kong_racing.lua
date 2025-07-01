@@ -1009,13 +1009,15 @@ function display_next_message_if_no_message_displayed()
 end
 
 function display_message(message)
-    local num_bytes_written = 0
-    local message_length = math.min(string.len(message), RomHack.MAX_MESSAGE_BYTES)
-    for i = 0, message_length - 1 do
-        RomHack:set_value(RomHack.MESSAGE_TEXT + i, message:byte(i + 1));
-        num_bytes_written = num_bytes_written + 1
+    local message_length = string.len(message)
+    for i = 0, RomHack.MAX_MESSAGE_BYTES - 2 do
+        if i < message_length then
+            RomHack:set_value(RomHack.MESSAGE_TEXT + i, message:byte(i + 1));
+        else
+            RomHack:set_value(RomHack.MESSAGE_TEXT + i, 0);
+        end
     end
-    RomHack:set_value(RomHack.MESSAGE_TEXT + num_bytes_written, 0);
+    RomHack:set_value(RomHack.MESSAGE_TEXT + RomHack.MAX_MESSAGE_BYTES - 1, 0);
     n64_sent_message_count = n64_sent_message_count + 1
     RomHack:set_value(RomHack.N64_RECEIVED_MESSAGE_COUNT, n64_sent_message_count);
 end
