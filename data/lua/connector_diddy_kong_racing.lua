@@ -27,7 +27,6 @@ frame = 0
 slot_loaded = false
 in_save_file = false
 in_save_file_counter = 0
-rom_hack_init_complete = false
 save_file_init_complete = false
 current_map = 0
 paused = false
@@ -544,8 +543,6 @@ function main()
 
     server, error = socket.bind("localhost", 21221)
 
-    RomHack:set_base_address()
-
     event.onframeend(handle_frame)
 end
 
@@ -573,22 +570,26 @@ function handle_frame()
     else
         if frame % 10 == 1 then
             check_if_in_save_file()
-            if slot_loaded and in_save_file and not save_file_init_complete then
-                set_races_as_visited()
-                save_file_init_complete = true
-            end
-
-            if save_file_init_complete and rom_hack_init_complete then
+            if slot_loaded and in_save_file then
                 update_in_game_totals()
                 dpad_stats()
+
+                if not save_file_init_complete then
+                    set_races_as_visited()
+                    save_file_init_complete = true
+                end
             end
         end
 
         if frame % 60 == 1 then
             local new_map = Ram:get_value(Ram.ADDRESS.CURRENT_MAP)
-            if new_map == 0x17 then
+            if new_map == 0x17 then -- Title screen
                 Ram:set_flag(Ram.ADDRESS.CHARACTER_UNLOCKS, 0) -- Unlock T.T.
                 Ram:set_flag(Ram.ADDRESS.CHARACTER_UNLOCKS, 1) -- Unlock Drumstick
+
+                if slot_loaded then -- For when game is reset while connected
+                    pass_settings_to_romhack()
+                end
             end
 
             if new_map ~= current_map then
@@ -597,7 +598,10 @@ function handle_frame()
             end
 
             communicate_with_client()
-            display_next_message_if_no_message_displayed()
+
+            if slot_loaded then
+                display_next_message_if_no_message_displayed()
+            end
         end
     end
 end
@@ -809,6 +813,8 @@ function process_slot(slot)
 end
 
 function pass_settings_to_romhack()
+    RomHack:set_base_address()
+
     RomHack:set_value(RomHack.SETTINGS + RomHack.VICTORY_CONDITION, victory_condition)
     RomHack:set_value(RomHack.SETTINGS + RomHack.OPEN_WORLDS, open_worlds and 1 or 0)
     RomHack:set_value(RomHack.SETTINGS + RomHack.SHUFFLE_WIZPIG_AMULET, shuffle_wizpig_amulet and 1 or 0)
@@ -852,8 +858,6 @@ function pass_settings_to_romhack()
         }
         RomHack:set_value(RomHack.SETTINGS + RomHack.POWER_UP_BALLOON_TYPE, setting_to_value[power_up_balloon_type])
     end
-
-    rom_hack_init_complete = true
 end
 
 function send_request_to_client()
