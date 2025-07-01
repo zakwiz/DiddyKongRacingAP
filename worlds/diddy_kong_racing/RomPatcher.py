@@ -12,7 +12,7 @@ from Utils import open_filename
 patched_rom_filename_template: str = "Diddy-Kong-Racing-AP-{}.z64"
 vanilla_rom_md5: str = "4f0e07f0eeac7e5d7ce3a75461888d03"
 vanilla_swapped_rom_md5: str = "e00c0e6bfb0ce740e3e1c50ba82bc01a"
-patched_rom_md5: str = "5ab005270ee8c4debbc0241b139075d0"
+patched_rom_md5: str = "73c889b2f0045eedf792b24536f92e93"
 
 async def apply_patch(version_number: str) -> None:
     fpath = pathlib.Path(__file__)
