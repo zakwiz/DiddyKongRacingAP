@@ -26,12 +26,12 @@ Double-click `diddy_kong_racing.apworld` to install it into the `custom_worlds` 
 
 ## How To Install - Client Side
 - Double-click `diddy_kong_racing.apworld` to install it into the `custom_worlds` folder of your Archipelago install.
-- Copy `data/lua/connector_diddy_kong_racing.lua` into the `lua` folder in your existing Archipelago folder (`data/lua`).
+- Move `connector_diddy_kong_racing.lua` into the `data/lua` folder of your Archipelago install.
 - Run the Archipelago launcher and select Diddy Kong Racing Client.
 - The client will prompt you to select your ROM so it can be patched.
-- Connect the Archipelago Client with the server.
-- Open Bizhawk (version 2.10 only) and open your patched Diddy Kong Racing ROM (it should be in the top-level folder of your Archipelago install).
-- Run the `connector_diddy_kong_racing.lua` script (drag and drop it into Bizhawk).
+- Once the patching is complete, connect the Diddy Kong Racing client to the server by clicking the Connect button.
+- Open Bizhawk (version 2.10 required) and open your patched Diddy Kong Racing ROM (it should be in the top-level folder of your Archipelago install).
+- Run the `connector_diddy_kong_racing.lua` script from the `data/lua` folder of your Archipelago install (drag and drop it into Bizhawk).
 
 ## Generating Your World
 Familiarize yourself on how Archipelago works. Here is a guide to learn how to generate your world: https://archipelago.gg/tutorial/Archipelago/setup/en#generating-a-game
