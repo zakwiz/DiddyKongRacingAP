@@ -624,16 +624,14 @@ function check_if_in_save_file()
             init_complete = false
             in_save_file_counter = 0
         end
-    else
-        if in_save_file_1 and in_save_file_2 and in_save_file_3 then
-            if in_save_file_counter == 6 then
-                print("Entered save file")
-                print("Press D-PAD UP to see collected items")
-                print("----------------")
-                in_save_file = true
-            else
-                in_save_file_counter = in_save_file_counter + 1
-            end
+    elseif in_save_file_1 and in_save_file_2 and in_save_file_3 then
+        if in_save_file_counter == 6 then
+            print("Entered save file")
+            print("Press D-PAD UP to see collected items")
+            print("----------------")
+            in_save_file = true
+        else
+            in_save_file_counter = in_save_file_counter + 1
         end
     end
 end
