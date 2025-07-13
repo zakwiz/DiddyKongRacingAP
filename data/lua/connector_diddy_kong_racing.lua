@@ -14,6 +14,7 @@ socket = require("socket")
 json = require("json")
 
 REQUIRED_BIZHAWK_VERSION = "2.10"
+VANILLA_ROM_HASH = "0CB115D8716DBBC2922FDA38E533B9FE63BB9670"
 PATCHED_ROM_HASH = "6B5FA79C66432D00DBFD285B5A4578102F51E384"
 APWORLD_VERSION = "DKRv1.0.0"
 
@@ -533,7 +534,11 @@ function main()
         return
     end
 
-    if gameinfo.getromhash() ~= PATCHED_ROM_HASH then
+    local rom_hash = gameinfo.getromhash()
+    if rom_hash == VANILLA_ROM_HASH then
+        print("Incorrect ROM hash, you're using the vanilla Diddy Kong Racing ROM, use the patched ROM instead (see client for location)")
+        return
+    elseif rom_hash ~= PATCHED_ROM_HASH then
         print("Incorrect ROM hash, make sure you're running the correct patched Diddy Kong Racing ROM")
         return
     end
