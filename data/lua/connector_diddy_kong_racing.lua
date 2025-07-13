@@ -532,17 +532,17 @@ function main()
 
     local bizhawk_version = client.getversion()
     if bizhawk_version ~= REQUIRED_BIZHAWK_VERSION then
-        print("Incorrect BizHawk version: " .. bizhawk_version)
+        print("ERROR: Incorrect BizHawk version: " .. bizhawk_version)
         print("Please use version " .. REQUIRED_BIZHAWK_VERSION .. " instead")
         return
     end
 
     local rom_hash = gameinfo.getromhash()
     if rom_hash == VANILLA_ROM_HASH then
-        print("Incorrect ROM hash, you're using the vanilla Diddy Kong Racing ROM, use the patched ROM instead (see client for location)")
+        print("ERROR: Incorrect ROM hash, you're using the vanilla Diddy Kong Racing ROM, use the patched ROM instead (see client for location)")
         return
     elseif rom_hash ~= PATCHED_ROM_HASH then
-        print("Incorrect ROM hash, make sure you're running the correct patched Diddy Kong Racing ROM")
+        print("ERROR: Incorrect ROM hash, make sure you're running the correct patched Diddy Kong Racing ROM")
         return
     end
 
