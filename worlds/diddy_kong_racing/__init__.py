@@ -87,7 +87,7 @@ class DiddyKongRacingWorld(World):
                     self.multiworld.itempool.append(item)
 
     def item_pre_filled(self, item_name: str) -> bool:
-        if self.options.victory_condition.value == 0 and item_name == ItemName.FUTURE_FUN_LAND_BALLOON:
+        if self.is_ffl_unused() and item_name == ItemName.FUTURE_FUN_LAND_BALLOON:
             return True
 
         if not self.options.shuffle_wizpig_amulet and item_name == ItemName.WIZPIG_AMULET_PIECE:
@@ -111,7 +111,7 @@ class DiddyKongRacingWorld(World):
         return rules.set_rules()
 
     def pre_fill(self) -> None:
-        if self.options.victory_condition.value == 0:
+        if self.is_ffl_unused():
             future_fun_land_balloon = self.create_item(ItemName.FUTURE_FUN_LAND_BALLOON)
             self.place_locked_item(LocationName.SPACEDUST_ALLEY_1, future_fun_land_balloon)
             self.place_locked_item(LocationName.SPACEDUST_ALLEY_2, future_fun_land_balloon)
@@ -176,3 +176,6 @@ class DiddyKongRacingWorld(World):
     # For Universal Tracker, doesn't get called in standard generation
     def interpret_slot_data(self, slot_data: dict[str, Any]) -> None:
         place_door_unlock_items(self, slot_data["door_unlock_requirements"])
+
+    def is_ffl_unused(self) -> bool:
+        return self.options.victory_condition.value == 0 and not self.options.open_worlds
