@@ -527,6 +527,9 @@ VICTORY_CONDITION_TO_ADDRESS = {
 }
 
 function main()
+    print("Diddy Kong Racing Archipelago Version: " .. APWORLD_VERSION)
+    print("----------------")
+
     local bizhawk_version = client.getversion()
     if bizhawk_version ~= REQUIRED_BIZHAWK_VERSION then
         print("Incorrect BizHawk version: " .. bizhawk_version)
@@ -542,9 +545,6 @@ function main()
         print("Incorrect ROM hash, make sure you're running the correct patched Diddy Kong Racing ROM")
         return
     end
-
-    print("Diddy Kong Racing Archipelago Version: " .. APWORLD_VERSION)
-    print("----------------")
 
     server, error = socket.bind("localhost", 21221)
 
