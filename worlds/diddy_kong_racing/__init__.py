@@ -9,7 +9,7 @@ from worlds.LauncherComponents import Component, components, launch_subprocess, 
 from .DoorShuffle import get_door_unlock_requirements, place_door_unlock_items, place_vanilla_door_unlock_items, shuffle_door_unlock_items
 from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE
 from .Locations import ALL_LOCATION_TABLE
-from .Regions import connect_regions, create_regions
+from .Regions import connect_regions, connect_track_regions, create_regions
 from .Options import DiddyKongRacingOptions
 from .Rules import DiddyKongRacingRules
 from .Names import ItemName, LocationName, RegionName
@@ -175,6 +175,7 @@ class DiddyKongRacingWorld(World):
     # For Universal Tracker, doesn't get called in standard generation
     def interpret_slot_data(self, slot_data: dict[str, Any]) -> None:
         place_door_unlock_items(self, slot_data["door_unlock_requirements"])
+        connect_track_regions(self, slot_data["entrance_order"])
 
     def is_ffl_unused(self) -> bool:
         return self.options.victory_condition.value == 0 and not self.options.open_worlds

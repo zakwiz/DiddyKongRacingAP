@@ -276,13 +276,21 @@ def connect_regions(self) -> None:
         }
     )
 
-    if self.options.shuffle_race_entrances:
-        self.random.shuffle(self.entrance_order)
-
-        while not is_entrance_order_valid(self.entrance_order):
+    # Skip for Universal Tracker, this will be done from slot_data
+    if not hasattr(multiworld, "generation_is_fake"):
+        if self.options.shuffle_race_entrances:
             self.random.shuffle(self.entrance_order)
 
-    for door_num, entrance_num in enumerate(self.entrance_order):
+            while not is_entrance_order_valid(self.entrance_order):
+                self.random.shuffle(self.entrance_order)
+
+        connect_track_regions(self, self.entrance_order)
+
+
+def connect_track_regions(self, entrance_order: list[int]) -> None:
+    rules = DiddyKongRacingRules(self)
+
+    for door_num, entrance_num in enumerate(entrance_order):
         if door_num < 4:
             start_region = RegionName.DINO_DOMAIN
         elif door_num < 8:
@@ -294,8 +302,8 @@ def connect_regions(self) -> None:
         else:
             start_region = RegionName.FUTURE_FUN_LAND
 
-        multiworld.get_region(start_region, player).connect(
-            multiworld.get_region(VANILLA_ENTRANCE_ORDER[entrance_num], player),
+        self.multiworld.get_region(start_region, self.player).connect(
+            self.multiworld.get_region(VANILLA_ENTRANCE_ORDER[entrance_num], self.player),
             rule = rules.door_rules[door_num][0]
         )
 
