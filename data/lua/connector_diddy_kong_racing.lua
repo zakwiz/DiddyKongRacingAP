@@ -533,6 +533,52 @@ VICTORY_CONDITION_TO_ADDRESS = {
     }
 }
 
+VANILLA_TRACK_ADDRESS_ORDER = {
+    Ram.ADDRESS.ANCIENT_LAKE,
+    Ram.ADDRESS.FOSSIL_CANYON,
+    Ram.ADDRESS.JUNGLE_FALLS,
+    Ram.ADDRESS.HOT_TOP_VOLCANO,
+    Ram.ADDRESS.EVERFROST_PEAK,
+    Ram.ADDRESS.WALRUS_COVE,
+    Ram.ADDRESS.SNOWBALL_VALLEY,
+    Ram.ADDRESS.FROSTY_VILLAGE,
+    Ram.ADDRESS.WHALE_BAY,
+    Ram.ADDRESS.CRESCENT_ISLAND,
+    Ram.ADDRESS.PIRATE_LAGOON,
+    Ram.ADDRESS.TREASURE_CAVES,
+    Ram.ADDRESS.WINDMILL_PLAINS,
+    Ram.ADDRESS.GREENWOOD_VILLAGE,
+    Ram.ADDRESS.BOULDER_CANYON,
+    Ram.ADDRESS.HAUNTED_WOODS,
+    Ram.ADDRESS.SPACEDUST_ALLEY,
+    Ram.ADDRESS.DARKMOON_CAVERNS,
+    Ram.ADDRESS.SPACEPORT_ALPHA,
+    Ram.ADDRESS.STAR_CITY
+}
+
+VANILLA_TRACK_ADDRESS_TO_INDEX = {
+    [Ram.ADDRESS.ANCIENT_LAKE] = 1,
+    [Ram.ADDRESS.FOSSIL_CANYON] = 2,
+    [Ram.ADDRESS.JUNGLE_FALLS] = 3,
+    [Ram.ADDRESS.HOT_TOP_VOLCANO] = 4,
+    [Ram.ADDRESS.EVERFROST_PEAK] = 5,
+    [Ram.ADDRESS.WALRUS_COVE] = 6,
+    [Ram.ADDRESS.SNOWBALL_VALLEY] = 7,
+    [Ram.ADDRESS.FROSTY_VILLAGE] = 8,
+    [Ram.ADDRESS.WHALE_BAY] = 9,
+    [Ram.ADDRESS.CRESCENT_ISLAND] = 10,
+    [Ram.ADDRESS.PIRATE_LAGOON] = 11,
+    [Ram.ADDRESS.TREASURE_CAVES] = 12,
+    [Ram.ADDRESS.WINDMILL_PLAINS] = 13,
+    [Ram.ADDRESS.GREENWOOD_VILLAGE] = 14,
+    [Ram.ADDRESS.BOULDER_CANYON] = 15,
+    [Ram.ADDRESS.HAUNTED_WOODS] = 16,
+    [Ram.ADDRESS.SPACEDUST_ALLEY] = 17,
+    [Ram.ADDRESS.DARKMOON_CAVERNS] = 18,
+    [Ram.ADDRESS.SPACEPORT_ALPHA] = 19,
+    [Ram.ADDRESS.STAR_CITY] = 20
+}
+
 function main()
     print("Diddy Kong Racing Archipelago Version: " .. APWORLD_VERSION)
     print("----------------")
@@ -776,6 +822,21 @@ function process_slot(slot)
         shuffle_door_requirements = false
     end
 
+    if slot["slot_shuffle_race_entrances"] and slot["slot_shuffle_race_entrances"] == "true" then
+        shuffle_race_entrances = true
+    else
+        shuffle_race_entrances = false
+    end
+
+    if slot["slot_entrance_order"] and next(slot["slot_entrance_order"]) then
+        entrance_order = slot["slot_entrance_order"]
+        track_address_order = {}
+        for i, entrance_num in pairs(entrance_order) do
+            -- Convert from 0-indexed to 1-indexed
+            track_address_order[entrance_num + 1] = VANILLA_TRACK_ADDRESS_ORDER[i]
+        end
+    end
+
     if slot["slot_boss_1_regional_balloons"] and slot["slot_boss_1_regional_balloons"] ~= "" then
         boss_1_regional_balloons = slot["slot_boss_1_regional_balloons"]
     end
@@ -839,6 +900,13 @@ function pass_settings_to_romhack()
     RomHack:set_value(RomHack.SETTINGS + RomHack.WIZPIG_2_BALLOONS, wizpig_2_balloons)
     RomHack:set_value(RomHack.SETTINGS + RomHack.SKIP_TROPHY_RACES, skip_trophy_races and 1 or 0)
     RomHack:set_value(RomHack.SETTINGS + RomHack.RANDOMIZE_CHARACTER_ON_MAP_CHANGE, randomize_character_on_map_change and 1 or 0)
+    RomHack:set_value(RomHack.SETTINGS + RomHack.SHUFFLE_TRACKS, shuffle_race_entrances and 1 or 0)
+
+    -- Enable shuffle vehicles and send all vehicles to make the player vehicle correct when shuffling tracks
+    RomHack:set_value(RomHack.SETTINGS + RomHack.SHUFFLE_VEHICLES, 1)
+    RomHack:set_value(RomHack.RECEIVED_ITEM_COUNTS + 12, 1) -- Kart
+    RomHack:set_value(RomHack.RECEIVED_ITEM_COUNTS + 13, 1) -- Hovercraft
+    RomHack:set_value(RomHack.RECEIVED_ITEM_COUNTS + 14, 1) -- Plane
 
     if door_unlock_requirements then
         for i, requirement in pairs(door_unlock_requirements) do
@@ -852,6 +920,11 @@ function pass_settings_to_romhack()
             end
             RomHack:set_value(RomHack.DOOR_COSTS + romhack_door_offset, requirement)
         end
+    end
+
+    for i, entrance_num in pairs(entrance_order) do
+        -- Add 1 to entrance_num because 0 means vanilla
+        RomHack:set_value(RomHack.TRACKS + (i * 3), entrance_num + 1)
     end
 
     if (power_up_balloon_type ~= 0) then
@@ -912,6 +985,14 @@ function get_local_checks()
             or item == DARKWATER_BEACH_KEY
             or item == SMOKEY_CASTLE_KEY then
                 is_collected = RomHack:check_flag(address[BYTE], address[BIT])
+            elseif item == DINO_DOMAIN_BALLOON
+                or item == SNOWFLAKE_MOUNTAIN_BALLOON
+                or item == SHERBET_ISLAND_BALLOON
+                or item == DRAGON_FOREST_BALLOON
+                or item == FUTURE_FUN_LAND_BALLOON then
+                local vanilla_track_index = VANILLA_TRACK_ADDRESS_TO_INDEX[address[BYTE]]
+                local track_address = track_address_order[vanilla_track_index]
+                is_collected = Ram:check_flag(track_address, address[BIT])
             else
                 is_collected = Ram:check_flag(address[BYTE], address[BIT])
             end

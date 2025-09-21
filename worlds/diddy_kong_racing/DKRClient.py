@@ -289,6 +289,8 @@ def get_slot_payload(ctx: DiddyKongRacingContext) -> str:
             "slot_maximum_door_requirement": ctx.slot_data["maximum_door_requirement"],
             "slot_shuffle_door_requirements": ctx.slot_data["shuffle_door_requirements"],
             "slot_door_unlock_requirements": ctx.slot_data["door_unlock_requirements"],
+            "slot_shuffle_race_entrances": ctx.slot_data["shuffle_race_entrances"],
+            "slot_entrance_order": ctx.slot_data["entrance_order"],
             "slot_boss_1_regional_balloons": ctx.slot_data["boss_1_regional_balloons"],
             "slot_boss_2_regional_balloons": ctx.slot_data["boss_2_regional_balloons"],
             "slot_wizpig_1_amulet_pieces": ctx.slot_data["wizpig_1_amulet_pieces"],

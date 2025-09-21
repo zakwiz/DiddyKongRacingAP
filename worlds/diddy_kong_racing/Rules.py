@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any, Callable
 
-from BaseClasses import CollectionState
+from BaseClasses import CollectionState, Location
 from worlds.generic.Rules import set_rule
 
 from .DoorShuffle import get_requirement_for_location, vanilla_door_unlock_info_list
@@ -15,84 +15,131 @@ else:
 
 # Shamelessly Stolen from KH2 :D
 
+VANILLA_RACE_2_LOCATIONS: list[list[str]] = [
+    [LocationName.ANCIENT_LAKE_2, LocationName.FIRE_MOUNTAIN_KEY],
+    [LocationName.FOSSIL_CANYON_2],
+    [LocationName.JUNGLE_FALLS_2],
+    [LocationName.HOT_TOP_VOLCANO_2],
+    [LocationName.EVERFROST_PEAK_2],
+    [LocationName.WALRUS_COVE_2],
+    [LocationName.SNOWBALL_VALLEY_2, LocationName.ICICLE_PYRAMID_KEY],
+    [LocationName.FROSTY_VILLAGE_2],
+    [LocationName.WHALE_BAY_2],
+    [LocationName.CRESCENT_ISLAND_2, LocationName.DARKWATER_BEACH_KEY],
+    [LocationName.PIRATE_LAGOON_2],
+    [LocationName.TREASURE_CAVES_2],
+    [LocationName.WINDMILL_PLAINS_2],
+    [LocationName.GREENWOOD_VILLAGE_2],
+    [LocationName.BOULDER_CANYON_2, LocationName.SMOKEY_CASTLE_KEY],
+    [LocationName.HAUNTED_WOODS_2],
+    [LocationName.SPACEDUST_ALLEY_2],
+    [LocationName.DARKMOON_CAVERNS_2],
+    [LocationName.SPACEPORT_ALPHA_2],
+    [LocationName.STAR_CITY_2]
+]
+
 
 class DiddyKongRacingRules:
     player: int
     world: DiddyKongRacingWorld
     balloon_rules: dict[str, Callable[[object], bool]] = {}
-    key_rules: dict[str, Callable[[object], bool]] = {}
-    amulet_rules: dict[str, Callable[[object], bool]] = {}
+    door_rules: list[tuple[Callable[[object], bool], ...]] = []
 
     def __init__(self, world: DiddyKongRacingWorld) -> None:
         self.player = world.player
         self.world = world
-
         self.balloon_rules = {
-            # Timber's Island
             LocationName.BRIDGE_BALLOON: lambda state: self.balloon_bridge(state),
             LocationName.WATERFALL_BALLOON: lambda state: self.balloon_waterfall(state),
             LocationName.RIVER_BALLOON: lambda state: self.balloon_river(state),
             LocationName.OCEAN_BALLOON: lambda state: self.balloon_ocean(state),
             LocationName.TAJ_CAR_RACE: lambda state: self.balloon_taj_car(state),
             LocationName.TAJ_HOVERCRAFT_RACE: lambda state: self.balloon_taj_hovercraft(state),
-            LocationName.TAJ_PLANE_RACE: lambda state: self.balloon_taj_plane(state),
-            # Dino Domain
-            LocationName.ANCIENT_LAKE_1: lambda state: self.balloon_ancient_lake_1(state),
-            LocationName.ANCIENT_LAKE_2: lambda state: self.balloon_ancient_lake_2(state),
-            LocationName.FOSSIL_CANYON_1: lambda state: self.balloon_fossil_canyon_1(state),
-            LocationName.FOSSIL_CANYON_2: lambda state: self.balloon_fossil_canyon_2(state),
-            LocationName.JUNGLE_FALLS_1: lambda state: self.balloon_jungle_falls_1(state),
-            LocationName.JUNGLE_FALLS_2: lambda state: self.balloon_jungle_falls_2(state),
-            LocationName.HOT_TOP_VOLCANO_1: lambda state: self.balloon_hot_top_volcano_1(state),
-            LocationName.HOT_TOP_VOLCANO_2: lambda state: self.balloon_hot_top_volcano_2(state),
-            # Snowflake Mountain
-            LocationName.EVERFROST_PEAK_1: lambda state: self.balloon_everfrost_peak_1(state),
-            LocationName.EVERFROST_PEAK_2: lambda state: self.balloon_everfrost_peak_2(state),
-            LocationName.WALRUS_COVE_1: lambda state: self.balloon_walrus_cove_1(state),
-            LocationName.WALRUS_COVE_2: lambda state: self.balloon_walrus_cove_2(state),
-            LocationName.SNOWBALL_VALLEY_1: lambda state: self.balloon_snowball_valley_1(state),
-            LocationName.SNOWBALL_VALLEY_2: lambda state: self.balloon_snowball_valley_2(state),
-            LocationName.FROSTY_VILLAGE_1: lambda state: self.balloon_frosty_village_1(state),
-            LocationName.FROSTY_VILLAGE_2: lambda state: self.balloon_frosty_village_2(state),
-            # Sherbet Island
-            LocationName.WHALE_BAY_1: lambda state: self.balloon_whale_bay_1(state),
-            LocationName.WHALE_BAY_2: lambda state: self.balloon_whale_bay_2(state),
-            LocationName.CRESCENT_ISLAND_1: lambda state: self.balloon_crescent_island_1(state),
-            LocationName.CRESCENT_ISLAND_2: lambda state: self.balloon_crescent_island_2(state),
-            LocationName.PIRATE_LAGOON_1: lambda state: self.balloon_pirate_lagoon_1(state),
-            LocationName.PIRATE_LAGOON_2: lambda state: self.balloon_pirate_lagoon_2(state),
-            LocationName.TREASURE_CAVES_1: lambda state: self.balloon_treasure_caves_1(state),
-            LocationName.TREASURE_CAVES_2: lambda state: self.balloon_treasure_caves_2(state),
-            # Dragon Forest
-            LocationName.WINDMILL_PLAINS_1: lambda state: self.balloon_windmill_plains_1(state),
-            LocationName.WINDMILL_PLAINS_2: lambda state: self.balloon_windmill_plains_2(state),
-            LocationName.GREENWOOD_VILLAGE_1: lambda state: self.balloon_greenwood_village_1(state),
-            LocationName.GREENWOOD_VILLAGE_2: lambda state: self.balloon_greenwood_village_2(state),
-            LocationName.BOULDER_CANYON_1: lambda state: self.balloon_boulder_canyon_1(state),
-            LocationName.BOULDER_CANYON_2: lambda state: self.balloon_boulder_canyon_2(state),
-            LocationName.HAUNTED_WOODS_1: lambda state: self.balloon_haunted_woods_1(state),
-            LocationName.HAUNTED_WOODS_2: lambda state: self.balloon_haunted_woods_2(state),
-            # Future Fun Land
-            LocationName.SPACEDUST_ALLEY_1: lambda state: self.balloon_spacedust_alley_1(state),
-            LocationName.SPACEDUST_ALLEY_2: lambda state: self.balloon_spacedust_alley_2(state),
-            LocationName.DARKMOON_CAVERNS_1: lambda state: self.balloon_darkmoon_caverns_1(state),
-            LocationName.DARKMOON_CAVERNS_2: lambda state: self.balloon_darkmoon_caverns_2(state),
-            LocationName.SPACEPORT_ALPHA_1: lambda state: self.balloon_spaceport_alpha_1(state),
-            LocationName.SPACEPORT_ALPHA_2: lambda state: self.balloon_spaceport_alpha_2(state),
-            LocationName.STAR_CITY_1: lambda state: self.balloon_star_city_1(state),
-            LocationName.STAR_CITY_2: lambda state: self.balloon_star_city_2(state)
+            LocationName.TAJ_PLANE_RACE: lambda state: self.balloon_taj_plane(state)
         }
-        self.key_rules = {
-            LocationName.FIRE_MOUNTAIN_KEY: lambda state: self.balloon_ancient_lake_2(state),
-            LocationName.ICICLE_PYRAMID_KEY: lambda state: self.balloon_snowball_valley_2(state),
-            LocationName.DARKWATER_BEACH_KEY: lambda state: self.balloon_crescent_island_2(state),
-            LocationName.SMOKEY_CASTLE_KEY: lambda state: self.balloon_boulder_canyon_2(state)
-        }
+        self.door_rules = [
+            (
+                lambda state: self.ancient_lake_door_1(state),
+                lambda state: self.ancient_lake_door_2(state)
+            ),
+            (
+                lambda state: self.fossil_canyon_door_1(state),
+                lambda state: self.fossil_canyon_door_2(state)
+            ),
+            (
+                lambda state: self.jungle_falls_door_1(state),
+                lambda state: self.jungle_falls_door_2(state)
+            ),
+            (
+                lambda state: self.hot_top_volcano_door_1(state),
+                lambda state: self.hot_top_volcano_door_2(state)
+            ),
+            (
+                lambda state: self.everfrost_peak_door_1(state),
+                lambda state: self.everfrost_peak_door_2(state)
+            ),
+            (
+                lambda state: self.walrus_cove_door_1(state),
+                lambda state: self.walrus_cove_door_2(state)
+            ),
+            (
+                lambda state: self.snowball_valley_door_1(state),
+                lambda state: self.snowball_valley_door_2(state)
+            ),
+            (
+                lambda state: self.frosty_village_door_1(state),
+                lambda state: self.frosty_village_door_2(state)
+            ),
+            (
+                lambda state: self.whale_bay_door_1(state),
+                lambda state: self.whale_bay_door_2(state)
+            ),
+            (
+                lambda state: self.crescent_island_door_1(state),
+                lambda state: self.crescent_island_door_2(state)
+            ),
+            (
+                lambda state: self.pirate_lagoon_door_1(state),
+                lambda state: self.pirate_lagoon_door_2(state)
+            ),
+            (
+                lambda state: self.treasure_caves_door_1(state),
+                lambda state: self.treasure_caves_door_2(state)
+            ),
+            (
+                lambda state: self.windmill_plains_door_1(state),
+                lambda state: self.windmill_plains_door_2(state)
+            ),
+            (
+                lambda state: self.greenwood_village_door_1(state),
+                lambda state: self.greenwood_village_door_2(state)
+            ),
+            (
+                lambda state: self.boulder_canyon_door_1(state),
+                lambda state: self.boulder_canyon_door_2(state)
+            ),
+            (
+                lambda state: self.haunted_woods_door_1(state),
+                lambda state: self.haunted_woods_door_2(state)
+            ),
+            (
+                lambda state: self.spacedust_alley_door_1(state),
+                lambda state: self.spacedust_alley_door_2(state)
+            ),
+            (
+                lambda state: self.darkmoon_caverns_door_1(state),
+                lambda state: self.darkmoon_caverns_door_2(state)
+            ),
+            (
+                lambda state: self.spaceport_alpha_door_1(state),
+                lambda state: self.spaceport_alpha_door_2(state)
+            ),
+            (
+                lambda state: self.star_city_door_1(state),
+                lambda state: self.star_city_door_2(state)
+            ),
+        ]
         self.amulet_rules = {
-            LocationName.FIRE_MOUNTAIN: lambda state: self.fire_mountain(state),
-            LocationName.ICICLE_PYRAMID: lambda state: self.icicle_pyramid(state),
-            LocationName.DARKWATER_BEACH: lambda state: self.darkwater_beach(state),
-            LocationName.SMOKEY_CASTLE: lambda state: self.smokey_castle(state),
             LocationName.TRICKY_2: lambda state: self.tricky_2(state),
             LocationName.BLUEY_2: lambda state: self.bluey_2(state),
             LocationName.BUBBLER_2: lambda state: self.bubbler_2(state),
@@ -101,10 +148,6 @@ class DiddyKongRacingRules:
         self.door_unlock_rules = {}
         for door_unlock_info in vanilla_door_unlock_info_list:
             self.door_unlock_rules[door_unlock_info.location] = self.door_unlock(self.world, door_unlock_info.location)
-        self.event_rules = {
-            LocationName.WIZPIG_1: lambda state: self.wizpig_1(state),
-            LocationName.WIZPIG_2: lambda state: self.wizpig_2(state)
-        }
 
     def can_access_dino_domain(self, state: CollectionState) -> bool:
         return self.world.options.open_worlds or state.has(ItemName.DINO_DOMAIN_UNLOCK, self.player)
@@ -147,141 +190,141 @@ class DiddyKongRacingRules:
     def balloon_taj_plane(self, state: CollectionState) -> bool:
         return self.has_total_balloon_count(state, 18)
 
-    def balloon_ancient_lake_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.ANCIENT_LAKE_1_UNLOCK, self.player)
+    def ancient_lake_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.ANCIENT_LAKE_DOOR_1_UNLOCK, self.player)
 
-    def balloon_ancient_lake_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.ANCIENT_LAKE_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.DINO_DOMAIN_BALLOON))
+    def ancient_lake_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.ANCIENT_LAKE_DOOR_2_UNLOCK, self.player)
+                and self.tricky_1(state))
 
-    def balloon_fossil_canyon_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.FOSSIL_CANYON_1_UNLOCK, self.player)
+    def fossil_canyon_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.FOSSIL_CANYON_DOOR_1_UNLOCK, self.player)
 
-    def balloon_fossil_canyon_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.FOSSIL_CANYON_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.DINO_DOMAIN_BALLOON))
+    def fossil_canyon_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.FOSSIL_CANYON_DOOR_2_UNLOCK, self.player)
+                and self.tricky_1(state))
 
-    def balloon_jungle_falls_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.JUNGLE_FALLS_1_UNLOCK, self.player)
+    def jungle_falls_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.JUNGLE_FALLS_DOOR_1_UNLOCK, self.player)
 
-    def balloon_jungle_falls_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.JUNGLE_FALLS_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.DINO_DOMAIN_BALLOON))
+    def jungle_falls_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.JUNGLE_FALLS_DOOR_2_UNLOCK, self.player)
+                and self.tricky_1(state))
 
-    def balloon_hot_top_volcano_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.HOT_TOP_VOLCANO_1_UNLOCK, self.player)
+    def hot_top_volcano_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.HOT_TOP_VOLCANO_DOOR_1_UNLOCK, self.player)
 
-    def balloon_hot_top_volcano_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.HOT_TOP_VOLCANO_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.DINO_DOMAIN_BALLOON))
+    def hot_top_volcano_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.HOT_TOP_VOLCANO_DOOR_2_UNLOCK, self.player)
+                and self.tricky_1(state))
 
-    def balloon_everfrost_peak_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.EVERFROST_PEAK_1_UNLOCK, self.player)
+    def everfrost_peak_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.EVERFROST_PEAK_DOOR_1_UNLOCK, self.player)
 
-    def balloon_everfrost_peak_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.EVERFROST_PEAK_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.SNOWFLAKE_MOUNTAIN_BALLOON))
+    def everfrost_peak_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.EVERFROST_PEAK_DOOR_2_UNLOCK, self.player)
+                and self.bluey_1(state))
 
-    def balloon_walrus_cove_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.WALRUS_COVE_1_UNLOCK, self.player)
+    def walrus_cove_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.WALRUS_COVE_DOOR_1_UNLOCK, self.player)
 
-    def balloon_walrus_cove_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.WALRUS_COVE_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.SNOWFLAKE_MOUNTAIN_BALLOON))
+    def walrus_cove_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.WALRUS_COVE_DOOR_2_UNLOCK, self.player)
+                and self.bluey_1(state))
 
-    def balloon_snowball_valley_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.SNOWBALL_VALLEY_1_UNLOCK, self.player)
+    def snowball_valley_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.SNOWBALL_VALLEY_DOOR_1_UNLOCK, self.player)
 
-    def balloon_snowball_valley_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.SNOWBALL_VALLEY_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.SNOWFLAKE_MOUNTAIN_BALLOON))
+    def snowball_valley_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.SNOWBALL_VALLEY_DOOR_2_UNLOCK, self.player)
+                and self.bluey_1(state))
 
-    def balloon_frosty_village_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.FROSTY_VILLAGE_1_UNLOCK, self.player)
+    def frosty_village_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.FROSTY_VILLAGE_DOOR_1_UNLOCK, self.player)
 
-    def balloon_frosty_village_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.FROSTY_VILLAGE_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.SNOWFLAKE_MOUNTAIN_BALLOON))
+    def frosty_village_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.FROSTY_VILLAGE_DOOR_2_UNLOCK, self.player)
+                and self.bluey_1(state))
 
-    def balloon_whale_bay_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.WHALE_BAY_1_UNLOCK, self.player)
+    def whale_bay_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.WHALE_BAY_1_DOOR_UNLOCK, self.player)
 
-    def balloon_whale_bay_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.WHALE_BAY_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.SHERBET_ISLAND_BALLOON))
+    def whale_bay_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.WHALE_BAY_2_DOOR_UNLOCK, self.player)
+                and self.bubbler_1(state))
 
-    def balloon_crescent_island_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.CRESCENT_ISLAND_1_UNLOCK, self.player)
+    def crescent_island_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.CRESCENT_ISLAND_DOOR_1_UNLOCK, self.player)
 
-    def balloon_crescent_island_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.CRESCENT_ISLAND_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.SHERBET_ISLAND_BALLOON))
+    def crescent_island_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.CRESCENT_ISLAND_DOOR_2_UNLOCK, self.player)
+                and self.bubbler_1(state))
 
-    def balloon_pirate_lagoon_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.PIRATE_LAGOON_1_UNLOCK, self.player)
+    def pirate_lagoon_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.PIRATE_LAGOON_DOOR_1_UNLOCK, self.player)
 
-    def balloon_pirate_lagoon_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.PIRATE_LAGOON_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.SHERBET_ISLAND_BALLOON))
+    def pirate_lagoon_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.PIRATE_LAGOON_DOOR_2_UNLOCK, self.player)
+                and self.bubbler_1(state))
 
-    def balloon_treasure_caves_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.TREASURE_CAVES_1_UNLOCK, self.player)
+    def treasure_caves_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.TREASURE_CAVES_DOOR_1_UNLOCK, self.player)
 
-    def balloon_treasure_caves_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.TREASURE_CAVES_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.SHERBET_ISLAND_BALLOON))
+    def treasure_caves_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.TREASURE_CAVES_DOOR_2_UNLOCK, self.player)
+                and self.bubbler_1(state))
 
-    def balloon_windmill_plains_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.WINDMILL_PLAINS_1_UNLOCK, self.player)
+    def windmill_plains_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.WINDMILL_PLAINS_DOOR_1_UNLOCK, self.player)
 
-    def balloon_windmill_plains_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.WINDMILL_PLAINS_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.DRAGON_FOREST_BALLOON))
+    def windmill_plains_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.WINDMILL_PLAINS_DOOR_2_UNLOCK, self.player)
+                and self.smokey_1(state))
 
-    def balloon_greenwood_village_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.GREENWOOD_VILLAGE_1_UNLOCK, self.player)
+    def greenwood_village_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.GREENWOOD_VILLAGE_DOOR_1_UNLOCK, self.player)
 
-    def balloon_greenwood_village_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.GREENWOOD_VILLAGE_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.DRAGON_FOREST_BALLOON))
+    def greenwood_village_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.GREENWOOD_VILLAGE_DOOR_2_UNLOCK, self.player)
+                and self.smokey_1(state))
 
-    def balloon_boulder_canyon_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.BOULDER_CANYON_1_UNLOCK, self.player)
+    def boulder_canyon_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.BOULDER_CANYON_DOOR_1_UNLOCK, self.player)
 
-    def balloon_boulder_canyon_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.BOULDER_CANYON_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.DRAGON_FOREST_BALLOON))
+    def boulder_canyon_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.BOULDER_CANYON_DOOR_2_UNLOCK, self.player)
+                and self.smokey_1(state))
 
-    def balloon_haunted_woods_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.HAUNTED_WOODS_1_UNLOCK, self.player)
+    def haunted_woods_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.HAUNTED_WOODS_DOOR_1_UNLOCK, self.player)
 
-    def balloon_haunted_woods_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.HAUNTED_WOODS_2_UNLOCK, self.player)
-                and self.can_access_boss_1(state, ItemName.DRAGON_FOREST_BALLOON))
+    def haunted_woods_door_2(self, state: CollectionState) -> bool:
+        return (state.has(ItemName.HAUNTED_WOODS_DOOR_2_UNLOCK, self.player)
+                and self.smokey_1(state))
 
-    def balloon_spacedust_alley_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.SPACEDUST_ALLEY_1_UNLOCK, self.player)
+    def spacedust_alley_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.SPACEDUST_ALLEY_DOOR_1_UNLOCK, self.player)
 
-    def balloon_spacedust_alley_2(self, state: CollectionState) -> bool:
-        return state.has(ItemName.SPACEDUST_ALLEY_2_UNLOCK, self.player)
+    def spacedust_alley_door_2(self, state: CollectionState) -> bool:
+        return state.has(ItemName.SPACEDUST_ALLEY_DOOR_2_UNLOCK, self.player)
 
-    def balloon_darkmoon_caverns_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.DARKMOON_CAVERNS_1_UNLOCK, self.player)
+    def darkmoon_caverns_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.DARKMOON_CAVERNS_DOOR_1_UNLOCK, self.player)
 
-    def balloon_darkmoon_caverns_2(self, state: CollectionState) -> bool:
-        return state.has(ItemName.DARKMOON_CAVERNS_2_UNLOCK, self.player)
+    def darkmoon_caverns_door_2(self, state: CollectionState) -> bool:
+        return state.has(ItemName.DARKMOON_CAVERNS_DOOR_2_UNLOCK, self.player)
 
-    def balloon_spaceport_alpha_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.SPACEPORT_ALPHA_1_UNLOCK, self.player)
+    def spaceport_alpha_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.SPACEPORT_ALPHA_DOOR_1_UNLOCK, self.player)
 
-    def balloon_spaceport_alpha_2(self, state: CollectionState) -> bool:
-        return state.has(ItemName.SPACEPORT_ALPHA_2_UNLOCK, self.player)
+    def spaceport_alpha_door_2(self, state: CollectionState) -> bool:
+        return state.has(ItemName.SPACEPORT_ALPHA_DOOR_2_UNLOCK, self.player)
 
-    def balloon_star_city_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.STAR_CITY_1_UNLOCK, self.player)
+    def star_city_door_1(self, state: CollectionState) -> bool:
+        return state.has(ItemName.STAR_CITY_DOOR_1_UNLOCK, self.player)
 
-    def balloon_star_city_2(self, state: CollectionState) -> bool:
-        return state.has(ItemName.STAR_CITY_2_UNLOCK, self.player)
+    def star_city_door_2(self, state: CollectionState) -> bool:
+        return state.has(ItemName.STAR_CITY_DOOR_2_UNLOCK, self.player)
 
     def fire_mountain(self, state: CollectionState) -> bool:
         return state.has(ItemName.FIRE_MOUNTAIN_KEY, self.player)
@@ -295,14 +338,26 @@ class DiddyKongRacingRules:
     def smokey_castle(self, state: CollectionState) -> bool:
         return state.has(ItemName.SMOKEY_CASTLE_KEY, self.player)
 
+    def tricky_1(self, state: CollectionState) -> bool:
+        return self.can_access_boss_1(state, ItemName.DINO_DOMAIN_BALLOON)
+
     def tricky_2(self, state: CollectionState) -> bool:
         return self.can_access_boss_2(state, ItemName.DINO_DOMAIN_BALLOON)
+
+    def bluey_1(self, state: CollectionState) -> bool:
+        return self.can_access_boss_1(state, ItemName.SNOWFLAKE_MOUNTAIN_BALLOON)
 
     def bluey_2(self, state: CollectionState) -> bool:
         return self.can_access_boss_2(state, ItemName.SNOWFLAKE_MOUNTAIN_BALLOON)
 
+    def bubbler_1(self, state: CollectionState) -> bool:
+        return self.can_access_boss_1(state, ItemName.SHERBET_ISLAND_BALLOON)
+
     def bubbler_2(self, state: CollectionState) -> bool:
         return self.can_access_boss_2(state, ItemName.SHERBET_ISLAND_BALLOON)
+
+    def smokey_1(self, state: CollectionState) -> bool:
+        return self.can_access_boss_1(state, ItemName.DRAGON_FOREST_BALLOON)
 
     def smokey_2(self, state: CollectionState) -> bool:
         return self.can_access_boss_2(state, ItemName.DRAGON_FOREST_BALLOON)
@@ -340,30 +395,24 @@ class DiddyKongRacingRules:
 
     def set_rules(self) -> None:
         for location, rules in self.balloon_rules.items():
-            balloon_location = self.world.multiworld.get_location(location, self.player)
+            balloon_location = self.get_location(location)
             set_rule(balloon_location, rules)
 
-        for location, rules in self.key_rules.items():
-            key_location = self.world.multiworld.get_location(location, self.player)
-            set_rule(key_location, rules)
+        for door_num, entrance_num in enumerate(self.world.entrance_order):
+            door_2_unlock_rule = self.door_rules[door_num][1]
+            for location in VANILLA_RACE_2_LOCATIONS[entrance_num]:
+                set_rule(self.get_location(location), door_2_unlock_rule)
 
         for location, rules in self.amulet_rules.items():
-            amulet_location = self.world.multiworld.get_location(location, self.player)
+            amulet_location = self.get_location(location)
             set_rule(amulet_location, rules)
 
         for location, rules in self.door_unlock_rules.items():
             if not (self.world.options.open_worlds and location in LocationName.WORLD_UNLOCK_LOCATIONS):
-                door_unlock_location = self.world.multiworld.get_location(location, self.player)
+                door_unlock_location = self.get_location(location)
                 set_rule(door_unlock_location, rules)
 
-        if self.world.options.victory_condition.value == 0:
-            victory_location_name = LocationName.WIZPIG_1
-        elif self.world.options.victory_condition.value == 1:
-            victory_location_name = LocationName.WIZPIG_2
-        else:
-            raise Exception("Unexpected victory condition: " + str(self.world.options.victory_condition.value))
-
-        event_item_location = self.world.multiworld.get_location(victory_location_name, self.player)
-        set_rule(event_item_location, self.event_rules[victory_location_name])
-
         self.world.multiworld.completion_condition[self.player] = lambda state: state.has(ItemName.VICTORY, self.player)
+
+    def get_location(self, location_name) -> Location:
+        return self.world.multiworld.get_location(location_name, self.player)

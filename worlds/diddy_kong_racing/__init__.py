@@ -12,7 +12,7 @@ from .Locations import ALL_LOCATION_TABLE
 from .Regions import connect_regions, create_regions
 from .Options import DiddyKongRacingOptions
 from .Rules import DiddyKongRacingRules
-from .Names import ItemName, LocationName
+from .Names import ItemName, LocationName, RegionName
 
 
 def run_client():
@@ -55,6 +55,7 @@ class DiddyKongRacingWorld(World):
 
     def __init__(self, world: MultiWorld, player: int) -> None:
         self.slot_data = []
+        self.entrance_order: list[int] = list(range(20))
         super(DiddyKongRacingWorld, self).__init__(world, player)
 
     def create_item(self, item_name: str) -> Item:
@@ -113,14 +114,10 @@ class DiddyKongRacingWorld(World):
     def pre_fill(self) -> None:
         if self.is_ffl_unused():
             future_fun_land_balloon = self.create_item(ItemName.FUTURE_FUN_LAND_BALLOON)
-            self.place_locked_item(LocationName.SPACEDUST_ALLEY_1, future_fun_land_balloon)
-            self.place_locked_item(LocationName.SPACEDUST_ALLEY_2, future_fun_land_balloon)
-            self.place_locked_item(LocationName.DARKMOON_CAVERNS_1, future_fun_land_balloon)
-            self.place_locked_item(LocationName.DARKMOON_CAVERNS_2, future_fun_land_balloon)
-            self.place_locked_item(LocationName.SPACEPORT_ALPHA_1, future_fun_land_balloon)
-            self.place_locked_item(LocationName.SPACEPORT_ALPHA_2, future_fun_land_balloon)
-            self.place_locked_item(LocationName.STAR_CITY_1, future_fun_land_balloon)
-            self.place_locked_item(LocationName.STAR_CITY_2, future_fun_land_balloon)
+            for ffl_exit in self.multiworld.get_region(RegionName.FUTURE_FUN_LAND, self.player).exits:
+                if ffl_exit.connected_region.name != RegionName.TIMBERS_ISLAND:
+                    for ffl_location in ffl_exit.connected_region.locations:
+                        self.place_locked_item(ffl_location.name, future_fun_land_balloon)
 
         if not self.options.shuffle_wizpig_amulet:
             wizpig_amulet_item = self.create_item(ItemName.WIZPIG_AMULET_PIECE)
@@ -161,6 +158,8 @@ class DiddyKongRacingWorld(World):
             "maximum_door_requirement": self.options.maximum_door_requirement.value,
             "shuffle_door_requirements": "true" if self.options.shuffle_door_requirements.value else "false",
             "door_unlock_requirements": door_unlock_requirements,
+            "shuffle_race_entrances": "true" if self.options.shuffle_race_entrances else "false",
+            "entrance_order": self.entrance_order,
             "boss_1_regional_balloons": self.options.boss_1_regional_balloons.value,
             "boss_2_regional_balloons": self.options.boss_2_regional_balloons.value,
             "wizpig_1_amulet_pieces": self.options.wizpig_1_amulet_pieces.value,

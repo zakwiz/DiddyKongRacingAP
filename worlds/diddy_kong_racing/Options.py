@@ -60,6 +60,11 @@ class ShuffleDoorRequirements(Toggle):
     display_name = "Shuffle door requirements"
 
 
+class ShuffleRaceEntrances(Toggle):
+    """The race entrances behind all numbered doors will be shuffled"""
+    display_name = "Shuffle race entrances"
+
+
 class Boss1RegionalBalloons(Range):
     """The number of regional balloons required to unlock boss race 1 for that region"""
     display_name = "Boss 1 regional balloons"
@@ -131,6 +136,7 @@ class DiddyKongRacingOptions(PerGameCommonOptions):
     door_requirement_progression: DoorRequirementProgression
     maximum_door_requirement: MaximumDoorRequirement
     shuffle_door_requirements: ShuffleDoorRequirements
+    shuffle_race_entrances: ShuffleRaceEntrances
     boss_1_regional_balloons: Boss1RegionalBalloons
     boss_2_regional_balloons: Boss2RegionalBalloons
     wizpig_1_amulet_pieces: Wizpig1AmuletPieces
