@@ -13,7 +13,8 @@ end
 socket = require("socket")
 json = require("json")
 
-REQUIRED_BIZHAWK_VERSION = "2.10"
+REQUIRED_BIZHAWK_MAJOR_VERSION = 2
+MINIMUM_BIZHAWK_MINOR_VERSION = 10
 VANILLA_ROM_HASH = "0CB115D8716DBBC2922FDA38E533B9FE63BB9670"
 PATCHED_ROM_HASH = "B0BAA790510DE55EA666AC86F3E523E1E4326CCF"
 APWORLD_VERSION = "DKRv1.1.0"
@@ -583,10 +584,19 @@ function main()
     print("Diddy Kong Racing Archipelago Version: " .. APWORLD_VERSION)
     print("----------------")
 
-    local bizhawk_version = client.getversion()
-    if bizhawk_version ~= REQUIRED_BIZHAWK_VERSION then
-        print("ERROR: Incorrect BizHawk version: " .. bizhawk_version)
-        print("Please use version " .. REQUIRED_BIZHAWK_VERSION .. " instead")
+    local bizhawk_version = "2.10.1"
+    local first_dot_index, _ = string.find(bizhawk_version, ".", 1, true)
+    local second_dot_index, _ = string.find(bizhawk_version, ".", first_dot_index + 1, true)
+    local bizhawk_major_version = tonumber(string.sub(bizhawk_version, 0, first_dot_index))
+    local bizhawk_minor_version
+    if second_dot_index then
+        bizhawk_minor_version = tonumber(string.sub(bizhawk_version, first_dot_index + 1, second_dot_index))
+    else
+        bizhawk_minor_version = tonumber(string.sub(bizhawk_version, first_dot_index + 1))
+    end
+    if bizhawk_major_version ~= REQUIRED_BIZHAWK_MAJOR_VERSION or bizhawk_minor_version < MINIMUM_BIZHAWK_MINOR_VERSION then
+        print("ERROR: Your Bizhawk version (" .. bizhawk_version .. ") is not supported")
+        print("The minimum supported version is " .. REQUIRED_BIZHAWK_MAJOR_VERSION .. "." .. MINIMUM_BIZHAWK_MINOR_VERSION)
         return
     end
 
