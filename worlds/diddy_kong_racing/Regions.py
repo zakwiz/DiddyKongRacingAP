@@ -141,7 +141,7 @@ DIDDY_KONG_RACING_REGIONS: dict[str, list[str]] = {
     ]
 }
 
-VANILLA_ENTRANCE_ORDER: list[str] = [
+VANILLA_REGION_ORDER: list[str] = [
     RegionName.ANCIENT_LAKE,
     RegionName.FOSSIL_CANYON,
     RegionName.JUNGLE_FALLS,
@@ -189,10 +189,6 @@ MAP_VALUE_TO_REGION_NAME: dict[int, str] = {
 
 
 def create_regions(self) -> None:
-    multiworld = self.multiworld
-    player = self.player
-    active_locations = self.location_name_to_id
-
     if self.options.victory_condition.value == 0:
         victory_item_location = LocationName.WIZPIG_1
     elif self.options.victory_condition.value == 1:
@@ -200,13 +196,14 @@ def create_regions(self) -> None:
     else:
         raise Exception("Unexpected victory condition")
 
-    multiworld.regions += [
-        create_region(self, multiworld, player, active_locations, region, locations, victory_item_location)
-        for region, locations in DIDDY_KONG_RACING_REGIONS.items()
+    self.multiworld.regions += [
+        create_region(self, self.multiworld, self.player, self.location_name_to_id,
+                      region_name, locations, victory_item_location)
+        for region_name, locations in DIDDY_KONG_RACING_REGIONS.items()
     ]
 
-    multiworld.get_location(victory_item_location, player).place_locked_item(
-        multiworld.worlds[player].create_event_item(ItemName.VICTORY)
+    self.multiworld.get_location(victory_item_location, self.player).place_locked_item(
+        self.multiworld.worlds[self.player].create_event_item(ItemName.VICTORY)
     )
 
 
@@ -317,6 +314,17 @@ def connect_regions(self) -> None:
         connect_track_regions(self)
 
 
+# Can't put tracks with keys in FFL when it's not accessible because of location/item imbalance
+def is_entrance_order_valid(entrance_order: list[int]) -> bool:
+    tracks_with_keys = (0, 6, 9, 14)
+
+    for i in range(16, 20):
+        if entrance_order[i] in tracks_with_keys:
+            return False
+
+    return True
+
+
 def connect_track_regions(self) -> None:
     rules = DiddyKongRacingRules(self)
     use_ut_deferred_entrances = (self.options.shuffle_race_entrances.value
@@ -337,7 +345,7 @@ def connect_track_regions(self) -> None:
             start_region_name = RegionName.FUTURE_FUN_LAND
 
         start_region = self.multiworld.get_region(start_region_name, self.player)
-        vanilla_end_region = VANILLA_ENTRANCE_ORDER[door_num]
+        vanilla_end_region = VANILLA_REGION_ORDER[door_num]
         entrance_name = convert_region_name_to_vanilla_entrance_name(vanilla_end_region)
         entrance = start_region.create_exit(entrance_name)
         set_rule(entrance, rules.door_rules[door_num][0])
@@ -349,7 +357,7 @@ def connect_track_regions(self) -> None:
                     self.found_entrances_datastorage_key.append(datastorage_key)
                     break
         else:
-            end_region_name = VANILLA_ENTRANCE_ORDER[entrance_num]
+            end_region_name = VANILLA_REGION_ORDER[entrance_num]
             end_region = self.multiworld.get_region(end_region_name, self.player)
             entrance.connect(end_region)
 
@@ -357,10 +365,10 @@ def connect_track_regions(self) -> None:
 def reconnect_found_entrance(self, key: str) -> None:
     found_region_map_value = int(key.removeprefix(DATASTORAGE_KEY_PREFIX.replace("{player}", str(self.player))))
     found_region_name = MAP_VALUE_TO_REGION_NAME[found_region_map_value]
-    found_region_index = VANILLA_ENTRANCE_ORDER.index(found_region_name)
+    found_region_index = VANILLA_REGION_ORDER.index(found_region_name)
     found_region = self.multiworld.get_region(found_region_name, self.player)
     found_entrance_index = self.entrance_order.index(found_region_index)
-    found_entrance_vanilla_region = VANILLA_ENTRANCE_ORDER[found_entrance_index]
+    found_entrance_vanilla_region = VANILLA_REGION_ORDER[found_entrance_index]
     found_entrance_name = convert_region_name_to_vanilla_entrance_name(found_entrance_vanilla_region)
     found_entrance = self.multiworld.get_entrance(found_entrance_name, self.player)
 
@@ -369,14 +377,3 @@ def reconnect_found_entrance(self, key: str) -> None:
 
 def convert_region_name_to_vanilla_entrance_name(region_name: str) -> str:
     return region_name + ENTRANCE_NAME_SUFFIX
-
-
-# Can't put tracks with keys in FFL when it's not accessible because of location/item imbalance
-def is_entrance_order_valid(entrance_order: list[int]) -> bool:
-    tracks_with_keys = (0, 6, 9, 14)
-
-    for i in range(16, 20):
-        if entrance_order[i] in tracks_with_keys:
-            return False
-
-    return True

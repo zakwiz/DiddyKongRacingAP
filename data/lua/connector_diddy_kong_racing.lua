@@ -584,6 +584,15 @@ function main()
     print("Diddy Kong Racing Archipelago Version: " .. APWORLD_VERSION)
     print("----------------")
 
+    validate_bizhawk_version()
+    validate_rom_hash()
+
+    server, error = socket.bind("localhost", 21221)
+
+    event.onframeend(handle_frame)
+end
+
+function validate_bizhawk_version()
     local bizhawk_version = "2.10.1"
     local first_dot_index, _ = string.find(bizhawk_version, ".", 1, true)
     local second_dot_index, _ = string.find(bizhawk_version, ".", first_dot_index + 1, true)
@@ -595,23 +604,17 @@ function main()
         bizhawk_minor_version = tonumber(string.sub(bizhawk_version, first_dot_index + 1))
     end
     if bizhawk_major_version ~= REQUIRED_BIZHAWK_MAJOR_VERSION or bizhawk_minor_version < MINIMUM_BIZHAWK_MINOR_VERSION then
-        print("ERROR: Your Bizhawk version (" .. bizhawk_version .. ") is not supported")
-        print("The minimum supported version is " .. REQUIRED_BIZHAWK_MAJOR_VERSION .. "." .. MINIMUM_BIZHAWK_MINOR_VERSION)
-        return
+        error("ERROR: Your Bizhawk version (" .. bizhawk_version .. ") is not supported, the minimum supported version is " .. REQUIRED_BIZHAWK_MAJOR_VERSION .. "." .. MINIMUM_BIZHAWK_MINOR_VERSION)
     end
+end
 
+function validate_rom_hash()
     local rom_hash = gameinfo.getromhash()
     if rom_hash == VANILLA_ROM_HASH then
-        print("ERROR: Incorrect ROM hash, you're using the vanilla Diddy Kong Racing ROM, use the patched ROM instead (see client for location)")
-        return
+        error("ERROR: Incorrect ROM hash, you're using the vanilla Diddy Kong Racing ROM, use the patched ROM instead (see client for location)")
     elseif rom_hash ~= PATCHED_ROM_HASH then
-        print("ERROR: Incorrect ROM hash, make sure you're running the correct patched Diddy Kong Racing ROM")
-        return
+        error("ERROR: Incorrect ROM hash, make sure you're running the correct patched Diddy Kong Racing ROM")
     end
-
-    server, error = socket.bind("localhost", 21221)
-
-    event.onframeend(handle_frame)
 end
 
 function handle_frame()

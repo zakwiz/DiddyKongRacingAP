@@ -391,25 +391,25 @@ class DiddyKongRacingRules:
         return state.has(regional_balloon_item_name, self.player, self.world.options.boss_2_regional_balloons.value)
 
     def set_rules(self) -> None:
-        for location, rules in self.balloon_rules.items():
-            balloon_location = self.get_location(location)
-            set_rule(balloon_location, rules)
+        for location, rule in self.balloon_rules.items():
+            balloon_location = self.get_player_location(location)
+            set_rule(balloon_location, rule)
 
         for door_num, entrance_num in enumerate(self.world.entrance_order):
             door_2_unlock_rule = self.door_rules[door_num][1]
             for location in VANILLA_RACE_2_LOCATIONS[entrance_num]:
-                set_rule(self.get_location(location), door_2_unlock_rule)
+                set_rule(self.get_player_location(location), door_2_unlock_rule)
 
-        for location, rules in self.amulet_rules.items():
-            amulet_location = self.get_location(location)
-            set_rule(amulet_location, rules)
+        for location, rule in self.amulet_rules.items():
+            amulet_location = self.get_player_location(location)
+            set_rule(amulet_location, rule)
 
-        for location, rules in self.door_unlock_rules.items():
+        for location, rule in self.door_unlock_rules.items():
             if not (self.world.options.open_worlds and location in LocationName.WORLD_UNLOCK_LOCATIONS):
-                door_unlock_location = self.get_location(location)
-                set_rule(door_unlock_location, rules)
+                door_unlock_location = self.get_player_location(location)
+                set_rule(door_unlock_location, rule)
 
         self.world.multiworld.completion_condition[self.player] = lambda state: state.has(ItemName.VICTORY, self.player)
 
-    def get_location(self, location_name) -> Location:
+    def get_player_location(self, location_name) -> Location:
         return self.world.multiworld.get_location(location_name, self.player)

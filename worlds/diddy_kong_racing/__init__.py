@@ -55,31 +55,13 @@ class DiddyKongRacingWorld(World):
     found_entrances_datastorage_key: list[str] = []
 
     def __init__(self, world: MultiWorld, player: int) -> None:
-        self.slot_data = []
+        self.slot_data: dict[str, Any] = {}
         self.entrance_order: list[int] = list(range(20))
         super(DiddyKongRacingWorld, self).__init__(world, player)
 
-    def create_item(self, item_name: str) -> Item:
-        item = ALL_ITEM_TABLE.get(item_name)
-
-        item_classification = ItemClassification.progression
-        if self.options.victory_condition.value != 1:
-            if item_name == ItemName.TT_AMULET_PIECE:
-                item_classification = ItemClassification.filler
-
-        created_item = DiddyKongRacingItem(
-            self.item_id_to_name[item.dkr_id],
-            item_classification,
-            item.dkr_id,
-            self.player
-        )
-
-        return created_item
-
-    def create_event_item(self, name: str) -> Item:
-        created_item = DiddyKongRacingItem(name, ItemClassification.progression, None, self.player)
-
-        return created_item
+    def create_regions(self) -> None:
+        create_regions(self)
+        connect_regions(self)
 
     def create_items(self) -> None:
         for name, dkr_id in ALL_ITEM_TABLE.items():
@@ -87,25 +69,6 @@ class DiddyKongRacingWorld(World):
                 for _ in range(dkr_id.count):
                     item = self.create_item(name)
                     self.multiworld.itempool.append(item)
-
-    def item_pre_filled(self, item_name: str) -> bool:
-        if self.is_ffl_unused() and item_name == ItemName.FUTURE_FUN_LAND_BALLOON:
-            return True
-
-        if not self.options.shuffle_wizpig_amulet and item_name == ItemName.WIZPIG_AMULET_PIECE:
-            return True
-
-        if not self.options.shuffle_tt_amulet and item_name == ItemName.TT_AMULET_PIECE:
-            return True
-
-        if item_name in ItemName.DOOR_UNLOCK_ITEMS:
-            return True
-
-        return False
-
-    def create_regions(self) -> None:
-        create_regions(self)
-        connect_regions(self)
 
     def set_rules(self) -> None:
         rules = DiddyKongRacingRules(self)
@@ -139,9 +102,6 @@ class DiddyKongRacingWorld(World):
         else:
             place_vanilla_door_unlock_items(self)
 
-    def place_locked_item(self, location_name: str, item: Item) -> None:
-        self.multiworld.get_location(location_name, self.player).place_locked_item(item)
-
     def fill_slot_data(self) -> dict[str, Any]:
         door_unlock_requirements = []
         if self.options.shuffle_door_requirements or self.options.door_requirement_progression != 0:
@@ -173,16 +133,56 @@ class DiddyKongRacingWorld(World):
 
         return dkr_options
 
-    # For Universal Tracker, doesn't get called in standard generation
+    def item_pre_filled(self, item_name: str) -> bool:
+        if self.is_ffl_unused() and item_name == ItemName.FUTURE_FUN_LAND_BALLOON:
+            return True
+
+        if not self.options.shuffle_wizpig_amulet and item_name == ItemName.WIZPIG_AMULET_PIECE:
+            return True
+
+        if not self.options.shuffle_tt_amulet and item_name == ItemName.TT_AMULET_PIECE:
+            return True
+
+        if item_name in ItemName.DOOR_UNLOCK_ITEMS:
+            return True
+
+        return False
+
+    def create_item(self, item_name: str) -> Item:
+        item = ALL_ITEM_TABLE.get(item_name)
+
+        item_classification = ItemClassification.progression
+        if self.options.victory_condition.value != 1:
+            if item_name == ItemName.TT_AMULET_PIECE:
+                item_classification = ItemClassification.filler
+
+        created_item = DiddyKongRacingItem(
+            self.item_id_to_name[item.dkr_id],
+            item_classification,
+            item.dkr_id,
+            self.player
+        )
+
+        return created_item
+
+    def create_event_item(self, name: str) -> Item:
+        created_item = DiddyKongRacingItem(name, ItemClassification.progression, None, self.player)
+
+        return created_item
+
+    def place_locked_item(self, location_name: str, item: Item) -> None:
+        self.multiworld.get_location(location_name, self.player).place_locked_item(item)
+
+    def is_ffl_unused(self) -> bool:
+        return self.options.victory_condition.value == 0 and not self.options.open_worlds
+
+    # For Universal Tracker
     def interpret_slot_data(self, slot_data: dict[str, Any]) -> None:
         place_door_unlock_items(self, slot_data["door_unlock_requirements"])
         self.entrance_order = slot_data["entrance_order"]
         connect_track_regions(self)
 
-    # For Universal Tracker, doesn't get called in standard generation
+    # For Universal Tracker
     def reconnect_found_entrances(self, found_key: str, data_storage_value: Any) -> None:
         if data_storage_value:
             reconnect_found_entrance(self, found_key)
-
-    def is_ffl_unused(self) -> bool:
-        return self.options.victory_condition.value == 0 and not self.options.open_worlds
