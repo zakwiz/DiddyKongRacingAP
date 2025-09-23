@@ -9,7 +9,7 @@ from worlds.LauncherComponents import Component, components, launch_subprocess, 
 from .DoorShuffle import get_door_unlock_requirements, place_door_unlock_items, place_vanilla_door_unlock_items, shuffle_door_unlock_items
 from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE
 from .Locations import ALL_LOCATION_TABLE
-from .Regions import connect_regions, connect_track_regions, create_regions
+from .Regions import connect_regions, connect_track_regions, create_regions, reconnect_found_entrance
 from .Options import DiddyKongRacingOptions
 from .Rules import DiddyKongRacingRules
 from .Names import ItemName, LocationName, RegionName
@@ -52,6 +52,7 @@ class DiddyKongRacingWorld(World):
 
     options_dataclass = DiddyKongRacingOptions
     options: DiddyKongRacingOptions
+    found_entrances_datastorage_key: list[str] = []
 
     def __init__(self, world: MultiWorld, player: int) -> None:
         self.slot_data = []
@@ -175,7 +176,14 @@ class DiddyKongRacingWorld(World):
     # For Universal Tracker, doesn't get called in standard generation
     def interpret_slot_data(self, slot_data: dict[str, Any]) -> None:
         place_door_unlock_items(self, slot_data["door_unlock_requirements"])
-        connect_track_regions(self, slot_data["entrance_order"])
+        self.entrance_order = slot_data["entrance_order"]
+        connect_track_regions(self)
+
+
+    # For Universal Tracker, doesn't get called in standard generation
+    def reconnect_found_entrances(self, found_key: str, data_storage_value: Any) -> None:
+        if data_storage_value:
+            reconnect_found_entrance(self, found_key)
 
     def is_ffl_unused(self) -> bool:
         return self.options.victory_condition.value == 0 and not self.options.open_worlds

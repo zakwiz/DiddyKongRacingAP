@@ -371,9 +371,10 @@ async def parse_payload(payload: dict, ctx: DiddyKongRacingContext) -> None:
                 }])
             ctx.location_table = locations
 
-        # For PopTracker
         if ctx.current_map != payload_current_map:
             ctx.current_map = payload_current_map
+
+            # For PopTracker
             await ctx.send_msgs([{
                 "cmd": "Set",
                 "key": f"Diddy_Kong_Racing_{ctx.team}_{ctx.slot}_map",
@@ -381,6 +382,16 @@ async def parse_payload(payload: dict, ctx: DiddyKongRacingContext) -> None:
                 "want_reply": False,
                 "operations": [{"operation": "replace",
                     "value": hex(payload_current_map)}]
+            }])
+
+            # For Universal Tracker deferred entrances
+            await ctx.send_msgs([{
+                "cmd": "Set",
+                "key": f"Diddy_Kong_Racing_{ctx.slot}_" + str(payload_current_map),
+                "default": False,
+                "want_reply": False,
+                "operations": [{"operation": "replace",
+                    "value": True}]
             }])
 
     # Send Async Data.

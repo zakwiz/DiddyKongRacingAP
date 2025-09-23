@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from BaseClasses import MultiWorld, Region
+from worlds.generic.Rules import set_rule
 
 from .Names import ItemName, LocationName, RegionName
 from .Locations import DiddyKongRacingLocation
 from .Rules import DiddyKongRacingRules
 
+
+ENTRANCE_NAME_SUFFIX: str = " Door"
+DATASTORAGE_KEY_PREFIX: str = "Diddy_Kong_Racing_{player}_"
 
 DIDDY_KONG_RACING_REGIONS: dict[str, list[str]] = {
     RegionName.MENU: [],
@@ -162,6 +166,29 @@ VANILLA_ENTRANCE_ORDER: list[str] = [
     RegionName.STAR_CITY
 ]
 
+MAP_VALUE_TO_REGION_NAME: dict[int, str] = {
+    5: RegionName.ANCIENT_LAKE,
+    3: RegionName.FOSSIL_CANYON,
+    29: RegionName.JUNGLE_FALLS,
+    7: RegionName.HOT_TOP_VOLCANO,
+    13: RegionName.EVERFROST_PEAK,
+    6: RegionName.WALRUS_COVE,
+    9: RegionName.SNOWBALL_VALLEY,
+    28: RegionName.FROSTY_VILLAGE,
+    8: RegionName.WHALE_BAY,
+    10: RegionName.CRESCENT_ISLAND,
+    4: RegionName.PIRATE_LAGOON,
+    30: RegionName.TREASURE_CAVES,
+    20: RegionName.WINDMILL_PLAINS,
+    18: RegionName.GREENWOOD_VILLAGE,
+    19: RegionName.BOULDER_CANYON,
+    31: RegionName.HAUNTED_WOODS,
+    17: RegionName.SPACEDUST_ALLEY,
+    32: RegionName.DARKMOON_CAVERNS,
+    15: RegionName.SPACEPORT_ALPHA,
+    33: RegionName.STAR_CITY
+}
+
 def create_regions(self) -> None:
     multiworld = self.multiworld
     player = self.player
@@ -284,28 +311,61 @@ def connect_regions(self) -> None:
             while not is_entrance_order_valid(self.entrance_order):
                 self.random.shuffle(self.entrance_order)
 
-        connect_track_regions(self, self.entrance_order)
+        connect_track_regions(self)
 
 
-def connect_track_regions(self, entrance_order: list[int]) -> None:
+def connect_track_regions(self) -> None:
     rules = DiddyKongRacingRules(self)
+    use_ut_deferred_entrances = (self.options.shuffle_race_entrances.value
+                                 and hasattr(self.multiworld, "generation_is_fake")
+                                 and hasattr(self.multiworld, "enforce_deferred_connections")
+                                 and self.multiworld.enforce_deferred_connections in ("on", "default"))
 
-    for door_num, entrance_num in enumerate(entrance_order):
+    for door_num, entrance_num in enumerate(self.entrance_order):
         if door_num < 4:
-            start_region = RegionName.DINO_DOMAIN
+            start_region_name = RegionName.DINO_DOMAIN
         elif door_num < 8:
-            start_region = RegionName.SNOWFLAKE_MOUNTAIN
+            start_region_name = RegionName.SNOWFLAKE_MOUNTAIN
         elif door_num < 12:
-            start_region = RegionName.SHERBET_ISLAND
+            start_region_name = RegionName.SHERBET_ISLAND
         elif door_num < 16:
-            start_region = RegionName.DRAGON_FOREST
+            start_region_name = RegionName.DRAGON_FOREST
         else:
-            start_region = RegionName.FUTURE_FUN_LAND
+            start_region_name = RegionName.FUTURE_FUN_LAND
 
-        self.multiworld.get_region(start_region, self.player).connect(
-            self.multiworld.get_region(VANILLA_ENTRANCE_ORDER[entrance_num], self.player),
-            rule = rules.door_rules[door_num][0]
-        )
+        start_region = self.multiworld.get_region(start_region_name, self.player)
+        vanilla_end_region = VANILLA_ENTRANCE_ORDER[door_num]
+        entrance_name = convert_region_name_to_vanilla_entrance_name(vanilla_end_region)
+        entrance = start_region.create_exit(entrance_name)
+        set_rule(entrance, rules.door_rules[door_num][0])
+
+        if use_ut_deferred_entrances:
+            for map_value, region_name in MAP_VALUE_TO_REGION_NAME.items():
+                if region_name == vanilla_end_region:
+                    datastorage_key = DATASTORAGE_KEY_PREFIX + str(map_value)
+                    self.found_entrances_datastorage_key.append(datastorage_key)
+                    break
+        else:
+            end_region_name = VANILLA_ENTRANCE_ORDER[entrance_num]
+            end_region = self.multiworld.get_region(end_region_name, self.player)
+            entrance.connect(end_region)
+
+
+def reconnect_found_entrance(self, key: str) -> None:
+    found_region_map_value = int(key.removeprefix(DATASTORAGE_KEY_PREFIX.replace("{player}", str(self.player))))
+    found_region_name = MAP_VALUE_TO_REGION_NAME[found_region_map_value]
+    found_region_index = VANILLA_ENTRANCE_ORDER.index(found_region_name)
+    found_region = self.multiworld.get_region(found_region_name, self.player)
+    found_entrance_index = self.entrance_order.index(found_region_index)
+    found_entrance_vanilla_region = VANILLA_ENTRANCE_ORDER[found_entrance_index]
+    found_entrance_name = convert_region_name_to_vanilla_entrance_name(found_entrance_vanilla_region)
+    found_entrance = self.multiworld.get_entrance(found_entrance_name, self.player)
+
+    found_entrance.connect(found_region)
+
+
+def convert_region_name_to_vanilla_entrance_name(region_name: str) -> str:
+    return region_name + ENTRANCE_NAME_SUFFIX
 
 
 # Can't put tracks with keys in FFL when it's not accessible because of location/item imbalance
