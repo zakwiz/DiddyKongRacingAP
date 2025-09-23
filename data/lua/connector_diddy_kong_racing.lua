@@ -593,7 +593,7 @@ function main()
 end
 
 function validate_bizhawk_version()
-    local bizhawk_version = "2.10.1"
+    local bizhawk_version = client.getversion()
     local first_dot_index, _ = string.find(bizhawk_version, ".", 1, true)
     local second_dot_index, _ = string.find(bizhawk_version, ".", first_dot_index + 1, true)
     local bizhawk_major_version = tonumber(string.sub(bizhawk_version, 0, first_dot_index))
