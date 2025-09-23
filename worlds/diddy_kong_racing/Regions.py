@@ -1,10 +1,17 @@
 from __future__ import annotations
 
-from BaseClasses import MultiWorld, Region
+from typing import TYPE_CHECKING
+
+from BaseClasses import Region
 from worlds.generic.Rules import set_rule
 from .Locations import DiddyKongRacingLocation
 from .Names import ItemName, LocationName, RegionName
 from .Rules import DiddyKongRacingRules
+
+if TYPE_CHECKING:
+    from . import DiddyKongRacingWorld
+else:
+    DiddyKongRacingWorld = object
 
 ENTRANCE_NAME_SUFFIX: str = " Door"
 DATASTORAGE_KEY_PREFIX: str = "Diddy_Kong_Racing_{player}_"
@@ -188,37 +195,36 @@ MAP_VALUE_TO_REGION_NAME: dict[int, str] = {
 }
 
 
-def create_regions(self) -> None:
-    if self.options.victory_condition.value == 0:
+def create_regions(world: DiddyKongRacingWorld) -> None:
+    if world.options.victory_condition.value == 0:
         victory_item_location = LocationName.WIZPIG_1
-    elif self.options.victory_condition.value == 1:
+    elif world.options.victory_condition.value == 1:
         victory_item_location = LocationName.WIZPIG_2
     else:
         raise Exception("Unexpected victory condition")
 
-    self.multiworld.regions += [
-        create_region(self, self.multiworld, self.player, self.location_name_to_id,
-                      region_name, locations, victory_item_location)
+    world.multiworld.regions += [
+        create_region(world, region_name, locations, victory_item_location)
         for region_name, locations in DIDDY_KONG_RACING_REGIONS.items()
     ]
 
-    self.multiworld.get_location(victory_item_location, self.player).place_locked_item(
-        self.multiworld.worlds[self.player].create_event_item(ItemName.VICTORY)
+    world.multiworld.get_location(victory_item_location, world.player).place_locked_item(
+        world.multiworld.worlds[world.player].create_event_item(ItemName.VICTORY)
     )
 
 
-def create_region(self, multiworld: MultiWorld, player: int, active_locations,
-                  name: str, locations: list[str], victory_item_location: str) -> Region:
-    region = Region(name, player, multiworld)
+def create_region(world: DiddyKongRacingWorld, name: str, locations: list[str], victory_item_location: str) -> Region:
+    region = Region(name, world.player, world.multiworld)
     if name == RegionName.MENU:
         region.add_locations({location: None for location in LocationName.DOOR_UNLOCK_LOCATIONS})
 
-        if not self.options.open_worlds:
+        if not world.options.open_worlds:
             region.add_locations({location: None for location in LocationName.WORLD_UNLOCK_LOCATIONS})
     elif locations:
         if victory_item_location in locations:
             region.add_locations({victory_item_location: None})
 
+        active_locations = world.location_name_to_id
         location_to_id = {
             location: active_locations.get(location, 0) for location in locations
             if active_locations.get(location, None)
@@ -228,10 +234,10 @@ def create_region(self, multiworld: MultiWorld, player: int, active_locations,
     return region
 
 
-def connect_regions(self) -> None:
-    multiworld = self.multiworld
-    player = self.player
-    rules = DiddyKongRacingRules(self)
+def connect_regions(world: DiddyKongRacingWorld) -> None:
+    multiworld = world.multiworld
+    player = world.player
+    rules = DiddyKongRacingRules(world)
 
     region_menu = multiworld.get_region(RegionName.MENU, player)
     region_menu.add_exits({RegionName.TIMBERS_ISLAND})
@@ -305,13 +311,13 @@ def connect_regions(self) -> None:
 
     # Skip for Universal Tracker, this will be done from slot_data
     if not hasattr(multiworld, "generation_is_fake"):
-        if self.options.shuffle_race_entrances:
-            self.random.shuffle(self.entrance_order)
+        if world.options.shuffle_race_entrances:
+            world.random.shuffle(world.entrance_order)
 
-            while not is_entrance_order_valid(self.entrance_order):
-                self.random.shuffle(self.entrance_order)
+            while not is_entrance_order_valid(world.entrance_order):
+                world.random.shuffle(world.entrance_order)
 
-        connect_track_regions(self)
+        connect_track_regions(world)
 
 
 # Can't put tracks with keys in FFL when it's not accessible because of location/item imbalance
@@ -325,14 +331,14 @@ def is_entrance_order_valid(entrance_order: list[int]) -> bool:
     return True
 
 
-def connect_track_regions(self) -> None:
-    rules = DiddyKongRacingRules(self)
-    use_ut_deferred_entrances = (self.options.shuffle_race_entrances.value
-                                 and hasattr(self.multiworld, "generation_is_fake")
-                                 and hasattr(self.multiworld, "enforce_deferred_connections")
-                                 and self.multiworld.enforce_deferred_connections in ("on", "default"))
+def connect_track_regions(world: DiddyKongRacingWorld) -> None:
+    rules = DiddyKongRacingRules(world)
+    use_ut_deferred_entrances = (world.options.shuffle_race_entrances.value
+                                 and hasattr(world.multiworld, "generation_is_fake")
+                                 and hasattr(world.multiworld, "enforce_deferred_connections")
+                                 and world.multiworld.enforce_deferred_connections in ("on", "default"))
 
-    for door_num, entrance_num in enumerate(self.entrance_order):
+    for door_num, entrance_num in enumerate(world.entrance_order):
         if door_num < 4:
             start_region_name = RegionName.DINO_DOMAIN
         elif door_num < 8:
@@ -344,7 +350,7 @@ def connect_track_regions(self) -> None:
         else:
             start_region_name = RegionName.FUTURE_FUN_LAND
 
-        start_region = self.multiworld.get_region(start_region_name, self.player)
+        start_region = world.multiworld.get_region(start_region_name, world.player)
         vanilla_end_region = VANILLA_REGION_ORDER[door_num]
         entrance_name = convert_region_name_to_vanilla_entrance_name(vanilla_end_region)
         entrance = start_region.create_exit(entrance_name)
@@ -354,23 +360,23 @@ def connect_track_regions(self) -> None:
             for map_value, region_name in MAP_VALUE_TO_REGION_NAME.items():
                 if region_name == vanilla_end_region:
                     datastorage_key = DATASTORAGE_KEY_PREFIX + str(map_value)
-                    self.found_entrances_datastorage_key.append(datastorage_key)
+                    world.found_entrances_datastorage_key.append(datastorage_key)
                     break
         else:
             end_region_name = VANILLA_REGION_ORDER[entrance_num]
-            end_region = self.multiworld.get_region(end_region_name, self.player)
+            end_region = world.multiworld.get_region(end_region_name, world.player)
             entrance.connect(end_region)
 
 
-def reconnect_found_entrance(self, key: str) -> None:
-    found_region_map_value = int(key.removeprefix(DATASTORAGE_KEY_PREFIX.replace("{player}", str(self.player))))
+def reconnect_found_entrance(world: DiddyKongRacingWorld, key: str) -> None:
+    found_region_map_value = int(key.removeprefix(DATASTORAGE_KEY_PREFIX.replace("{player}", str(world.player))))
     found_region_name = MAP_VALUE_TO_REGION_NAME[found_region_map_value]
     found_region_index = VANILLA_REGION_ORDER.index(found_region_name)
-    found_region = self.multiworld.get_region(found_region_name, self.player)
-    found_entrance_index = self.entrance_order.index(found_region_index)
+    found_region = world.multiworld.get_region(found_region_name, world.player)
+    found_entrance_index = world.entrance_order.index(found_region_index)
     found_entrance_vanilla_region = VANILLA_REGION_ORDER[found_entrance_index]
     found_entrance_name = convert_region_name_to_vanilla_entrance_name(found_entrance_vanilla_region)
-    found_entrance = self.multiworld.get_entrance(found_entrance_name, self.player)
+    found_entrance = world.multiworld.get_entrance(found_entrance_name, world.player)
 
     found_entrance.connect(found_region)
 

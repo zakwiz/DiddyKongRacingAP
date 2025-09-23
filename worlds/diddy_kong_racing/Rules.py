@@ -5,13 +5,11 @@ from worlds.generic.Rules import set_rule
 from .DoorShuffle import get_requirement_for_location, vanilla_door_unlock_info_list
 from .Names import ItemName, LocationName
 
-# I don't know what is going on here, but it works.
+# Allows type hinting without circular imports
 if TYPE_CHECKING:
     from . import DiddyKongRacingWorld
 else:
     DiddyKongRacingWorld = object
-
-# Shamelessly Stolen from KH2 :D
 
 VANILLA_RACE_2_LOCATIONS: list[list[str]] = [
     [LocationName.ANCIENT_LAKE_2, LocationName.FIRE_MOUNTAIN_KEY],

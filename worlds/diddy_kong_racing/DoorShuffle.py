@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import math
+from typing import TYPE_CHECKING
 
-from BaseClasses import Location
 from .Names import ItemName, LocationName
 
+if TYPE_CHECKING:
+    from . import DiddyKongRacingWorld
+else:
+    DiddyKongRacingWorld = object
 
 class DoorUnlockInfo:
     def __init__(self, item: str, location: str, requirement: int):
@@ -65,15 +69,15 @@ vanilla_door_unlock_info_sorted_by_requirement: list[DoorUnlockInfo] = sorted(va
 cached_door_requirement_progression: list[int] | None = None
 
 
-def get_door_requirement_progression(self) -> list[int]:
+def get_door_requirement_progression(world: DiddyKongRacingWorld) -> list[int]:
     global cached_door_requirement_progression
     if cached_door_requirement_progression:
         return cached_door_requirement_progression
 
-    if self.options.door_requirement_progression == 0:  # Vanilla
+    if world.options.door_requirement_progression == 0:  # Vanilla
         door_requirement_progression = [x.requirement for x in vanilla_door_unlock_info_sorted_by_requirement]
-    elif self.options.door_requirement_progression == 1:  # Linear
-        door_unlock_requirement_interval = ((self.options.maximum_door_requirement - 1)
+    elif world.options.door_requirement_progression == 1:  # Linear
+        door_unlock_requirement_interval = ((world.options.maximum_door_requirement - 1)
                                             / (len(vanilla_door_unlock_info_list) - 1))
         door_requirement_progression = []
         door_unlock_requirement = 1
@@ -82,25 +86,25 @@ def get_door_requirement_progression(self) -> list[int]:
             door_unlock_requirement += door_unlock_requirement_interval
     else:  # Exponential
         door_requirement_progression = []
-        ratio = self.options.maximum_door_requirement / 46
+        ratio = world.options.maximum_door_requirement / 46
         for i in range(len(vanilla_door_unlock_info_list) - 1):
             door_requirement_progression.append(max(1, math.floor(ratio * 3.31 * math.exp(0.0628 * i) - 2)))
 
-        door_requirement_progression.append(int(self.options.maximum_door_requirement))
+        door_requirement_progression.append(int(world.options.maximum_door_requirement))
 
     cached_door_requirement_progression = door_requirement_progression
     return door_requirement_progression
 
 
-def get_requirement_for_location(self, location: Location) -> int:
+def get_requirement_for_location(world: DiddyKongRacingWorld, location: str) -> int:
     for i in range(len(vanilla_door_unlock_info_sorted_by_requirement)):
         if vanilla_door_unlock_info_sorted_by_requirement[i].location == location:
-            return get_door_requirement_progression(self)[i]
+            return get_door_requirement_progression(world)[i]
 
-    raise Exception("Invalid location passed to DoorShuffle.get_requirement_for_location: " + location.name)
+    raise Exception("Invalid location passed to DoorShuffle.get_requirement_for_location: " + location)
 
 
-def shuffle_door_unlock_items(self) -> None:
+def shuffle_door_unlock_items(world: DiddyKongRacingWorld) -> None:
     race_1_unlock_to_race_2_unlock = {
         ItemName.ANCIENT_LAKE_DOOR_1_UNLOCK: ItemName.ANCIENT_LAKE_DOOR_2_UNLOCK,
         ItemName.FOSSIL_CANYON_DOOR_1_UNLOCK: ItemName.FOSSIL_CANYON_DOOR_2_UNLOCK,
@@ -155,7 +159,7 @@ def shuffle_door_unlock_items(self) -> None:
         ItemName.STAR_CITY_DOOR_1_UNLOCK
     )
 
-    if self.options.open_worlds:
+    if world.options.open_worlds:
         available_doors = [
             *dino_domain_race_1_unlocks,
             *snowflake_mountain_race_1_unlocks,
@@ -174,11 +178,11 @@ def shuffle_door_unlock_items(self) -> None:
     race_2_unlock_count = 0
 
     for door_unlock_info, requirement in zip(vanilla_door_unlock_info_sorted_by_requirement,
-                                             get_door_requirement_progression(self)):
-        if not (self.options.open_worlds and door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
-            self.random.shuffle(available_doors)
+                                             get_door_requirement_progression(world)):
+        if not (world.options.open_worlds and door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
+            world.random.shuffle(available_doors)
             item = available_doors.pop()
-            self.place_locked_item(door_unlock_info.location, self.create_event_item(item))
+            world.place_locked_item(door_unlock_info.location, world.create_event_item(item))
 
             if item == ItemName.DINO_DOMAIN_UNLOCK:
                 available_doors.extend(dino_domain_race_1_unlocks)
@@ -190,42 +194,42 @@ def shuffle_door_unlock_items(self) -> None:
                 available_doors.extend(dragon_forest_race_1_unlocks)
             elif item in race_1_unlock_to_race_2_unlock:
                 available_doors.append(race_1_unlock_to_race_2_unlock[item])
-            elif not self.options.open_worlds:
+            elif not world.options.open_worlds:
                 race_2_unlock_count += 1
                 if race_2_unlock_count == 16:
                     available_doors.extend(future_fun_land_race_1_unlocks)
 
 
-def place_vanilla_door_unlock_items(self) -> None:
+def place_vanilla_door_unlock_items(world: DiddyKongRacingWorld) -> None:
     for door_unlock_info in vanilla_door_unlock_info_list:
-        if not (self.options.open_worlds and door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
-            self.place_locked_item(door_unlock_info.location, self.create_event_item(door_unlock_info.item))
+        if not (world.options.open_worlds and door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
+            world.place_locked_item(door_unlock_info.location, world.create_event_item(door_unlock_info.item))
 
 
-def place_door_unlock_items(self, door_unlock_requirements: list[int]) -> None:
+def place_door_unlock_items(world: DiddyKongRacingWorld, door_unlock_requirements: list[int]) -> None:
     filled_door_unlock_locations = set()
-    if self.options.open_worlds:
+    if world.options.open_worlds:
         filled_door_unlock_locations.update(LocationName.WORLD_UNLOCK_LOCATIONS)
 
     for item_door_unlock_info, item_door_unlock_requirement in zip(vanilla_door_unlock_info_list,
                                                                    door_unlock_requirements):
-        if not (self.options.open_worlds and item_door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
+        if not (world.options.open_worlds and item_door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
             for location_door_unlock_info, location_door_unlock_requirement in \
-                    zip(vanilla_door_unlock_info_sorted_by_requirement, get_door_requirement_progression(self)):
+                    zip(vanilla_door_unlock_info_sorted_by_requirement, get_door_requirement_progression(world)):
                 location = location_door_unlock_info.location
                 if item_door_unlock_requirement == location_door_unlock_requirement and location not in filled_door_unlock_locations:
-                    self.place_locked_item(location, self.create_event_item(item_door_unlock_info.item))
+                    world.place_locked_item(location, world.create_event_item(item_door_unlock_info.item))
                     filled_door_unlock_locations.add(location)
                     break
 
 
-def get_door_unlock_requirements(self) -> list[int]:
+def get_door_unlock_requirements(world: DiddyKongRacingWorld) -> list[int]:
     door_unlock_requirements = []
     for door_unlock_info in vanilla_door_unlock_info_list:
-        if self.options.open_worlds and door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS:
+        if world.options.open_worlds and door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS:
             door_unlock_requirements.append(0)
         else:
-            location = self.multiworld.find_item(door_unlock_info.item, self.player).name
-            door_unlock_requirements.append(get_requirement_for_location(self, location))
+            location = world.multiworld.find_item(door_unlock_info.item, world.player).name
+            door_unlock_requirements.append(get_requirement_for_location(world, location))
 
     return door_unlock_requirements
