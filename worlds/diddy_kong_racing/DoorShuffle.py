@@ -201,6 +201,8 @@ def place_vanilla_door_unlock_items(self) -> None:
 
 def place_door_unlock_items(self, door_unlock_requirements: list[int]) -> None:
     filled_door_unlock_locations = set()
+    if self.options.open_worlds:
+        filled_door_unlock_locations.update(LocationName.WORLD_UNLOCK_LOCATIONS)
 
     for item_door_unlock_info, item_door_unlock_requirement in zip(vanilla_door_unlock_info_list, door_unlock_requirements):
         if not (self.options.open_worlds and item_door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
