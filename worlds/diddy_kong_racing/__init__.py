@@ -5,14 +5,14 @@ from typing import Any
 from BaseClasses import Item, ItemClassification, MultiWorld, Tutorial
 from worlds.AutoWorld import WebWorld, World
 from worlds.LauncherComponents import Component, components, launch_subprocess, Type
-
-from .DoorShuffle import get_door_unlock_requirements, place_door_unlock_items, place_vanilla_door_unlock_items, shuffle_door_unlock_items
+from .DoorShuffle import get_door_unlock_requirements, place_door_unlock_items, place_vanilla_door_unlock_items, \
+    shuffle_door_unlock_items
 from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE
 from .Locations import ALL_LOCATION_TABLE
-from .Regions import connect_regions, connect_track_regions, create_regions, reconnect_found_entrance
-from .Options import DiddyKongRacingOptions
-from .Rules import DiddyKongRacingRules
 from .Names import ItemName, LocationName, RegionName
+from .Options import DiddyKongRacingOptions
+from .Regions import connect_regions, connect_track_regions, create_regions, reconnect_found_entrance
+from .Rules import DiddyKongRacingRules
 
 
 def run_client():
@@ -178,7 +178,6 @@ class DiddyKongRacingWorld(World):
         place_door_unlock_items(self, slot_data["door_unlock_requirements"])
         self.entrance_order = slot_data["entrance_order"]
         connect_track_regions(self)
-
 
     # For Universal Tracker, doesn't get called in standard generation
     def reconnect_found_entrances(self, found_key: str, data_storage_value: Any) -> None:

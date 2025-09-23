@@ -2,10 +2,8 @@ from typing import TYPE_CHECKING, Any, Callable
 
 from BaseClasses import CollectionState, Location
 from worlds.generic.Rules import set_rule
-
 from .DoorShuffle import get_requirement_for_location, vanilla_door_unlock_info_list
 from .Names import ItemName, LocationName
-
 
 # I don't know what is going on here, but it works.
 if TYPE_CHECKING:
@@ -165,8 +163,7 @@ class DiddyKongRacingRules:
         return (self.world.options.open_worlds or
                 self.wizpig_1(state) and
                 (self.world.options.skip_trophy_races or
-                 (self.tricky_2(state) and self.bluey_2(state) and self.bubbler_2(state) and self.smokey_2(state))
-                  )
+                 (self.tricky_2(state) and self.bluey_2(state) and self.bubbler_2(state) and self.smokey_2(state)))
                 )
 
     def balloon_bridge(self, state: CollectionState) -> bool:

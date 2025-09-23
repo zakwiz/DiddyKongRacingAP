@@ -3,7 +3,6 @@ from __future__ import annotations
 import math
 
 from BaseClasses import Location
-
 from .Names import ItemName, LocationName
 
 
@@ -12,6 +11,7 @@ class DoorUnlockInfo:
         self.item = item
         self.location = location
         self.requirement = requirement
+
 
 vanilla_door_unlock_info_list: list[DoorUnlockInfo] = [
     DoorUnlockInfo(ItemName.DINO_DOMAIN_UNLOCK, LocationName.WORLD_1_UNLOCK, 1),
@@ -60,7 +60,8 @@ vanilla_door_unlock_info_list: list[DoorUnlockInfo] = [
     DoorUnlockInfo(ItemName.STAR_CITY_DOOR_2_UNLOCK, LocationName.RACE_20_2_UNLOCK, 46)
 ]
 
-vanilla_door_unlock_info_sorted_by_requirement: list[DoorUnlockInfo] = sorted(vanilla_door_unlock_info_list, key=lambda x: x.requirement)
+vanilla_door_unlock_info_sorted_by_requirement: list[DoorUnlockInfo] = sorted(vanilla_door_unlock_info_list,
+                                                                              key=lambda x: x.requirement)
 cached_door_requirement_progression: list[int] | None = None
 
 
@@ -69,16 +70,17 @@ def get_door_requirement_progression(self) -> list[int]:
     if cached_door_requirement_progression:
         return cached_door_requirement_progression
 
-    if self.options.door_requirement_progression == 0: # Vanilla
+    if self.options.door_requirement_progression == 0:  # Vanilla
         door_requirement_progression = [x.requirement for x in vanilla_door_unlock_info_sorted_by_requirement]
-    elif self.options.door_requirement_progression == 1: # Linear
-        door_unlock_requirement_interval = (self.options.maximum_door_requirement - 1) / (len(vanilla_door_unlock_info_list) - 1)
+    elif self.options.door_requirement_progression == 1:  # Linear
+        door_unlock_requirement_interval = ((self.options.maximum_door_requirement - 1)
+                                            / (len(vanilla_door_unlock_info_list) - 1))
         door_requirement_progression = []
         door_unlock_requirement = 1
         for _ in range(len(vanilla_door_unlock_info_list)):
             door_requirement_progression.append(math.floor(door_unlock_requirement))
             door_unlock_requirement += door_unlock_requirement_interval
-    else: # Exponential
+    else:  # Exponential
         door_requirement_progression = []
         ratio = self.options.maximum_door_requirement / 46
         for i in range(len(vanilla_door_unlock_info_list) - 1):
@@ -171,7 +173,8 @@ def shuffle_door_unlock_items(self) -> None:
 
     race_2_unlock_count = 0
 
-    for door_unlock_info, requirement in zip(vanilla_door_unlock_info_sorted_by_requirement, get_door_requirement_progression(self)):
+    for door_unlock_info, requirement in zip(vanilla_door_unlock_info_sorted_by_requirement,
+                                             get_door_requirement_progression(self)):
         if not (self.options.open_worlds and door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
             self.random.shuffle(available_doors)
             item = available_doors.pop()
@@ -204,9 +207,11 @@ def place_door_unlock_items(self, door_unlock_requirements: list[int]) -> None:
     if self.options.open_worlds:
         filled_door_unlock_locations.update(LocationName.WORLD_UNLOCK_LOCATIONS)
 
-    for item_door_unlock_info, item_door_unlock_requirement in zip(vanilla_door_unlock_info_list, door_unlock_requirements):
+    for item_door_unlock_info, item_door_unlock_requirement in zip(vanilla_door_unlock_info_list,
+                                                                   door_unlock_requirements):
         if not (self.options.open_worlds and item_door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
-            for location_door_unlock_info, location_door_unlock_requirement in zip(vanilla_door_unlock_info_sorted_by_requirement, get_door_requirement_progression(self)):
+            for location_door_unlock_info, location_door_unlock_requirement in \
+                    zip(vanilla_door_unlock_info_sorted_by_requirement, get_door_requirement_progression(self)):
                 location = location_door_unlock_info.location
                 if item_door_unlock_requirement == location_door_unlock_requirement and location not in filled_door_unlock_locations:
                     self.place_locked_item(location, self.create_event_item(item_door_unlock_info.item))

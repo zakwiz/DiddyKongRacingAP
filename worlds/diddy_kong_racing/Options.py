@@ -122,6 +122,7 @@ class PowerUpBalloonType(Choice):
     option_random_hidden = 2
     default = option_vanilla
 
+
 class SkipTrophyRaces(DefaultOnToggle):
     """Start with all 1st place trophies, so you only need to beat Wizpig 1 to unlock Future Fun Land"""
     display_name = "Skip trophy races"

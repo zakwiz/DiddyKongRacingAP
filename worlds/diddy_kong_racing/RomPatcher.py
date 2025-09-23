@@ -1,10 +1,11 @@
 import asyncio
-import bsdiff4
 import hashlib
-import pathlib
 import os
+import pathlib
 import sys
 import zipfile
+
+import bsdiff4
 
 from CommonClient import logger
 from Utils import open_filename
@@ -13,6 +14,7 @@ patched_rom_filename_template: str = "Diddy-Kong-Racing-AP-{}.z64"
 vanilla_rom_md5: str = "4f0e07f0eeac7e5d7ce3a75461888d03"
 vanilla_swapped_rom_md5: str = "e00c0e6bfb0ce740e3e1c50ba82bc01a"
 patched_rom_md5: str = "d430c2e16a13be58991fe4bb52063f1e"
+
 
 async def apply_patch(version_number: str) -> None:
     fpath = pathlib.Path(__file__)
@@ -32,7 +34,9 @@ async def apply_patch(version_number: str) -> None:
         rom = open_filename("Select your Diddy Kong Racing US 1.0 ROM",
                             (("Rom Files", (".z64", ".n64")), ("All Files", "*")))
         if not rom:
-            logger.error("ERROR: No ROM selected. Please restart the Diddy Kong Racing client and select your Diddy Kong Racing US 1.0 ROM.")
+            logger.error(
+                "ERROR: No ROM selected. Please restart the Diddy Kong Racing client and select your Diddy Kong Racing US 1.0 ROM."
+            )
             raise Exception
 
         if not patched_rom_path:
@@ -60,7 +64,9 @@ def patch_rom(vanilla_rom_path: str, output_path: str, patch_path: str) -> None:
     if rom_md5 == vanilla_swapped_rom_md5:
         rom = swap(rom)
     elif rom_md5 != vanilla_rom_md5:
-        logger.error("ERROR: Unknown ROM selected. Please restart the Diddy Kong Racing client and select your Diddy Kong Racing US 1.0 ROM.")
+        logger.error(
+            "ERROR: Unknown ROM selected. Please restart the Diddy Kong Racing client and select your Diddy Kong Racing US 1.0 ROM."
+        )
         raise Exception
 
     patch_file = open_file(patch_path).read()
@@ -86,6 +92,7 @@ def swap(data: bytes) -> bytes:
         swapped_data[i + 1] = data[i]
 
     return bytes(swapped_data)
+
 
 def open_file(resource: str):
     filename = sys.modules[__name__].__file__

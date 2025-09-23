@@ -2,11 +2,9 @@ from __future__ import annotations
 
 from BaseClasses import MultiWorld, Region
 from worlds.generic.Rules import set_rule
-
-from .Names import ItemName, LocationName, RegionName
 from .Locations import DiddyKongRacingLocation
+from .Names import ItemName, LocationName, RegionName
 from .Rules import DiddyKongRacingRules
-
 
 ENTRANCE_NAME_SUFFIX: str = " Door"
 DATASTORAGE_KEY_PREFIX: str = "Diddy_Kong_Racing_{player}_"
@@ -189,6 +187,7 @@ MAP_VALUE_TO_REGION_NAME: dict[int, str] = {
     33: RegionName.STAR_CITY
 }
 
+
 def create_regions(self) -> None:
     multiworld = self.multiworld
     player = self.player
@@ -211,7 +210,8 @@ def create_regions(self) -> None:
     )
 
 
-def create_region(self, multiworld: MultiWorld, player: int, active_locations, name: str, locations: list[str], victory_item_location: str) -> Region:
+def create_region(self, multiworld: MultiWorld, player: int, active_locations,
+                  name: str, locations: list[str], victory_item_location: str) -> Region:
     region = Region(name, player, multiworld)
     if name == RegionName.MENU:
         region.add_locations({location: None for location in LocationName.DOOR_UNLOCK_LOCATIONS})
@@ -222,7 +222,10 @@ def create_region(self, multiworld: MultiWorld, player: int, active_locations, n
         if victory_item_location in locations:
             region.add_locations({victory_item_location: None})
 
-        location_to_id = {location: active_locations.get(location, 0) for location in locations if active_locations.get(location, None)}
+        location_to_id = {
+            location: active_locations.get(location, 0) for location in locations
+            if active_locations.get(location, None)
+        }
         region.add_locations(location_to_id, DiddyKongRacingLocation)
 
     return region
