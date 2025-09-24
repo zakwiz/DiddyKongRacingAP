@@ -44,19 +44,17 @@ class DiddyKongRacingWorld(World):
     item_name_to_id = {}
 
     for name, data in ALL_ITEM_TABLE.items():
-        if data.dkr_id is None:  # Skip Victory Item
-            continue
         item_name_to_id[name] = data.dkr_id
 
     location_name_to_id = {name: data.dkr_id for name, data in ALL_LOCATION_TABLE.items()}
 
     options_dataclass = DiddyKongRacingOptions
     options: DiddyKongRacingOptions
+    slot_data: dict[str, Any] = {}
+    entrance_order: list[int] = list(range(20))
     found_entrances_datastorage_key: list[str] = []
 
     def __init__(self, world: MultiWorld, player: int) -> None:
-        self.slot_data: dict[str, Any] = {}
-        self.entrance_order: list[int] = list(range(20))
         super(DiddyKongRacingWorld, self).__init__(world, player)
 
     def create_regions(self) -> None:
