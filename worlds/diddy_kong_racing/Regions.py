@@ -367,6 +367,9 @@ def connect_track_regions(world: DiddyKongRacingWorld) -> None:
             end_region = world.multiworld.get_region(end_region_name, world.player)
             entrance.connect(end_region)
 
+            if world.options.shuffle_race_entrances.value:
+                world.multiworld.spoiler.set_entrance(entrance_name, end_region_name, "entrance", world.player)
+
 
 def reconnect_found_entrance(world: DiddyKongRacingWorld, key: str) -> None:
     found_region_map_value = int(key.removeprefix(DATASTORAGE_KEY_PREFIX.replace("{player}", str(world.player))))
