@@ -242,10 +242,10 @@ class DiddyKongRacingRules:
                 and self.bluey_1(state))
 
     def whale_bay_door_1(self, state: CollectionState) -> bool:
-        return state.has(ItemName.WHALE_BAY_1_DOOR_UNLOCK, self.player)
+        return state.has(ItemName.WHALE_BAY_DOOR_1_UNLOCK, self.player)
 
     def whale_bay_door_2(self, state: CollectionState) -> bool:
-        return (state.has(ItemName.WHALE_BAY_2_DOOR_UNLOCK, self.player)
+        return (state.has(ItemName.WHALE_BAY_DOOR_2_UNLOCK, self.player)
                 and self.bubbler_1(state))
 
     def crescent_island_door_1(self, state: CollectionState) -> bool:

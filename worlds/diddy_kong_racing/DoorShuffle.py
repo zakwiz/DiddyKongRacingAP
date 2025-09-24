@@ -38,8 +38,8 @@ vanilla_door_unlock_info_list: list[DoorUnlockInfo] = [
     DoorUnlockInfo(ItemName.SNOWBALL_VALLEY_DOOR_2_UNLOCK, LocationName.RACE_7_2_UNLOCK, 14),
     DoorUnlockInfo(ItemName.FROSTY_VILLAGE_DOOR_1_UNLOCK, LocationName.RACE_8_1_UNLOCK, 9),
     DoorUnlockInfo(ItemName.FROSTY_VILLAGE_DOOR_2_UNLOCK, LocationName.RACE_8_2_UNLOCK, 16),
-    DoorUnlockInfo(ItemName.WHALE_BAY_1_DOOR_UNLOCK, LocationName.RACE_9_1_UNLOCK, 10),
-    DoorUnlockInfo(ItemName.WHALE_BAY_2_DOOR_UNLOCK, LocationName.RACE_9_2_UNLOCK, 17),
+    DoorUnlockInfo(ItemName.WHALE_BAY_DOOR_1_UNLOCK, LocationName.RACE_9_1_UNLOCK, 10),
+    DoorUnlockInfo(ItemName.WHALE_BAY_DOOR_2_UNLOCK, LocationName.RACE_9_2_UNLOCK, 17),
     DoorUnlockInfo(ItemName.CRESCENT_ISLAND_DOOR_1_UNLOCK, LocationName.RACE_10_1_UNLOCK, 11),
     DoorUnlockInfo(ItemName.CRESCENT_ISLAND_DOOR_2_UNLOCK, LocationName.RACE_10_2_UNLOCK, 18),
     DoorUnlockInfo(ItemName.PIRATE_LAGOON_DOOR_1_UNLOCK, LocationName.RACE_11_1_UNLOCK, 13),
@@ -114,7 +114,7 @@ def shuffle_door_unlock_items(world: DiddyKongRacingWorld) -> None:
         ItemName.WALRUS_COVE_DOOR_1_UNLOCK: ItemName.WALRUS_COVE_DOOR_2_UNLOCK,
         ItemName.SNOWBALL_VALLEY_DOOR_1_UNLOCK: ItemName.SNOWBALL_VALLEY_DOOR_2_UNLOCK,
         ItemName.FROSTY_VILLAGE_DOOR_1_UNLOCK: ItemName.FROSTY_VILLAGE_DOOR_2_UNLOCK,
-        ItemName.WHALE_BAY_1_DOOR_UNLOCK: ItemName.WHALE_BAY_2_DOOR_UNLOCK,
+        ItemName.WHALE_BAY_DOOR_1_UNLOCK: ItemName.WHALE_BAY_DOOR_2_UNLOCK,
         ItemName.CRESCENT_ISLAND_DOOR_1_UNLOCK: ItemName.CRESCENT_ISLAND_DOOR_2_UNLOCK,
         ItemName.PIRATE_LAGOON_DOOR_1_UNLOCK: ItemName.PIRATE_LAGOON_DOOR_2_UNLOCK,
         ItemName.TREASURE_CAVES_DOOR_1_UNLOCK: ItemName.TREASURE_CAVES_DOOR_2_UNLOCK,
@@ -141,7 +141,7 @@ def shuffle_door_unlock_items(world: DiddyKongRacingWorld) -> None:
         ItemName.FROSTY_VILLAGE_DOOR_1_UNLOCK
     )
     sherbet_island_race_1_unlocks = (
-        ItemName.WHALE_BAY_1_DOOR_UNLOCK,
+        ItemName.WHALE_BAY_DOOR_1_UNLOCK,
         ItemName.CRESCENT_ISLAND_DOOR_1_UNLOCK,
         ItemName.PIRATE_LAGOON_DOOR_1_UNLOCK,
         ItemName.TREASURE_CAVES_DOOR_1_UNLOCK
