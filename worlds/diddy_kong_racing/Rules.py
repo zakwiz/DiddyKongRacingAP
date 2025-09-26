@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any, Callable
 
 from BaseClasses import CollectionState
 from worlds.generic.Rules import set_rule
-from .DoorShuffle import get_requirement_for_location, vanilla_door_unlock_info_list
+from .DoorShuffle import get_door_unlock_requirement, is_door_location
 from .Names import ItemName, LocationName, RegionName
 from .Regions import convert_region_name_to_entrance_name
 
@@ -101,10 +101,10 @@ def set_region_access_rules(world: DiddyKongRacingWorld) -> None:
 
 
 def set_door_unlock_rules(world: DiddyKongRacingWorld) -> None:
-    for door_unlock_info in vanilla_door_unlock_info_list:
-        location_name = door_unlock_info.location
-        if not (world.options.open_worlds and location_name in LocationName.WORLD_UNLOCK_LOCATIONS):
-            set_location_rule(world, location_name, door_unlock(world, location_name))
+    for location in world.get_region(RegionName.MENU).get_locations():
+        if is_door_location(location):
+            door_unlock_requirement = get_door_unlock_requirement(location)
+            set_rule(location, door_unlock(world, door_unlock_requirement))
 
 
 def set_overworld_balloon_rules(world: DiddyKongRacingWorld) -> None:
@@ -449,8 +449,8 @@ def wizpig_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
             and has_total_balloon_count(world, state, world.options.wizpig_2_balloons.value))
 
 
-def door_unlock(world: DiddyKongRacingWorld, location: str) -> Callable[[Any], bool]:
-    return lambda state: has_total_balloon_count(world, state, get_requirement_for_location(world, location))
+def door_unlock(world: DiddyKongRacingWorld, requirement: int) -> Callable[[Any], bool]:
+    return lambda state: has_total_balloon_count(world, state, requirement)
 
 
 def set_location_rule(world: DiddyKongRacingWorld, location_name: str, rule: Callable[[object], bool]):

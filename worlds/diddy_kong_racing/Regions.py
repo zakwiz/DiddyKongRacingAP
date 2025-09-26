@@ -213,12 +213,7 @@ def create_regions(world: DiddyKongRacingWorld) -> None:
 
 def create_region(world: DiddyKongRacingWorld, name: str, locations: list[str], victory_item_location: str) -> Region:
     region = Region(name, world.player, world.multiworld)
-    if name == RegionName.MENU:
-        region.add_locations({location: None for location in LocationName.DOOR_UNLOCK_LOCATIONS})
-
-        if not world.options.open_worlds:
-            region.add_locations({location: None for location in LocationName.WORLD_UNLOCK_LOCATIONS})
-    elif locations:
+    if locations:
         if victory_item_location in locations:
             region.add_locations({victory_item_location: None})
 

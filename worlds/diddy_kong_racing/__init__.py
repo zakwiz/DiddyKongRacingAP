@@ -5,14 +5,14 @@ from typing import Any
 from BaseClasses import Item, ItemClassification, MultiWorld, Tutorial
 from worlds.AutoWorld import WebWorld, World
 from worlds.LauncherComponents import Component, components, launch_subprocess, Type
-from .DoorShuffle import place_door_unlock_items, place_vanilla_door_unlock_items, \
+from .DoorUnlocks import place_door_unlock_items, place_vanilla_door_unlock_items, \
     shuffle_door_unlock_items, vanilla_door_unlock_info_list
 from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE
 from .Locations import ALL_LOCATION_TABLE
 from .Names import ItemName, LocationName, RegionName
 from .Options import DiddyKongRacingOptions
 from .Regions import connect_regions, connect_track_regions, create_regions, reconnect_found_entrance
-from .Rules import set_region_access_rules, set_rules
+from .Rules import set_region_access_rules, set_rules, set_door_unlock_rules
 
 
 def run_client():
@@ -50,7 +50,9 @@ class DiddyKongRacingWorld(World):
 
     options_dataclass = DiddyKongRacingOptions
     options: DiddyKongRacingOptions
+    origin_region_name: str = RegionName.TIMBERS_ISLAND
     slot_data: dict[str, Any] = {}
+    mirrored_tracks: list[bool]
     entrance_order: list[int] = list(range(20))
     door_unlock_requirements: list[int] = [0] * len(vanilla_door_unlock_info_list)
     found_entrances_datastorage_key: list[str] = []
@@ -64,20 +66,33 @@ class DiddyKongRacingWorld(World):
 
     def create_items(self) -> None:
         for name, dkr_id in ALL_ITEM_TABLE.items():
-            if not self.item_pre_filled(name):
+            if not self.is_item_pre_filled(name):
                 for _ in range(dkr_id.count):
                     item = self.create_item(name)
                     self.multiworld.itempool.append(item)
 
-        if self.options.shuffle_door_requirements:
-            shuffle_door_unlock_items(self)
-        else:
-            place_vanilla_door_unlock_items(self)
+        # Skip for Universal Tracker, this will be done from slot_data
+        if not hasattr(self.multiworld, "generation_is_fake"):
+            if self.options.shuffle_door_requirements:
+                shuffle_door_unlock_items(self)
+            else:
+                place_vanilla_door_unlock_items(self)
 
-        place_door_unlock_items(self)
+            place_door_unlock_items(self)
 
     def set_rules(self) -> None:
         set_rules(self)
+
+    def generate_basic(self) -> None:
+        num_tracks = 20
+        if self.options.mirrored_tracks.value == 0:
+            self.mirrored_tracks = [False] * num_tracks
+        elif self.options.mirrored_tracks.value == 1:
+            self.mirrored_tracks = [True] * num_tracks
+        else:
+            self.mirrored_tracks = []
+            for _ in range(num_tracks):
+                self.mirrored_tracks.append(bool(self.random.getrandbits(1)))
 
     def pre_fill(self) -> None:
         if self.is_ffl_unused():
@@ -122,13 +137,14 @@ class DiddyKongRacingWorld(World):
             "wizpig_2_amulet_pieces": self.options.wizpig_2_amulet_pieces.value,
             "wizpig_2_balloons": self.options.wizpig_2_balloons.value,
             "randomize_character_on_map_change": "true" if self.options.randomize_character_on_map_change else "false",
+            "mirrored_tracks": self.mirrored_tracks,
             "power_up_balloon_type": self.options.power_up_balloon_type.value,
             "skip_trophy_races": "true" if self.options.skip_trophy_races else "false"
         }
 
         return dkr_options
 
-    def item_pre_filled(self, item_name: str) -> bool:
+    def is_item_pre_filled(self, item_name: str) -> bool:
         if self.is_ffl_unused() and item_name == ItemName.FUTURE_FUN_LAND_BALLOON:
             return True
 
@@ -136,9 +152,6 @@ class DiddyKongRacingWorld(World):
             return True
 
         if not self.options.shuffle_tt_amulet and item_name == ItemName.TT_AMULET_PIECE:
-            return True
-
-        if item_name in ItemName.DOOR_UNLOCK_ITEMS:
             return True
 
         return False
@@ -178,6 +191,7 @@ class DiddyKongRacingWorld(World):
         self.door_unlock_requirements = slot_data["door_unlock_requirements"]
         place_door_unlock_items(self)
         set_region_access_rules(self)
+        set_door_unlock_rules(self)
 
     # For Universal Tracker
     def reconnect_found_entrances(self, found_key: str, data_storage_value: Any) -> None:

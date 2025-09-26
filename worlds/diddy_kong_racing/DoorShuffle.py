@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import math
+import re
 from typing import TYPE_CHECKING
 
-from .Names import ItemName, LocationName
+from BaseClasses import Location
+from .Names import ItemName, LocationName, RegionName
 
 if TYPE_CHECKING:
     from . import DiddyKongRacingWorld
@@ -68,6 +70,8 @@ vanilla_door_unlock_info_sorted_by_requirement: list[DoorUnlockInfo] = sorted(va
                                                                               key=lambda x: x.requirement)
 cached_door_requirement_progression: list[int] | None = None
 
+DOOR_UNLOCK_ITEM_PATTERN = re.compile("(\\d+) balloon\\(s\\) \\(.* Unlock\\)")
+
 
 def get_door_requirement_progression(world: DiddyKongRacingWorld) -> list[int]:
     global cached_door_requirement_progression
@@ -94,14 +98,6 @@ def get_door_requirement_progression(world: DiddyKongRacingWorld) -> list[int]:
 
     cached_door_requirement_progression = door_requirement_progression
     return door_requirement_progression
-
-
-def get_requirement_for_location(world: DiddyKongRacingWorld, location: str) -> int:
-    for i in range(len(vanilla_door_unlock_info_sorted_by_requirement)):
-        if vanilla_door_unlock_info_sorted_by_requirement[i].location == location:
-            return get_door_requirement_progression(world)[i]
-
-    raise Exception("Invalid location passed to DoorShuffle.get_requirement_for_location: " + location)
 
 
 def shuffle_door_unlock_items(world: DiddyKongRacingWorld) -> None:
@@ -215,13 +211,30 @@ def place_door_unlock_items(world: DiddyKongRacingWorld) -> None:
     if world.options.open_worlds:
         filled_door_unlock_locations.update(LocationName.WORLD_UNLOCK_LOCATIONS)
 
+    menu_region = world.get_region(RegionName.MENU)
+
     for item_door_unlock_info, item_door_unlock_requirement in zip(vanilla_door_unlock_info_list,
                                                                    world.door_unlock_requirements):
         if not (world.options.open_worlds and item_door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
             for location_door_unlock_info, location_door_unlock_requirement in \
                     zip(vanilla_door_unlock_info_sorted_by_requirement, get_door_requirement_progression(world)):
-                location = location_door_unlock_info.location
-                if item_door_unlock_requirement == location_door_unlock_requirement and location not in filled_door_unlock_locations:
-                    world.place_locked_item(location, world.create_event_item(item_door_unlock_info.item))
-                    filled_door_unlock_locations.add(location)
+                base_location_name = location_door_unlock_info.location
+                if item_door_unlock_requirement == location_door_unlock_requirement and base_location_name not in filled_door_unlock_locations:
+                    location_name = build_door_unlock_location_name(location_door_unlock_info.location,
+                                                                    item_door_unlock_requirement)
+                    menu_region.add_locations({location_name: None})
+                    world.place_locked_item(location_name, world.create_event_item(item_door_unlock_info.item))
+                    filled_door_unlock_locations.add(base_location_name)
                     break
+
+
+def build_door_unlock_location_name(door_unlock_location_base_name: str, door_unlock_requirement: int) -> str:
+    return str(door_unlock_requirement) + " balloon(s) (" + door_unlock_location_base_name + ")"
+
+
+def is_door_location(location: Location):
+    return DOOR_UNLOCK_ITEM_PATTERN.match(location.name)
+
+
+def get_door_unlock_requirement(location: Location):
+    return int(DOOR_UNLOCK_ITEM_PATTERN.match(location.name).group(1))
