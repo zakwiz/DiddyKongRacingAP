@@ -5,7 +5,7 @@ import re
 from typing import TYPE_CHECKING
 
 from BaseClasses import Location
-from .Names import ItemName, LocationName, RegionName
+from .Names import ItemName, LocationName
 
 if TYPE_CHECKING:
     from . import DiddyKongRacingWorld
@@ -211,7 +211,7 @@ def place_door_unlock_items(world: DiddyKongRacingWorld) -> None:
     if world.options.open_worlds:
         filled_door_unlock_locations.update(LocationName.WORLD_UNLOCK_LOCATIONS)
 
-    menu_region = world.get_region(RegionName.MENU)
+    origin_region = world.get_region(world.origin_region_name)
 
     for item_door_unlock_info, item_door_unlock_requirement in zip(vanilla_door_unlock_info_list,
                                                                    world.door_unlock_requirements):
@@ -222,7 +222,7 @@ def place_door_unlock_items(world: DiddyKongRacingWorld) -> None:
                 if item_door_unlock_requirement == location_door_unlock_requirement and base_location_name not in filled_door_unlock_locations:
                     location_name = build_door_unlock_location_name(location_door_unlock_info.location,
                                                                     item_door_unlock_requirement)
-                    menu_region.add_locations({location_name: None})
+                    origin_region.add_locations({location_name: None})
                     world.place_locked_item(location_name, world.create_event_item(item_door_unlock_info.item))
                     filled_door_unlock_locations.add(base_location_name)
                     break

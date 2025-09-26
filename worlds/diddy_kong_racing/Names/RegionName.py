@@ -1,4 +1,3 @@
-MENU = "Menu"
 TIMBERS_ISLAND = "Timber's Island"
 DINO_DOMAIN = "Dino Domain"
 ANCIENT_LAKE = "DD: Ancient Lake"

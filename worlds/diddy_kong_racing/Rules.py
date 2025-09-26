@@ -101,7 +101,7 @@ def set_region_access_rules(world: DiddyKongRacingWorld) -> None:
 
 
 def set_door_unlock_rules(world: DiddyKongRacingWorld) -> None:
-    for location in world.get_region(RegionName.MENU).get_locations():
+    for location in world.get_region(world.origin_region_name).get_locations():
         if is_door_unlock_location(location):
             door_unlock_requirement = get_door_unlock_requirement(location)
             set_rule(location, door_unlock(world, door_unlock_requirement))

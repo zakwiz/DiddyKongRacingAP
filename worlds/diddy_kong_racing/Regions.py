@@ -15,7 +15,6 @@ ENTRANCE_NAME_SUFFIX: str = " Door"
 DATASTORAGE_KEY_PREFIX: str = "Diddy_Kong_Racing_{player}_"
 
 DIDDY_KONG_RACING_REGIONS: dict[str, list[str]] = {
-    RegionName.MENU: [],
     RegionName.TIMBERS_ISLAND: [
         LocationName.BRIDGE_BALLOON,
         LocationName.WATERFALL_BALLOON,
@@ -228,9 +227,6 @@ def create_region(world: DiddyKongRacingWorld, name: str, locations: list[str], 
 
 
 def connect_regions(world: DiddyKongRacingWorld) -> None:
-    region_menu = world.get_region(RegionName.MENU)
-    region_menu.add_exits({RegionName.TIMBERS_ISLAND})
-
     add_named_exits(world, RegionName.TIMBERS_ISLAND, [
         RegionName.DINO_DOMAIN,
         RegionName.SNOWFLAKE_MOUNTAIN,
