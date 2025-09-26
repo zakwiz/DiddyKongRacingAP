@@ -4,7 +4,7 @@ from BaseClasses import CollectionState, Location
 from worlds.generic.Rules import set_rule
 from .DoorShuffle import get_requirement_for_location, vanilla_door_unlock_info_list
 from .Names import ItemName, LocationName, RegionName
-from .Regions import convert_region_name_to_vanilla_entrance_name
+from .Regions import convert_region_name_to_entrance_name
 
 # Allows type hinting without circular imports
 if TYPE_CHECKING:
@@ -408,7 +408,7 @@ def set_region_access_rules(world: DiddyKongRacingWorld) -> None:
     }
 
     for region, rule in region_access_rules.items():
-        entrance_name = convert_region_name_to_vanilla_entrance_name(region)
+        entrance_name = convert_region_name_to_entrance_name(region)
         entrance = world.get_entrance(entrance_name)
         set_rule(entrance, rule)
 
