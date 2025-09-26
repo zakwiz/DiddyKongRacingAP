@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Callable
 
 from BaseClasses import CollectionState
 from worlds.generic.Rules import set_rule
@@ -449,11 +449,11 @@ def wizpig_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
             and has_total_balloon_count(world, state, world.options.wizpig_2_balloons.value))
 
 
-def door_unlock(world: DiddyKongRacingWorld, requirement: int) -> Callable[[Any], bool]:
+def door_unlock(world: DiddyKongRacingWorld, requirement: int) -> Callable[[object], bool]:
     return lambda state: has_total_balloon_count(world, state, requirement)
 
 
-def set_location_rule(world: DiddyKongRacingWorld, location_name: str, rule: Callable[[object], bool]):
+def set_location_rule(world: DiddyKongRacingWorld, location_name: str, rule: Callable[[object], bool]) -> None:
     location = world.get_location(location_name)
     set_rule(location, rule)
 
@@ -474,9 +474,9 @@ def has_total_balloon_count(world: DiddyKongRacingWorld, state: CollectionState,
     return collected_balloon_count >= balloon_count
 
 
-def can_access_boss_1(world: DiddyKongRacingWorld, state: CollectionState, regional_balloon_item_name: str):
+def can_access_boss_1(world: DiddyKongRacingWorld, state: CollectionState, regional_balloon_item_name: str) -> bool:
     return state.has(regional_balloon_item_name, world.player, world.options.boss_1_regional_balloons.value)
 
 
-def can_access_boss_2(world: DiddyKongRacingWorld, state: CollectionState, regional_balloon_item_name: str):
+def can_access_boss_2(world: DiddyKongRacingWorld, state: CollectionState, regional_balloon_item_name: str) -> bool:
     return state.has(regional_balloon_item_name, world.player, world.options.boss_2_regional_balloons.value)
