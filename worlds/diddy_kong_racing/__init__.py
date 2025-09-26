@@ -5,8 +5,8 @@ from typing import Any
 from BaseClasses import Item, ItemClassification, MultiWorld, Tutorial
 from worlds.AutoWorld import WebWorld, World
 from worlds.LauncherComponents import Component, components, launch_subprocess, Type
-from .DoorShuffle import get_door_unlock_requirements, place_door_unlock_items, place_vanilla_door_unlock_items, \
-    shuffle_door_unlock_items
+from .DoorShuffle import place_door_unlock_items, place_vanilla_door_unlock_items, \
+    shuffle_door_unlock_items, vanilla_door_unlock_info_list
 from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE
 from .Locations import ALL_LOCATION_TABLE
 from .Names import ItemName, LocationName, RegionName
@@ -52,6 +52,7 @@ class DiddyKongRacingWorld(World):
     options: DiddyKongRacingOptions
     slot_data: dict[str, Any] = {}
     entrance_order: list[int] = list(range(20))
+    door_unlock_requirements: list[int] = [0] * len(vanilla_door_unlock_info_list)
     found_entrances_datastorage_key: list[str] = []
 
     def __init__(self, world: MultiWorld, player: int) -> None:
@@ -72,6 +73,8 @@ class DiddyKongRacingWorld(World):
             shuffle_door_unlock_items(self)
         else:
             place_vanilla_door_unlock_items(self)
+
+        place_door_unlock_items(self)
 
     def set_rules(self) -> None:
         set_rules(self)
@@ -99,10 +102,6 @@ class DiddyKongRacingWorld(World):
             self.place_locked_item(LocationName.SMOKEY_CASTLE, tt_amulet_item)
 
     def fill_slot_data(self) -> dict[str, Any]:
-        door_unlock_requirements = []
-        if self.options.shuffle_door_requirements or self.options.door_requirement_progression != 0:
-            door_unlock_requirements = get_door_unlock_requirements(self)
-
         dkr_options: dict[str, Any] = {
             "apworld_version": self.apworld_version,
             "player_name": self.multiworld.player_name[self.player],
@@ -114,7 +113,7 @@ class DiddyKongRacingWorld(World):
             "door_requirement_progression": self.options.door_requirement_progression.value,
             "maximum_door_requirement": self.options.maximum_door_requirement.value,
             "shuffle_door_requirements": "true" if self.options.shuffle_door_requirements.value else "false",
-            "door_unlock_requirements": door_unlock_requirements,
+            "door_unlock_requirements": self.door_unlock_requirements,
             "shuffle_race_entrances": "true" if self.options.shuffle_race_entrances else "false",
             "entrance_order": self.entrance_order,
             "boss_1_regional_balloons": self.options.boss_1_regional_balloons.value,
@@ -174,9 +173,10 @@ class DiddyKongRacingWorld(World):
 
     # For Universal Tracker
     def interpret_slot_data(self, slot_data: dict[str, Any]) -> None:
-        place_door_unlock_items(self, slot_data["door_unlock_requirements"])
         self.entrance_order = slot_data["entrance_order"]
         connect_track_regions(self)
+        self.door_unlock_requirements = slot_data["door_unlock_requirements"]
+        place_door_unlock_items(self)
         set_region_access_rules(self)
 
     # For Universal Tracker
