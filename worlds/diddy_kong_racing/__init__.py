@@ -68,6 +68,11 @@ class DiddyKongRacingWorld(World):
                     item = self.create_item(name)
                     self.multiworld.itempool.append(item)
 
+        if self.options.shuffle_door_requirements:
+            shuffle_door_unlock_items(self)
+        else:
+            place_vanilla_door_unlock_items(self)
+
     def set_rules(self) -> None:
         set_rules(self)
 
@@ -92,11 +97,6 @@ class DiddyKongRacingWorld(World):
             self.place_locked_item(LocationName.ICICLE_PYRAMID, tt_amulet_item)
             self.place_locked_item(LocationName.DARKWATER_BEACH, tt_amulet_item)
             self.place_locked_item(LocationName.SMOKEY_CASTLE, tt_amulet_item)
-
-        if self.options.shuffle_door_requirements:
-            shuffle_door_unlock_items(self)
-        else:
-            place_vanilla_door_unlock_items(self)
 
     def fill_slot_data(self) -> dict[str, Any]:
         door_unlock_requirements = []
