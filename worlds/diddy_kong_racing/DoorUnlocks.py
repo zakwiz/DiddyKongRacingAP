@@ -232,7 +232,7 @@ def build_door_unlock_location_name(door_unlock_location_base_name: str, door_un
     return str(door_unlock_requirement) + " balloon(s) (" + door_unlock_location_base_name + ")"
 
 
-def is_door_location(location: Location):
+def is_door_unlock_location(location: Location):
     return DOOR_UNLOCK_ITEM_PATTERN.match(location.name)
 
 

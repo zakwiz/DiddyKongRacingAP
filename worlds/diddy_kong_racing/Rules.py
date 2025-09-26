@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Callable
 
 from BaseClasses import CollectionState
 from worlds.generic.Rules import set_rule
-from .DoorShuffle import get_door_unlock_requirement, is_door_location
+from .DoorUnlocks import get_door_unlock_requirement, is_door_unlock_location
 from .Names import ItemName, LocationName, RegionName
 from .Regions import convert_region_name_to_entrance_name
 
@@ -102,7 +102,7 @@ def set_region_access_rules(world: DiddyKongRacingWorld) -> None:
 
 def set_door_unlock_rules(world: DiddyKongRacingWorld) -> None:
     for location in world.get_region(RegionName.MENU).get_locations():
-        if is_door_location(location):
+        if is_door_unlock_location(location):
             door_unlock_requirement = get_door_unlock_requirement(location)
             set_rule(location, door_unlock(world, door_unlock_requirement))
 
