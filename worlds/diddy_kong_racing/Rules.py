@@ -181,9 +181,9 @@ def dragon_forest(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
 
 
 def future_fun_land(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (world.options.open_worlds or
+    return (world.options.open_worlds.value or
             wizpig_1(world, state) and
-            (world.options.skip_trophy_races or
+            (world.options.skip_trophy_races.value or
              (tricky_2(world, state) and bluey_2(world, state) and bubbler_2(world, state) and smokey_2(world, state)))
             )
 
