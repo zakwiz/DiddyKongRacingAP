@@ -109,13 +109,13 @@ def set_door_unlock_rules(world: DiddyKongRacingWorld) -> None:
 
 def set_overworld_balloon_rules(world: DiddyKongRacingWorld) -> None:
     overworld_balloon_rules = {
-        LocationName.BRIDGE_BALLOON: balloon_bridge(world),
-        LocationName.WATERFALL_BALLOON: balloon_waterfall(world),
-        LocationName.RIVER_BALLOON: balloon_river(world),
-        LocationName.OCEAN_BALLOON: balloon_ocean(world),
-        LocationName.TAJ_CAR_RACE: balloon_taj_car(world),
-        LocationName.TAJ_HOVERCRAFT_RACE: balloon_taj_hovercraft(world),
-        LocationName.TAJ_PLANE_RACE: balloon_taj_plane(world)
+        LocationName.BRIDGE_BALLOON: bridge_balloon(world),
+        LocationName.WATERFALL_BALLOON: waterfall_balloon(world),
+        LocationName.RIVER_BALLOON: river_balloon(world),
+        LocationName.OCEAN_BALLOON: ocean_balloon(world),
+        LocationName.TAJ_CAR_RACE: tag_car_race(world),
+        LocationName.TAJ_HOVERCRAFT_RACE: taj_hovercraft_race(world),
+        LocationName.TAJ_PLANE_RACE: taj_plane_race(world)
     }
 
     for location, rule in overworld_balloon_rules.items():
@@ -188,31 +188,31 @@ def future_fun_land(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
             )
 
 
-def balloon_bridge(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+def bridge_balloon(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
     return lambda state: True
 
 
-def balloon_waterfall(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+def waterfall_balloon(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
     return lambda state: True
 
 
-def balloon_river(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+def river_balloon(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
     return lambda state: True
 
 
-def balloon_ocean(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+def ocean_balloon(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
     return lambda state: True
 
 
-def balloon_taj_car(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+def tag_car_race(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
     return lambda state: has_total_balloon_count(world, state, 5)
 
 
-def balloon_taj_hovercraft(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+def taj_hovercraft_race(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
     return lambda state: has_total_balloon_count(world, state, 10)
 
 
-def balloon_taj_plane(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+def taj_plane_race(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
     return lambda state: has_total_balloon_count(world, state, 18)
 
 
