@@ -52,46 +52,46 @@ def set_rules(world: DiddyKongRacingWorld) -> None:
 def set_region_access_rules(world: DiddyKongRacingWorld) -> None:
     region_access_rules = {
         # Timber's Island
-        RegionName.DINO_DOMAIN: lambda state: dino_domain(world, state),
-        RegionName.SNOWFLAKE_MOUNTAIN: lambda state: snowflake_mountain(world, state),
-        RegionName.SHERBET_ISLAND: lambda state: sherbet_island(world, state),
-        RegionName.DRAGON_FOREST: lambda state: dragon_forest(world, state),
-        RegionName.WIZPIG_1: lambda state: wizpig_1(world, state),
-        RegionName.FUTURE_FUN_LAND: lambda state: future_fun_land(world, state),
+        RegionName.DINO_DOMAIN: dino_domain(world),
+        RegionName.SNOWFLAKE_MOUNTAIN: snowflake_mountain(world),
+        RegionName.SHERBET_ISLAND: sherbet_island(world),
+        RegionName.DRAGON_FOREST: dragon_forest(world),
+        RegionName.WIZPIG_1: wizpig_1(world),
+        RegionName.FUTURE_FUN_LAND: future_fun_land(world),
         # Dino Domain
-        RegionName.ANCIENT_LAKE: lambda state: ancient_lake_door_1(world, state),
-        RegionName.FOSSIL_CANYON: lambda state: fossil_canyon_door_1(world, state),
-        RegionName.JUNGLE_FALLS: lambda state: jungle_falls_door_1(world, state),
-        RegionName.HOT_TOP_VOLCANO: lambda state: hot_top_volcano_door_1(world, state),
-        RegionName.FIRE_MOUNTAIN: lambda state: fire_mountain(world, state),
-        RegionName.TRICKY: lambda state: tricky_1(world, state),
+        RegionName.ANCIENT_LAKE: ancient_lake_door_1(world),
+        RegionName.FOSSIL_CANYON: fossil_canyon_door_1(world),
+        RegionName.JUNGLE_FALLS: jungle_falls_door_1(world),
+        RegionName.HOT_TOP_VOLCANO: hot_top_volcano_door_1(world),
+        RegionName.FIRE_MOUNTAIN: fire_mountain(world),
+        RegionName.TRICKY: tricky_1(world),
         # Snowflake Mountain
-        RegionName.EVERFROST_PEAK: lambda state: everfrost_peak_door_1(world, state),
-        RegionName.WALRUS_COVE: lambda state: walrus_cove_door_1(world, state),
-        RegionName.SNOWBALL_VALLEY: lambda state: snowball_valley_door_1(world, state),
-        RegionName.FROSTY_VILLAGE: lambda state: frosty_village_door_1(world, state),
-        RegionName.ICICLE_PYRAMID: lambda state: icicle_pyramid(world, state),
-        RegionName.BLUEY: lambda state: bluey_1(world, state),
+        RegionName.EVERFROST_PEAK: everfrost_peak_door_1(world),
+        RegionName.WALRUS_COVE: walrus_cove_door_1(world),
+        RegionName.SNOWBALL_VALLEY: snowball_valley_door_1(world),
+        RegionName.FROSTY_VILLAGE: frosty_village_door_1(world),
+        RegionName.ICICLE_PYRAMID: icicle_pyramid(world),
+        RegionName.BLUEY: bluey_1(world),
         # Sherbet Island
-        RegionName.WHALE_BAY: lambda state: whale_bay_door_1(world, state),
-        RegionName.CRESCENT_ISLAND: lambda state: crescent_island_door_1(world, state),
-        RegionName.PIRATE_LAGOON: lambda state: pirate_lagoon_door_1(world, state),
-        RegionName.TREASURE_CAVES: lambda state: treasure_caves_door_1(world, state),
-        RegionName.DARKWATER_BEACH: lambda state: darkwater_beach(world, state),
-        RegionName.BUBBLER: lambda state: bubbler_1(world, state),
+        RegionName.WHALE_BAY: whale_bay_door_1(world),
+        RegionName.CRESCENT_ISLAND: crescent_island_door_1(world),
+        RegionName.PIRATE_LAGOON: pirate_lagoon_door_1(world),
+        RegionName.TREASURE_CAVES: treasure_caves_door_1(world),
+        RegionName.DARKWATER_BEACH: darkwater_beach(world),
+        RegionName.BUBBLER: bubbler_1(world),
         # Dragon Forest
-        RegionName.WINDMILL_PLAINS: lambda state: windmill_plains_door_1(world, state),
-        RegionName.GREENWOOD_VILLAGE: lambda state: greenwood_village_door_1(world, state),
-        RegionName.BOULDER_CANYON: lambda state: boulder_canyon_door_1(world, state),
-        RegionName.HAUNTED_WOODS: lambda state: haunted_woods_door_1(world, state),
-        RegionName.SMOKEY_CASTLE: lambda state: smokey_castle(world, state),
-        RegionName.SMOKEY: lambda state: smokey_1(world, state),
+        RegionName.WINDMILL_PLAINS: windmill_plains_door_1(world),
+        RegionName.GREENWOOD_VILLAGE: greenwood_village_door_1(world),
+        RegionName.BOULDER_CANYON: boulder_canyon_door_1(world),
+        RegionName.HAUNTED_WOODS: haunted_woods_door_1(world),
+        RegionName.SMOKEY_CASTLE: smokey_castle(world),
+        RegionName.SMOKEY: smokey_1(world),
         # Future Fun Land
-        RegionName.SPACEDUST_ALLEY: lambda state: spacedust_alley_door_1(world, state),
-        RegionName.DARKMOON_CAVERNS: lambda state: darkmoon_caverns_door_1(world, state),
-        RegionName.SPACEPORT_ALPHA: lambda state: spaceport_alpha_door_1(world, state),
-        RegionName.STAR_CITY: lambda state: star_city_door_1(world, state),
-        RegionName.WIZPIG_2: lambda state: wizpig_2(world, state),
+        RegionName.SPACEDUST_ALLEY: spacedust_alley_door_1(world),
+        RegionName.DARKMOON_CAVERNS: darkmoon_caverns_door_1(world),
+        RegionName.SPACEPORT_ALPHA: spaceport_alpha_door_1(world),
+        RegionName.STAR_CITY: star_city_door_1(world),
+        RegionName.WIZPIG_2: wizpig_2(world),
     }
 
     for region, rule in region_access_rules.items():
@@ -109,13 +109,13 @@ def set_door_unlock_rules(world: DiddyKongRacingWorld) -> None:
 
 def set_overworld_balloon_rules(world: DiddyKongRacingWorld) -> None:
     overworld_balloon_rules = {
-        LocationName.BRIDGE_BALLOON: lambda state: balloon_bridge(world, state),
-        LocationName.WATERFALL_BALLOON: lambda state: balloon_waterfall(world, state),
-        LocationName.RIVER_BALLOON: lambda state: balloon_river(world, state),
-        LocationName.OCEAN_BALLOON: lambda state: balloon_ocean(world, state),
-        LocationName.TAJ_CAR_RACE: lambda state: balloon_taj_car(world, state),
-        LocationName.TAJ_HOVERCRAFT_RACE: lambda state: balloon_taj_hovercraft(world, state),
-        LocationName.TAJ_PLANE_RACE: lambda state: balloon_taj_plane(world, state)
+        LocationName.BRIDGE_BALLOON: balloon_bridge(world),
+        LocationName.WATERFALL_BALLOON: balloon_waterfall(world),
+        LocationName.RIVER_BALLOON: balloon_river(world),
+        LocationName.OCEAN_BALLOON: balloon_ocean(world),
+        LocationName.TAJ_CAR_RACE: balloon_taj_car(world),
+        LocationName.TAJ_HOVERCRAFT_RACE: balloon_taj_hovercraft(world),
+        LocationName.TAJ_PLANE_RACE: balloon_taj_plane(world)
     }
 
     for location, rule in overworld_balloon_rules.items():
@@ -124,26 +124,26 @@ def set_overworld_balloon_rules(world: DiddyKongRacingWorld) -> None:
 
 def set_race_2_location_rules(world: DiddyKongRacingWorld) -> None:
     race_door_2_rules = [
-        lambda state: ancient_lake_door_2(world, state),
-        lambda state: fossil_canyon_door_2(world, state),
-        lambda state: jungle_falls_door_2(world, state),
-        lambda state: hot_top_volcano_door_2(world, state),
-        lambda state: everfrost_peak_door_2(world, state),
-        lambda state: walrus_cove_door_2(world, state),
-        lambda state: snowball_valley_door_2(world, state),
-        lambda state: frosty_village_door_2(world, state),
-        lambda state: whale_bay_door_2(world, state),
-        lambda state: crescent_island_door_2(world, state),
-        lambda state: pirate_lagoon_door_2(world, state),
-        lambda state: treasure_caves_door_2(world, state),
-        lambda state: windmill_plains_door_2(world, state),
-        lambda state: greenwood_village_door_2(world, state),
-        lambda state: boulder_canyon_door_2(world, state),
-        lambda state: haunted_woods_door_2(world, state),
-        lambda state: spacedust_alley_door_2(world, state),
-        lambda state: darkmoon_caverns_door_2(world, state),
-        lambda state: spaceport_alpha_door_2(world, state),
-        lambda state: star_city_door_2(world, state)
+        ancient_lake_door_2(world),
+        fossil_canyon_door_2(world),
+        jungle_falls_door_2(world),
+        hot_top_volcano_door_2(world),
+        everfrost_peak_door_2(world),
+        walrus_cove_door_2(world),
+        snowball_valley_door_2(world),
+        frosty_village_door_2(world),
+        whale_bay_door_2(world),
+        crescent_island_door_2(world),
+        pirate_lagoon_door_2(world),
+        treasure_caves_door_2(world),
+        windmill_plains_door_2(world),
+        greenwood_village_door_2(world),
+        boulder_canyon_door_2(world),
+        haunted_woods_door_2(world),
+        spacedust_alley_door_2(world),
+        darkmoon_caverns_door_2(world),
+        spaceport_alpha_door_2(world),
+        star_city_door_2(world)
     ]
 
     for door_num, entrance_num in enumerate(world.entrance_order):
@@ -154,298 +154,299 @@ def set_race_2_location_rules(world: DiddyKongRacingWorld) -> None:
 
 def set_amulet_rules(world: DiddyKongRacingWorld) -> None:
     amulet_rules = {
-        LocationName.TRICKY_2: lambda state: tricky_2(world, state),
-        LocationName.BLUEY_2: lambda state: bluey_2(world, state),
-        LocationName.BUBBLER_2: lambda state: bubbler_2(world, state),
-        LocationName.SMOKEY_2: lambda state: smokey_2(world, state)
+        LocationName.TRICKY_2: tricky_2(world),
+        LocationName.BLUEY_2: bluey_2(world),
+        LocationName.BUBBLER_2: bubbler_2(world),
+        LocationName.SMOKEY_2: smokey_2(world)
     }
 
     for location, rule in amulet_rules.items():
         set_location_rule(world, location, rule)
 
 
-def dino_domain(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return world.options.open_worlds or state.has(ItemName.DINO_DOMAIN_UNLOCK, world.player)
+def dino_domain(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: world.options.open_worlds or state.has(ItemName.DINO_DOMAIN_UNLOCK, world.player)
 
 
-def snowflake_mountain(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return world.options.open_worlds or state.has(ItemName.SNOWFLAKE_MOUNTAIN_UNLOCK, world.player)
+def snowflake_mountain(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: world.options.open_worlds or state.has(ItemName.SNOWFLAKE_MOUNTAIN_UNLOCK, world.player)
 
 
-def sherbet_island(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return world.options.open_worlds or state.has(ItemName.SHERBET_ISLAND_UNLOCK, world.player)
+def sherbet_island(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: world.options.open_worlds or state.has(ItemName.SHERBET_ISLAND_UNLOCK, world.player)
 
 
-def dragon_forest(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return world.options.open_worlds or state.has(ItemName.DRAGON_FOREST_UNLOCK, world.player)
+def dragon_forest(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: world.options.open_worlds or state.has(ItemName.DRAGON_FOREST_UNLOCK, world.player)
 
 
-def future_fun_land(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (world.options.open_worlds.value or
-            wizpig_1(world, state) and
+def future_fun_land(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (world.options.open_worlds.value or
+                          wizpig_1(world)(state) and
             (world.options.skip_trophy_races.value or
-             (tricky_2(world, state) and bluey_2(world, state) and bubbler_2(world, state) and smokey_2(world, state)))
+             (tricky_2(world)(state) and bluey_2(world)(state) and bubbler_2(world)(state) and smokey_2(world)(state)))
             )
 
 
-def balloon_bridge(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return True
+def balloon_bridge(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: True
 
 
-def balloon_waterfall(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return True
+def balloon_waterfall(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: True
 
 
-def balloon_river(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return True
+def balloon_river(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: True
 
 
-def balloon_ocean(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return True
+def balloon_ocean(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: True
 
 
-def balloon_taj_car(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return has_total_balloon_count(world, state, 5)
+def balloon_taj_car(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: has_total_balloon_count(world, state, 5)
 
 
-def balloon_taj_hovercraft(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return has_total_balloon_count(world, state, 10)
+def balloon_taj_hovercraft(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: has_total_balloon_count(world, state, 10)
 
 
-def balloon_taj_plane(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return has_total_balloon_count(world, state, 18)
+def balloon_taj_plane(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: has_total_balloon_count(world, state, 18)
 
 
-def ancient_lake_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.ANCIENT_LAKE_DOOR_1_UNLOCK, world.player)
+def ancient_lake_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.ANCIENT_LAKE_DOOR_1_UNLOCK, world.player)
 
 
-def ancient_lake_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.ANCIENT_LAKE_DOOR_2_UNLOCK, world.player)
-            and tricky_1(world, state))
+def ancient_lake_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.ANCIENT_LAKE_DOOR_2_UNLOCK, world.player)
+                          and tricky_1(world)(state))
 
 
-def fossil_canyon_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.FOSSIL_CANYON_DOOR_1_UNLOCK, world.player)
+def fossil_canyon_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.FOSSIL_CANYON_DOOR_1_UNLOCK, world.player)
 
 
-def fossil_canyon_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.FOSSIL_CANYON_DOOR_2_UNLOCK, world.player)
-            and tricky_1(world, state))
+def fossil_canyon_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.FOSSIL_CANYON_DOOR_2_UNLOCK, world.player)
+                          and tricky_1(world)(state))
 
 
-def jungle_falls_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.JUNGLE_FALLS_DOOR_1_UNLOCK, world.player)
+def jungle_falls_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.JUNGLE_FALLS_DOOR_1_UNLOCK, world.player)
 
 
-def jungle_falls_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.JUNGLE_FALLS_DOOR_2_UNLOCK, world.player)
-            and tricky_1(world, state))
+def jungle_falls_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.JUNGLE_FALLS_DOOR_2_UNLOCK, world.player)
+                          and tricky_1(world)(state))
 
 
-def hot_top_volcano_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.HOT_TOP_VOLCANO_DOOR_1_UNLOCK, world.player)
+def hot_top_volcano_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.HOT_TOP_VOLCANO_DOOR_1_UNLOCK, world.player)
 
 
-def hot_top_volcano_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.HOT_TOP_VOLCANO_DOOR_2_UNLOCK, world.player)
-            and tricky_1(world, state))
+def hot_top_volcano_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.HOT_TOP_VOLCANO_DOOR_2_UNLOCK, world.player)
+                          and tricky_1(world)(state))
 
 
-def everfrost_peak_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.EVERFROST_PEAK_DOOR_1_UNLOCK, world.player)
+def everfrost_peak_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.EVERFROST_PEAK_DOOR_1_UNLOCK, world.player)
 
 
-def everfrost_peak_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.EVERFROST_PEAK_DOOR_2_UNLOCK, world.player)
-            and bluey_1(world, state))
+def everfrost_peak_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.EVERFROST_PEAK_DOOR_2_UNLOCK, world.player)
+                          and bluey_1(world)(state))
 
 
-def walrus_cove_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.WALRUS_COVE_DOOR_1_UNLOCK, world.player)
+def walrus_cove_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.WALRUS_COVE_DOOR_1_UNLOCK, world.player)
 
 
-def walrus_cove_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.WALRUS_COVE_DOOR_2_UNLOCK, world.player)
-            and bluey_1(world, state))
+def walrus_cove_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.WALRUS_COVE_DOOR_2_UNLOCK, world.player)
+                          and bluey_1(world)(state))
 
 
-def snowball_valley_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.SNOWBALL_VALLEY_DOOR_1_UNLOCK, world.player)
+def snowball_valley_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.SNOWBALL_VALLEY_DOOR_1_UNLOCK, world.player)
 
 
-def snowball_valley_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.SNOWBALL_VALLEY_DOOR_2_UNLOCK, world.player)
-            and bluey_1(world, state))
+def snowball_valley_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.SNOWBALL_VALLEY_DOOR_2_UNLOCK, world.player)
+                          and bluey_1(world)(state))
 
 
-def frosty_village_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.FROSTY_VILLAGE_DOOR_1_UNLOCK, world.player)
+def frosty_village_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.FROSTY_VILLAGE_DOOR_1_UNLOCK, world.player)
 
 
-def frosty_village_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.FROSTY_VILLAGE_DOOR_2_UNLOCK, world.player)
-            and bluey_1(world, state))
+def frosty_village_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.FROSTY_VILLAGE_DOOR_2_UNLOCK, world.player)
+                          and bluey_1(world)(state))
 
 
-def whale_bay_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.WHALE_BAY_DOOR_1_UNLOCK, world.player)
+def whale_bay_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.WHALE_BAY_DOOR_1_UNLOCK, world.player)
 
 
-def whale_bay_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.WHALE_BAY_DOOR_2_UNLOCK, world.player)
-            and bubbler_1(world, state))
+def whale_bay_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.WHALE_BAY_DOOR_2_UNLOCK, world.player)
+                          and bubbler_1(world)(state))
 
 
-def crescent_island_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.CRESCENT_ISLAND_DOOR_1_UNLOCK, world.player)
+def crescent_island_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.CRESCENT_ISLAND_DOOR_1_UNLOCK, world.player)
 
 
-def crescent_island_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.CRESCENT_ISLAND_DOOR_2_UNLOCK, world.player)
-            and bubbler_1(world, state))
+def crescent_island_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.CRESCENT_ISLAND_DOOR_2_UNLOCK, world.player)
+                          and bubbler_1(world)(state))
 
 
-def pirate_lagoon_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.PIRATE_LAGOON_DOOR_1_UNLOCK, world.player)
+def pirate_lagoon_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.PIRATE_LAGOON_DOOR_1_UNLOCK, world.player)
 
 
-def pirate_lagoon_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.PIRATE_LAGOON_DOOR_2_UNLOCK, world.player)
-            and bubbler_1(world, state))
+def pirate_lagoon_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.PIRATE_LAGOON_DOOR_2_UNLOCK, world.player)
+                          and bubbler_1(world)(state))
 
 
-def treasure_caves_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.TREASURE_CAVES_DOOR_1_UNLOCK, world.player)
+def treasure_caves_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.TREASURE_CAVES_DOOR_1_UNLOCK, world.player)
 
 
-def treasure_caves_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.TREASURE_CAVES_DOOR_2_UNLOCK, world.player)
-            and bubbler_1(world, state))
+def treasure_caves_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.TREASURE_CAVES_DOOR_2_UNLOCK, world.player)
+                          and bubbler_1(world)(state))
 
 
-def windmill_plains_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.WINDMILL_PLAINS_DOOR_1_UNLOCK, world.player)
+def windmill_plains_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.WINDMILL_PLAINS_DOOR_1_UNLOCK, world.player)
 
 
-def windmill_plains_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.WINDMILL_PLAINS_DOOR_2_UNLOCK, world.player)
-            and smokey_1(world, state))
+def windmill_plains_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.WINDMILL_PLAINS_DOOR_2_UNLOCK, world.player)
+                          and smokey_1(world)(state))
 
 
-def greenwood_village_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.GREENWOOD_VILLAGE_DOOR_1_UNLOCK, world.player)
+def greenwood_village_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.GREENWOOD_VILLAGE_DOOR_1_UNLOCK, world.player)
 
 
-def greenwood_village_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.GREENWOOD_VILLAGE_DOOR_2_UNLOCK, world.player)
-            and smokey_1(world, state))
+def greenwood_village_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.GREENWOOD_VILLAGE_DOOR_2_UNLOCK, world.player)
+                          and smokey_1(world)(state))
 
 
-def boulder_canyon_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.BOULDER_CANYON_DOOR_1_UNLOCK, world.player)
+def boulder_canyon_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.BOULDER_CANYON_DOOR_1_UNLOCK, world.player)
 
 
-def boulder_canyon_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.BOULDER_CANYON_DOOR_2_UNLOCK, world.player)
-            and smokey_1(world, state))
+def boulder_canyon_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.BOULDER_CANYON_DOOR_2_UNLOCK, world.player)
+                          and smokey_1(world)(state))
 
 
-def haunted_woods_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.HAUNTED_WOODS_DOOR_1_UNLOCK, world.player)
+def haunted_woods_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.HAUNTED_WOODS_DOOR_1_UNLOCK, world.player)
 
 
-def haunted_woods_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.HAUNTED_WOODS_DOOR_2_UNLOCK, world.player)
-            and smokey_1(world, state))
+def haunted_woods_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.HAUNTED_WOODS_DOOR_2_UNLOCK, world.player)
+                          and smokey_1(world)(state))
 
 
-def spacedust_alley_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.SPACEDUST_ALLEY_DOOR_1_UNLOCK, world.player)
+def spacedust_alley_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.SPACEDUST_ALLEY_DOOR_1_UNLOCK, world.player)
 
 
-def spacedust_alley_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.SPACEDUST_ALLEY_DOOR_2_UNLOCK, world.player)
+def spacedust_alley_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.SPACEDUST_ALLEY_DOOR_2_UNLOCK, world.player)
 
 
-def darkmoon_caverns_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.DARKMOON_CAVERNS_DOOR_1_UNLOCK, world.player)
+def darkmoon_caverns_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.DARKMOON_CAVERNS_DOOR_1_UNLOCK, world.player)
 
 
-def darkmoon_caverns_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.DARKMOON_CAVERNS_DOOR_2_UNLOCK, world.player)
+def darkmoon_caverns_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.DARKMOON_CAVERNS_DOOR_2_UNLOCK, world.player)
 
 
-def spaceport_alpha_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.SPACEPORT_ALPHA_DOOR_1_UNLOCK, world.player)
+def spaceport_alpha_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.SPACEPORT_ALPHA_DOOR_1_UNLOCK, world.player)
 
 
-def spaceport_alpha_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.SPACEPORT_ALPHA_DOOR_2_UNLOCK, world.player)
+def spaceport_alpha_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.SPACEPORT_ALPHA_DOOR_2_UNLOCK, world.player)
 
 
-def star_city_door_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.STAR_CITY_DOOR_1_UNLOCK, world.player)
+def star_city_door_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.STAR_CITY_DOOR_1_UNLOCK, world.player)
 
 
-def star_city_door_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.STAR_CITY_DOOR_2_UNLOCK, world.player)
+def star_city_door_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.STAR_CITY_DOOR_2_UNLOCK, world.player)
 
 
-def fire_mountain(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.FIRE_MOUNTAIN_KEY, world.player)
+def fire_mountain(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.FIRE_MOUNTAIN_KEY, world.player)
 
 
-def icicle_pyramid(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.ICICLE_PYRAMID_KEY, world.player)
+def icicle_pyramid(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.ICICLE_PYRAMID_KEY, world.player)
 
 
-def darkwater_beach(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.DARKWATER_BEACH_KEY, world.player)
+def darkwater_beach(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.DARKWATER_BEACH_KEY, world.player)
 
 
-def smokey_castle(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.SMOKEY_CASTLE_KEY, world.player)
+def smokey_castle(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.SMOKEY_CASTLE_KEY, world.player)
 
 
-def tricky_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return can_access_boss_1(world, state, ItemName.DINO_DOMAIN_BALLOON)
+def tricky_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: can_access_boss_1(world, state, ItemName.DINO_DOMAIN_BALLOON)
 
 
-def tricky_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return can_access_boss_2(world, state, ItemName.DINO_DOMAIN_BALLOON)
+def tricky_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: can_access_boss_2(world, state, ItemName.DINO_DOMAIN_BALLOON)
 
 
-def bluey_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return can_access_boss_1(world, state, ItemName.SNOWFLAKE_MOUNTAIN_BALLOON)
+def bluey_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: can_access_boss_1(world, state, ItemName.SNOWFLAKE_MOUNTAIN_BALLOON)
 
 
-def bluey_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return can_access_boss_2(world, state, ItemName.SNOWFLAKE_MOUNTAIN_BALLOON)
+def bluey_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: can_access_boss_2(world, state, ItemName.SNOWFLAKE_MOUNTAIN_BALLOON)
 
 
-def bubbler_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return can_access_boss_1(world, state, ItemName.SHERBET_ISLAND_BALLOON)
+def bubbler_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: can_access_boss_1(world, state, ItemName.SHERBET_ISLAND_BALLOON)
 
 
-def bubbler_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return can_access_boss_2(world, state, ItemName.SHERBET_ISLAND_BALLOON)
+def bubbler_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: can_access_boss_2(world, state, ItemName.SHERBET_ISLAND_BALLOON)
 
 
-def smokey_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return can_access_boss_1(world, state, ItemName.DRAGON_FOREST_BALLOON)
+def smokey_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: can_access_boss_1(world, state, ItemName.DRAGON_FOREST_BALLOON)
 
 
-def smokey_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return can_access_boss_2(world, state, ItemName.DRAGON_FOREST_BALLOON)
+def smokey_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: can_access_boss_2(world, state, ItemName.DRAGON_FOREST_BALLOON)
 
 
-def wizpig_1(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return state.has(ItemName.WIZPIG_AMULET_PIECE, world.player, world.options.wizpig_1_amulet_pieces.value)
+def wizpig_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: state.has(ItemName.WIZPIG_AMULET_PIECE, world.player,
+                                   world.options.wizpig_1_amulet_pieces.value)
 
 
-def wizpig_2(world: DiddyKongRacingWorld, state: CollectionState) -> bool:
-    return (state.has(ItemName.TT_AMULET_PIECE, world.player, world.options.wizpig_2_amulet_pieces.value)
+def wizpig_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
+    return lambda state: (state.has(ItemName.TT_AMULET_PIECE, world.player, world.options.wizpig_2_amulet_pieces.value)
             and has_total_balloon_count(world, state, world.options.wizpig_2_balloons.value))
 
 
