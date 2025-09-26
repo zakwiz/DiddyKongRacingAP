@@ -3,10 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from BaseClasses import Region
-from worlds.generic.Rules import set_rule
 from .Locations import DiddyKongRacingLocation
 from .Names import ItemName, LocationName, RegionName
-from .Rules import DiddyKongRacingRules
 
 if TYPE_CHECKING:
     from . import DiddyKongRacingWorld
@@ -237,77 +235,37 @@ def create_region(world: DiddyKongRacingWorld, name: str, locations: list[str], 
 def connect_regions(world: DiddyKongRacingWorld) -> None:
     multiworld = world.multiworld
     player = world.player
-    rules = DiddyKongRacingRules(world)
 
     region_menu = multiworld.get_region(RegionName.MENU, player)
     region_menu.add_exits({RegionName.TIMBERS_ISLAND})
 
-    multiworld.get_region(RegionName.TIMBERS_ISLAND, player).add_exits(
-        {
-            RegionName.DINO_DOMAIN,
-            RegionName.SNOWFLAKE_MOUNTAIN,
-            RegionName.SHERBET_ISLAND,
-            RegionName.DRAGON_FOREST,
-            RegionName.WIZPIG_1,
-            RegionName.FUTURE_FUN_LAND
-        },
-        {
-            RegionName.DINO_DOMAIN: lambda state: rules.can_access_dino_domain(state),
-            RegionName.SNOWFLAKE_MOUNTAIN: lambda state: rules.can_access_snowflake_mountain(state),
-            RegionName.SHERBET_ISLAND: lambda state: rules.can_access_sherbet_island(state),
-            RegionName.DRAGON_FOREST: lambda state: rules.can_access_dragon_forest(state),
-            RegionName.WIZPIG_1: lambda state: rules.wizpig_1(state),
-            RegionName.FUTURE_FUN_LAND: lambda state: rules.can_access_future_fun_land(state)
-        }
-    )
-    multiworld.get_region(RegionName.DINO_DOMAIN, player).add_exits(
-        {
-            RegionName.FIRE_MOUNTAIN,
-            RegionName.TRICKY
-        },
-        {
-            RegionName.FIRE_MOUNTAIN: lambda state: rules.fire_mountain(state),
-            RegionName.TRICKY: lambda state: rules.tricky_1(state),
-        }
-    )
-    multiworld.get_region(RegionName.SNOWFLAKE_MOUNTAIN, player).add_exits(
-        {
-            RegionName.ICICLE_PYRAMID,
-            RegionName.BLUEY
-        },
-        {
-            RegionName.ICICLE_PYRAMID: lambda state: rules.icicle_pyramid(state),
-            RegionName.BLUEY: lambda state: rules.bluey_1(state),
-        }
-    )
-    multiworld.get_region(RegionName.SHERBET_ISLAND, player).add_exits(
-        {
-            RegionName.DARKWATER_BEACH,
-            RegionName.BUBBLER
-        },
-        {
-            RegionName.DARKWATER_BEACH: lambda state: rules.darkwater_beach(state),
-            RegionName.BUBBLER: lambda state: rules.bubbler_1(state),
-        }
-    )
-    multiworld.get_region(RegionName.DRAGON_FOREST, player).add_exits(
-        {
-            RegionName.SMOKEY_CASTLE,
-            RegionName.SMOKEY
-        },
-        {
-            RegionName.SMOKEY_CASTLE: lambda state: rules.smokey_castle(state),
-            RegionName.SMOKEY: lambda state: rules.smokey_1(state),
-        }
-    )
-    multiworld.get_region(RegionName.FUTURE_FUN_LAND, player).add_exits(
-        {
-            RegionName.WIZPIG_2
-        },
-        {
-            RegionName.WIZPIG_2: lambda state: rules.wizpig_2(state),
-        }
-    )
+    add_named_exits(world, RegionName.TIMBERS_ISLAND, [
+        RegionName.DINO_DOMAIN,
+        RegionName.SNOWFLAKE_MOUNTAIN,
+        RegionName.SHERBET_ISLAND,
+        RegionName.DRAGON_FOREST,
+        RegionName.WIZPIG_1,
+        RegionName.FUTURE_FUN_LAND
+    ])
+    add_named_exits(world, RegionName.DINO_DOMAIN, [
+        RegionName.FIRE_MOUNTAIN,
+        RegionName.TRICKY
+    ])
+    add_named_exits(world, RegionName.SNOWFLAKE_MOUNTAIN, [
+        RegionName.ICICLE_PYRAMID,
+        RegionName.BLUEY
+    ])
+    add_named_exits(world, RegionName.SHERBET_ISLAND, [
+        RegionName.DARKWATER_BEACH,
+        RegionName.BUBBLER
+    ])
+    add_named_exits(world, RegionName.DRAGON_FOREST, [
+        RegionName.SMOKEY_CASTLE,
+        RegionName.SMOKEY
+    ])
+    add_named_exits(world, RegionName.FUTURE_FUN_LAND, [
+        RegionName.WIZPIG_2
+    ])
 
     # Skip for Universal Tracker, this will be done from slot_data
     if not hasattr(multiworld, "generation_is_fake"):
@@ -318,6 +276,11 @@ def connect_regions(world: DiddyKongRacingWorld) -> None:
                 world.random.shuffle(world.entrance_order)
 
         connect_track_regions(world)
+
+
+def add_named_exits(world: DiddyKongRacingWorld, start_region: str, connected_regions: list[str]) -> None:
+    exits = {region: convert_region_name_to_vanilla_entrance_name(region) for region in connected_regions}
+    world.get_region(start_region).add_exits(exits)
 
 
 # Can't put tracks with keys in FFL when it's not accessible because of location/item imbalance
@@ -332,7 +295,6 @@ def is_entrance_order_valid(entrance_order: list[int]) -> bool:
 
 
 def connect_track_regions(world: DiddyKongRacingWorld) -> None:
-    rules = DiddyKongRacingRules(world)
     use_ut_deferred_entrances = (world.options.shuffle_race_entrances.value
                                  and hasattr(world.multiworld, "generation_is_fake")
                                  and hasattr(world.multiworld, "enforce_deferred_connections")
@@ -354,7 +316,6 @@ def connect_track_regions(world: DiddyKongRacingWorld) -> None:
         vanilla_end_region = VANILLA_REGION_ORDER[door_num]
         entrance_name = convert_region_name_to_vanilla_entrance_name(vanilla_end_region)
         entrance = start_region.create_exit(entrance_name)
-        set_rule(entrance, rules.door_rules[door_num][0])
 
         if use_ut_deferred_entrances:
             for map_value, region_name in MAP_VALUE_TO_REGION_NAME.items():

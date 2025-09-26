@@ -12,7 +12,7 @@ from .Locations import ALL_LOCATION_TABLE
 from .Names import ItemName, LocationName, RegionName
 from .Options import DiddyKongRacingOptions
 from .Regions import connect_regions, connect_track_regions, create_regions, reconnect_found_entrance
-from .Rules import DiddyKongRacingRules
+from .Rules import set_region_access_rules, set_rules
 
 
 def run_client():
@@ -69,9 +69,7 @@ class DiddyKongRacingWorld(World):
                     self.multiworld.itempool.append(item)
 
     def set_rules(self) -> None:
-        rules = DiddyKongRacingRules(self)
-
-        return rules.set_rules()
+        set_rules(self)
 
     def pre_fill(self) -> None:
         if self.is_ffl_unused():
@@ -179,6 +177,7 @@ class DiddyKongRacingWorld(World):
         place_door_unlock_items(self, slot_data["door_unlock_requirements"])
         self.entrance_order = slot_data["entrance_order"]
         connect_track_regions(self)
+        set_region_access_rules(self)
 
     # For Universal Tracker
     def reconnect_found_entrances(self, found_key: str, data_storage_value: Any) -> None:
