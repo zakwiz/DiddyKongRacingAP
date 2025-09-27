@@ -7,12 +7,12 @@ from worlds.AutoWorld import WebWorld, World
 from worlds.LauncherComponents import Component, components, launch_subprocess, Type
 from .DoorUnlocks import place_door_unlock_items, place_vanilla_door_unlock_items, \
     shuffle_door_unlock_items, vanilla_door_unlock_info_list
-from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE
+from .Items import ALL_ITEM_TABLE, DiddyKongRacingItem
 from .Locations import ALL_LOCATION_TABLE
 from .Names import ItemName, LocationName, RegionName
 from .Options import DiddyKongRacingOptions, OPTION_GROUPS
 from .Regions import connect_regions, connect_track_regions, create_regions, reconnect_found_entrance
-from .Rules import set_region_access_rules, set_rules, set_door_unlock_rules
+from .Rules import set_door_unlock_rules, set_region_access_rules, set_rules
 
 
 def run_client():
