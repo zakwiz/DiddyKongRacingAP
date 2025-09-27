@@ -7,7 +7,7 @@ from worlds.AutoWorld import WebWorld, World
 from worlds.LauncherComponents import Component, components, launch_subprocess, Type
 from .DoorUnlocks import place_door_unlock_items, place_vanilla_door_unlock_items, \
     shuffle_door_unlock_items, vanilla_door_unlock_info_list
-from .Items import ALL_ITEM_TABLE, DiddyKongRacingItem
+from .Items import ALL_ITEM_TABLE, DiddyKongRacingItem, ITEM_NAME_GROUPS
 from .Locations import ALL_LOCATION_TABLE
 from .Names import ItemName, LocationName, RegionName
 from .Options import DiddyKongRacingOptions, OPTION_GROUPS
@@ -49,6 +49,7 @@ class DiddyKongRacingWorld(World):
 
     location_name_to_id = {name: data.dkr_id for name, data in ALL_LOCATION_TABLE.items()}
 
+    item_name_groups = ITEM_NAME_GROUPS
     options_dataclass = DiddyKongRacingOptions
     options: DiddyKongRacingOptions
     origin_region_name: str = RegionName.TIMBERS_ISLAND

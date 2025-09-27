@@ -39,3 +39,18 @@ ALL_ITEM_TABLE: dict[str, ItemData] = {
     **KEY_TABLE,
     **AMULET_TABLE
 }
+
+ITEM_NAME_GROUPS: dict[str, set[str]] = {
+    "Balloons": {ItemName.TIMBERS_ISLAND_BALLOON, ItemName.DINO_DOMAIN_BALLOON, ItemName.SNOWFLAKE_MOUNTAIN_BALLOON,
+                 ItemName.SHERBET_ISLAND_BALLOON, ItemName.FUTURE_FUN_LAND_BALLOON},
+    "Keys": {ItemName.FIRE_MOUNTAIN_KEY, ItemName.ICICLE_PYRAMID_KEY, ItemName.DARKWATER_BEACH_KEY,
+             ItemName.SMOKEY_CASTLE_KEY},
+    "Amulets": {ItemName.WIZPIG_AMULET_PIECE, ItemName.TT_AMULET_PIECE},
+    "TI Balloon": {ItemName.TIMBERS_ISLAND_BALLOON},
+    "DD Balloon": {ItemName.DINO_DOMAIN_BALLOON},
+    "SM Balloon": {ItemName.SNOWFLAKE_MOUNTAIN_BALLOON},
+    "SI Balloon": {ItemName.SHERBET_ISLAND_BALLOON},
+    "FFL Balloon": {ItemName.FUTURE_FUN_LAND_BALLOON},
+    "Wizpig Amulet": {ItemName.WIZPIG_AMULET_PIECE},
+    "TT Amulet": {ItemName.TT_AMULET_PIECE}
+}
