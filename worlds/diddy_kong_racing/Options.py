@@ -123,6 +123,14 @@ class PowerUpBalloonType(Choice):
     default = option_vanilla
 
 
+class MirroredTracks(Choice):
+    """Whether tracks will be mirrored"""
+    display_name = "Mirrored tracks"
+    option_vanilla = 0
+    option_mirrored = 1
+    option_random_per_track = 2
+
+
 class SkipTrophyRaces(DefaultOnToggle):
     """Start with all 1st place trophies, so you only need to beat Wizpig 1 to unlock Future Fun Land"""
     display_name = "Skip trophy races"
@@ -144,5 +152,6 @@ class DiddyKongRacingOptions(PerGameCommonOptions):
     wizpig_2_amulet_pieces: Wizpig2AmuletPieces
     wizpig_2_balloons: Wizpig2Balloons
     randomize_character_on_map_change: RandomizeCharacterOnMapChange
+    mirrored_tracks: MirroredTracks
     power_up_balloon_type: PowerUpBalloonType
     skip_trophy_races: SkipTrophyRaces
