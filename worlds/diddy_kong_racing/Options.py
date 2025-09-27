@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Choice, DefaultOnToggle, PerGameCommonOptions, Range, Toggle
+from Options import Choice, DefaultOnToggle, OptionGroup, PerGameCommonOptions, Range, Toggle
 
 
 class VictoryCondition(Choice):
@@ -161,3 +161,37 @@ class DiddyKongRacingOptions(PerGameCommonOptions):
     randomize_music: RandomizeMusic
     power_up_balloon_type: PowerUpBalloonType
     skip_trophy_races: SkipTrophyRaces
+
+
+OPTION_GROUPS = [
+    OptionGroup("Victory", [
+        VictoryCondition
+    ]),
+    OptionGroup("Items", [
+        ShuffleWizpigAmulet,
+        ShuffleTTAmulet
+    ]),
+    OptionGroup("Doors", [
+        OpenWorlds,
+        DoorRequirementProgression,
+        MaximumDoorRequirement,
+        ShuffleDoorRequirements,
+        ShuffleRaceEntrances
+    ]),
+    OptionGroup("Bosses", [
+        Boss1RegionalBalloons,
+        Boss2RegionalBalloons,
+        Wizpig1AmuletPieces,
+        Wizpig2AmuletPieces,
+        Wizpig2Balloons
+    ]),
+    OptionGroup("Gameplay", [
+        RandomizeCharacterOnMapChange,
+        MirroredTracks,
+        PowerUpBalloonType
+    ]),
+    OptionGroup("Other", [
+        RandomizeMusic,
+        SkipTrophyRaces
+    ])
+]

@@ -10,7 +10,7 @@ from .DoorUnlocks import place_door_unlock_items, place_vanilla_door_unlock_item
 from .Items import DiddyKongRacingItem, ALL_ITEM_TABLE
 from .Locations import ALL_LOCATION_TABLE
 from .Names import ItemName, LocationName, RegionName
-from .Options import DiddyKongRacingOptions
+from .Options import DiddyKongRacingOptions, OPTION_GROUPS
 from .Regions import connect_regions, connect_track_regions, create_regions, reconnect_found_entrance
 from .Rules import set_region_access_rules, set_rules, set_door_unlock_rules
 
@@ -32,6 +32,7 @@ class DiddyKongRacingWeb(WebWorld):
                      ["zakwiz"])
 
     tutorials = [setup]
+    option_groups = OPTION_GROUPS
 
 
 class DiddyKongRacingWorld(World):
