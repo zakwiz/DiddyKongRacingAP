@@ -886,6 +886,10 @@ function process_slot(slot)
         mirrored_tracks = slot["slot_mirrored_tracks"]
     end
 
+    if slot["slot_music"] and next(slot["slot_music"]) then
+        music = slot["slot_music"]
+    end
+
     if slot["slot_power_up_balloon_type"] and slot["slot_power_up_balloon_type"] ~= "" then
         power_up_balloon_type = slot["slot_power_up_balloon_type"]
     end
@@ -944,6 +948,8 @@ function pass_settings_to_romhack()
         -- Add 1 to entrance_num because 0 means vanilla
         RomHack:set_value(track_base_address, entrance_num + 1)
         RomHack:set_value(track_base_address + 1, mirrored_tracks[i] and 1 or 0)
+        -- Add 1 to track_num because 0 means vanilla
+        RomHack:set_value(track_base_address + 2, music[i] + 1)
     end
 
     if (power_up_balloon_type ~= 0) then
