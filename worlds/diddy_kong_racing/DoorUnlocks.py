@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 else:
     DiddyKongRacingWorld = object
 
+
 class DoorUnlockInfo:
     def __init__(self, item: str, location: str, requirement: int):
         self.item = item

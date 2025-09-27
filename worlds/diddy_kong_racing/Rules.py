@@ -181,11 +181,21 @@ def dragon_forest(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
 
 
 def future_fun_land(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
-    return lambda state: (world.options.open_worlds.value or
-                          wizpig_1(world)(state) and
-            (world.options.skip_trophy_races.value or
-             (tricky_2(world)(state) and bluey_2(world)(state) and bubbler_2(world)(state) and smokey_2(world)(state)))
+    return lambda state: (
+            world.options.open_worlds.value
+            or (
+                    wizpig_1(world)(state)
+                    and (
+                            world.options.skip_trophy_races.value
+                            or (
+                                    tricky_2(world)(state)
+                                    and bluey_2(world)(state)
+                                    and bubbler_2(world)(state)
+                                    and smokey_2(world)(state)
+                            )
+                    )
             )
+    )
 
 
 def bridge_balloon(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
@@ -447,7 +457,7 @@ def wizpig_1(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
 
 def wizpig_2(world: DiddyKongRacingWorld) -> Callable[[object], bool]:
     return lambda state: (state.has(ItemName.TT_AMULET_PIECE, world.player, world.options.wizpig_2_amulet_pieces.value)
-            and has_total_balloon_count(world, state, world.options.wizpig_2_balloons.value))
+                          and has_total_balloon_count(world, state, world.options.wizpig_2_balloons.value))
 
 
 def door_unlock(world: DiddyKongRacingWorld, requirement: int) -> Callable[[object], bool]:
