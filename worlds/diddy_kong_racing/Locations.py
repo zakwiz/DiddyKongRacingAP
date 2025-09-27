@@ -14,7 +14,7 @@ class LocationData(NamedTuple):
     dkr_id: int | None = 0
 
 
-TIMBERS_ISLAND_LOCATION_TABLE = {
+TIMBERS_ISLAND_LOCATION_TABLE: dict[str, LocationData] = {
     LocationName.BRIDGE_BALLOON: LocationData(1616100),
     LocationName.WATERFALL_BALLOON: LocationData(1616101),
     LocationName.RIVER_BALLOON: LocationData(1616102),
@@ -24,7 +24,7 @@ TIMBERS_ISLAND_LOCATION_TABLE = {
     LocationName.TAJ_PLANE_RACE: LocationData(1616106)
 }
 
-DINO_DOMAIN_LOCATION_TABLE = {
+DINO_DOMAIN_LOCATION_TABLE: dict[str, LocationData] = {
     LocationName.ANCIENT_LAKE_1: LocationData(1616200),
     LocationName.ANCIENT_LAKE_2: LocationData(1616201),
     LocationName.FOSSIL_CANYON_1: LocationData(1616202),
@@ -38,7 +38,7 @@ DINO_DOMAIN_LOCATION_TABLE = {
     LocationName.TRICKY_2: LocationData(1616210)
 }
 
-SNOWFLAKE_MOUNTAIN_LOCATION_TABLE = {
+SNOWFLAKE_MOUNTAIN_LOCATION_TABLE: dict[str, LocationData] = {
     LocationName.EVERFROST_PEAK_1: LocationData(1616300),
     LocationName.EVERFROST_PEAK_2: LocationData(1616301),
     LocationName.WALRUS_COVE_1: LocationData(1616302),
@@ -52,7 +52,7 @@ SNOWFLAKE_MOUNTAIN_LOCATION_TABLE = {
     LocationName.BLUEY_2: LocationData(1616310)
 }
 
-SHERBET_ISLAND_LOCATION_TABLE = {
+SHERBET_ISLAND_LOCATION_TABLE: dict[str, LocationData] = {
     LocationName.WHALE_BAY_1: LocationData(1616400),
     LocationName.WHALE_BAY_2: LocationData(1616401),
     LocationName.CRESCENT_ISLAND_1: LocationData(1616402),
@@ -66,7 +66,7 @@ SHERBET_ISLAND_LOCATION_TABLE = {
     LocationName.BUBBLER_2: LocationData(1616410)
 }
 
-DRAGON_FOREST_LOCATION_TABLE = {
+DRAGON_FOREST_LOCATION_TABLE: dict[str, LocationData] = {
     LocationName.WINDMILL_PLAINS_1: LocationData(1616500),
     LocationName.WINDMILL_PLAINS_2: LocationData(1616501),
     LocationName.GREENWOOD_VILLAGE_1: LocationData(1616502),
@@ -80,7 +80,7 @@ DRAGON_FOREST_LOCATION_TABLE = {
     LocationName.SMOKEY_2: LocationData(1616510)
 }
 
-FUTURE_FUN_LAND_LOCATION_TABLE = {
+FUTURE_FUN_LAND_LOCATION_TABLE: dict[str, LocationData] = {
     LocationName.SPACEDUST_ALLEY_1: LocationData(1616600),
     LocationName.SPACEDUST_ALLEY_2: LocationData(1616601),
     LocationName.DARKMOON_CAVERNS_1: LocationData(1616602),
@@ -91,7 +91,7 @@ FUTURE_FUN_LAND_LOCATION_TABLE = {
     LocationName.STAR_CITY_2: LocationData(1616607)
 }
 
-ALL_LOCATION_TABLE = {
+ALL_LOCATION_TABLE: dict[str, LocationData] = {
     **TIMBERS_ISLAND_LOCATION_TABLE,
     **DINO_DOMAIN_LOCATION_TABLE,
     **SNOWFLAKE_MOUNTAIN_LOCATION_TABLE,

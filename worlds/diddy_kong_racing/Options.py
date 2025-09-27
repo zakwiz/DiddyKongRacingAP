@@ -163,7 +163,7 @@ class DiddyKongRacingOptions(PerGameCommonOptions):
     skip_trophy_races: SkipTrophyRaces
 
 
-OPTION_GROUPS = [
+OPTION_GROUPS: list[OptionGroup] = [
     OptionGroup("Victory", [
         VictoryCondition
     ]),
