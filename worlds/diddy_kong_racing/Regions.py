@@ -189,10 +189,12 @@ MAP_VALUE_TO_REGION_NAME: dict[int, str] = {
 
 
 def create_regions(world: DiddyKongRacingWorld) -> None:
-    world.multiworld.regions += [
-        create_region(world, region_name, locations)
-        for region_name, locations in DIDDY_KONG_RACING_REGIONS.items()
-    ]
+    for region_name, locations in DIDDY_KONG_RACING_REGIONS.items():
+        if region_name == RegionName.WIZPIG_2 and world.options.victory_condition.value == 0:
+            break
+
+        region = create_region(world, region_name, locations)
+        world.multiworld.regions.append(region)
 
     if world.options.victory_condition.value == 0:
         victory_region = RegionName.WIZPIG_1
@@ -252,9 +254,11 @@ def connect_regions(world: DiddyKongRacingWorld) -> None:
         RegionName.SMOKEY_CASTLE,
         RegionName.SMOKEY
     ])
-    add_named_exits(world, RegionName.FUTURE_FUN_LAND, [
-        RegionName.WIZPIG_2
-    ])
+
+    if world.options.victory_condition.value == 1:
+        add_named_exits(world, RegionName.FUTURE_FUN_LAND, [
+            RegionName.WIZPIG_2
+        ])
 
     # Skip for Universal Tracker, this will be done from slot_data
     if not hasattr(world.multiworld, "generation_is_fake"):

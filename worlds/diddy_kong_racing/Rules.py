@@ -90,9 +90,11 @@ def set_region_access_rules(world: DiddyKongRacingWorld) -> None:
         RegionName.SPACEDUST_ALLEY: spacedust_alley_door_1(world),
         RegionName.DARKMOON_CAVERNS: darkmoon_caverns_door_1(world),
         RegionName.SPACEPORT_ALPHA: spaceport_alpha_door_1(world),
-        RegionName.STAR_CITY: star_city_door_1(world),
-        RegionName.WIZPIG_2: wizpig_2(world),
+        RegionName.STAR_CITY: star_city_door_1(world)
     }
+
+    if world.options.victory_condition.value == 1:
+        region_access_rules[RegionName.WIZPIG_2] = wizpig_2(world)
 
     for region, rule in region_access_rules.items():
         entrance_name = convert_region_name_to_entrance_name(region)
