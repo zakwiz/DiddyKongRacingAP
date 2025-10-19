@@ -321,7 +321,7 @@ def connect_track_regions(world: DiddyKongRacingWorld) -> None:
 
 
 def reconnect_found_entrance(world: DiddyKongRacingWorld, key: str) -> None:
-    found_region_map_value = int(key.removeprefix(DATASTORAGE_KEY_PREFIX.replace("{player}", str(world.player))))
+    found_region_map_value = int(key[key.rfind("_") + 1:])
     found_region_name = MAP_VALUE_TO_REGION_NAME[found_region_map_value]
     found_region_index = VANILLA_REGION_ORDER.index(found_region_name)
     found_region = world.get_region(found_region_name)
