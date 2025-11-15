@@ -12,7 +12,7 @@ from .Locations import ALL_LOCATION_TABLE
 from .Names import ItemName, LocationName, RegionName
 from .Options import DiddyKongRacingOptions, OPTION_GROUPS
 from .Regions import connect_regions, connect_track_regions, create_regions, reconnect_found_entrance
-from .Rules import set_door_unlock_rules, set_region_access_rules, set_rules
+from .Rules import set_door_unlock_rules, set_region_access_rules, set_race_2_location_rules, set_rules
 
 
 def run_client():
@@ -204,6 +204,7 @@ class DiddyKongRacingWorld(World):
         place_door_unlock_items(self)
         set_region_access_rules(self)
         set_door_unlock_rules(self)
+        set_race_2_location_rules(self)
 
     # For Universal Tracker
     def reconnect_found_entrances(self, found_key: str, data_storage_value: Any) -> None:

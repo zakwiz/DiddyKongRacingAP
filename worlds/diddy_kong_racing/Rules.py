@@ -37,13 +37,13 @@ VANILLA_RACE_2_LOCATIONS: list[list[str]] = [
 
 
 def set_rules(world: DiddyKongRacingWorld) -> None:
-    # Skip for Universal Tracker, this will be called from interpret_slot_data, otherwise entrances won't exist yet
+    # Skip for Universal Tracker, these will be called from interpret_slot_data as they depend on slot data
     if not hasattr(world.multiworld, "generation_is_fake"):
         set_region_access_rules(world)
+        set_door_unlock_rules(world)
+        set_race_2_location_rules(world)
 
-    set_door_unlock_rules(world)
     set_overworld_balloon_rules(world)
-    set_race_2_location_rules(world)
     set_amulet_rules(world)
 
     world.multiworld.completion_condition[world.player] = lambda state: state.has(ItemName.VICTORY, world.player)
