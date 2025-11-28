@@ -105,9 +105,12 @@ class Wizpig2Balloons(Range):
     default = range_end
 
 
-class RandomizeCharacterOnMapChange(Toggle):
-    """Randomly change your character every time the map is changed"""
-    display_name = "Randomize character on map change"
+class TrackVersion(Choice):
+    """Whether regular race tracks will be Adventure 1 (normal) or Adventure 2 (faster CPUs, mirrored tracks, and harder silver coin placements)"""
+    display_name = "Track version"
+    option_adventure_1 = 0
+    option_adventure_2 = 1
+    option_random_per_track = 2
 
 
 class PowerUpBalloonType(Choice):
@@ -123,12 +126,9 @@ class PowerUpBalloonType(Choice):
     default = option_vanilla
 
 
-class TrackVersion(Choice):
-    """Whether regular race tracks will be Adventure 1 (normal) or Adventure 2 (faster CPUs, mirrored tracks, and harder silver coin placements)"""
-    display_name = "Track version"
-    option_adventure_1 = 0
-    option_adventure_2 = 1
-    option_random_per_track = 2
+class RandomizeCharacterOnMapChange(Toggle):
+    """Randomly change your character every time the map is changed"""
+    display_name = "Randomize character on map change"
 
 
 class RandomizeMusic(Toggle):
@@ -156,10 +156,10 @@ class DiddyKongRacingOptions(PerGameCommonOptions):
     wizpig_1_amulet_pieces: Wizpig1AmuletPieces
     wizpig_2_amulet_pieces: Wizpig2AmuletPieces
     wizpig_2_balloons: Wizpig2Balloons
-    randomize_character_on_map_change: RandomizeCharacterOnMapChange
     track_version: TrackVersion
-    randomize_music: RandomizeMusic
     power_up_balloon_type: PowerUpBalloonType
+    randomize_character_on_map_change: RandomizeCharacterOnMapChange
+    randomize_music: RandomizeMusic
     skip_trophy_races: SkipTrophyRaces
 
 
@@ -186,9 +186,9 @@ OPTION_GROUPS: list[OptionGroup] = [
         Wizpig2Balloons
     ]),
     OptionGroup("Gameplay", [
-        RandomizeCharacterOnMapChange,
         TrackVersion,
-        PowerUpBalloonType
+        PowerUpBalloonType,
+        RandomizeCharacterOnMapChange
     ]),
     OptionGroup("Other", [
         RandomizeMusic,
