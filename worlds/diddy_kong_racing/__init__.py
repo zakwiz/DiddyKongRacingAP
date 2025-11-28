@@ -54,7 +54,7 @@ class DiddyKongRacingWorld(World):
     options: DiddyKongRacingOptions
     origin_region_name: str = RegionName.TIMBERS_ISLAND
     slot_data: dict[str, Any] = {}
-    mirrored_tracks: list[bool]
+    track_versions: list[bool]
     music: list[int] = list(range(20))
     entrance_order: list[int] = list(range(20))
     door_unlock_requirements: list[int] = [0] * len(vanilla_door_unlock_info_list)
@@ -87,7 +87,7 @@ class DiddyKongRacingWorld(World):
         set_rules(self)
 
     def generate_basic(self) -> None:
-        self.set_mirrored_tracks()
+        self.set_track_versions()
         self.set_music()
 
     def pre_fill(self) -> None:
@@ -133,7 +133,7 @@ class DiddyKongRacingWorld(World):
             "wizpig_2_amulet_pieces": self.options.wizpig_2_amulet_pieces.value,
             "wizpig_2_balloons": self.options.wizpig_2_balloons.value,
             "randomize_character_on_map_change": "true" if self.options.randomize_character_on_map_change else "false",
-            "mirrored_tracks": self.mirrored_tracks,
+            "track_versions": self.track_versions,
             "music": self.music,
             "power_up_balloon_type": self.options.power_up_balloon_type.value,
             "skip_trophy_races": "true" if self.options.skip_trophy_races else "false"
@@ -181,16 +181,16 @@ class DiddyKongRacingWorld(World):
     def is_ffl_unused(self) -> bool:
         return self.options.victory_condition.value == 0 and not self.options.open_worlds
 
-    def set_mirrored_tracks(self) -> None:
+    def set_track_versions(self) -> None:
         num_tracks = 20
-        if self.options.mirrored_tracks.value == 0:
-            self.mirrored_tracks = [False] * num_tracks
-        elif self.options.mirrored_tracks.value == 1:
-            self.mirrored_tracks = [True] * num_tracks
+        if self.options.track_version.value == 0:
+            self.track_versions = [False] * num_tracks
+        elif self.options.track_version.value == 1:
+            self.track_versions = [True] * num_tracks
         else:
-            self.mirrored_tracks = []
+            self.track_versions = []
             for _ in range(num_tracks):
-                self.mirrored_tracks.append(bool(self.random.getrandbits(1)))
+                self.track_versions.append(bool(self.random.getrandbits(1)))
 
     def set_music(self) -> None:
         if self.options.randomize_music.value:

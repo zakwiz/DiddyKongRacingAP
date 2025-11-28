@@ -178,7 +178,7 @@ RomHack = {
     DOOR_COSTS = 0xF,
     TRACKS  = 0x3C,
       ACTUAL_TRACK = 0x0,
-      MIRROR = 0x1,
+      ADVENTURE = 0x1,
       MUSIC = 0x2,
     MESSAGE_TEXT = 0x83,
     N64_RECEIVED_MESSAGE_COUNT = 0xBE,
@@ -882,8 +882,8 @@ function process_slot(slot)
         randomize_character_on_map_change = false
     end
 
-    if slot["slot_mirrored_tracks"] and next(slot["slot_mirrored_tracks"]) then
-        mirrored_tracks = slot["slot_mirrored_tracks"]
+    if slot["slot_track_versions"] and next(slot["slot_track_versions"]) then
+        track_versions = slot["slot_track_versions"]
     end
 
     if slot["slot_music"] and next(slot["slot_music"]) then
@@ -947,7 +947,7 @@ function pass_settings_to_romhack()
         local track_base_address = RomHack.TRACKS + (i * 3)
         -- Add 1 to entrance_num because 0 means vanilla
         RomHack:set_value(track_base_address, entrance_num + 1)
-        RomHack:set_value(track_base_address + 1, mirrored_tracks[i] and 1 or 0)
+        RomHack:set_value(track_base_address + 1, track_versions[i] and 1 or 0)
         -- Add 1 to track_num because 0 means vanilla
         RomHack:set_value(track_base_address + 2, music[i] + 1)
     end

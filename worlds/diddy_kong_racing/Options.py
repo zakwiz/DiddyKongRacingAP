@@ -123,11 +123,11 @@ class PowerUpBalloonType(Choice):
     default = option_vanilla
 
 
-class MirroredTracks(Choice):
-    """Whether tracks will be mirrored"""
-    display_name = "Mirrored tracks"
-    option_vanilla = 0
-    option_mirrored = 1
+class TrackVersion(Choice):
+    """Whether regular race tracks will be Adventure 1 (normal) or Adventure 2 (faster CPUs, mirrored tracks, and harder silver coin placements)"""
+    display_name = "Track version"
+    option_adventure_1 = 0
+    option_adventure_2 = 1
     option_random_per_track = 2
 
 
@@ -157,7 +157,7 @@ class DiddyKongRacingOptions(PerGameCommonOptions):
     wizpig_2_amulet_pieces: Wizpig2AmuletPieces
     wizpig_2_balloons: Wizpig2Balloons
     randomize_character_on_map_change: RandomizeCharacterOnMapChange
-    mirrored_tracks: MirroredTracks
+    track_version: TrackVersion
     randomize_music: RandomizeMusic
     power_up_balloon_type: PowerUpBalloonType
     skip_trophy_races: SkipTrophyRaces
@@ -187,7 +187,7 @@ OPTION_GROUPS: list[OptionGroup] = [
     ]),
     OptionGroup("Gameplay", [
         RandomizeCharacterOnMapChange,
-        MirroredTracks,
+        TrackVersion,
         PowerUpBalloonType
     ]),
     OptionGroup("Other", [
