@@ -228,6 +228,10 @@ function RomHack:check_flag(byte, _bit)
     return Ram:check_flag(self.base_address + byte, _bit)
 end
 
+function RomHack:set_flag(byte, _bit)
+    Ram:set_flag(self.base_address + byte, _bit)
+end
+
 function RomHack:get_value(byte)
     return Ram:get_value(self.base_address + byte)
 end
@@ -966,6 +970,8 @@ function pass_settings_to_romhack()
         }
         RomHack:set_value(RomHack.SETTINGS + RomHack.POWER_UP_BALLOON_TYPE, setting_to_value[power_up_balloon_type])
     end
+
+    RomHack:set_flag(RomHack.SETTINGS + RomHack.BOULDER_CANYON_BELL_BALLOON, 0)
 end
 
 function send_request_to_client()
