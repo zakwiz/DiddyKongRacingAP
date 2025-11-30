@@ -42,7 +42,7 @@ logger.info(network_data_package["games"].keys())
 dkr_loc_name_to_id: dict[str, int] = network_data_package["games"]["Diddy Kong Racing"]["location_name_to_id"]
 dkr_itm_name_to_id: dict[str, int] = network_data_package["games"]["Diddy Kong Racing"]["item_name_to_id"]
 
-version_number: str = "v1.1.0"
+version_number: str = "v1.1.1"
 apworld_version: str = "DKR" + version_number
 patched_rom_filename: str = "Diddy-Kong-Racing-AP-" + version_number + ".z64"
 vanilla_rom_md5: str = "4f0e07f0eeac7e5d7ce3a75461888d03"
