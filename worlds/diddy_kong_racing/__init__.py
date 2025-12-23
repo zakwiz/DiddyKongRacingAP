@@ -54,14 +54,14 @@ class DiddyKongRacingWorld(World):
     options: DiddyKongRacingOptions
     origin_region_name: str = RegionName.TIMBERS_ISLAND
     slot_data: dict[str, Any] = {}
-    track_versions: list[bool]
-    music: list[int] = list(range(20))
-    entrance_order: list[int] = list(range(20))
-    door_unlock_requirements: list[int] = [0] * len(vanilla_door_unlock_info_list)
     found_entrances_datastorage_key: list[str] = []
 
     def __init__(self, world: MultiWorld, player: int) -> None:
         super(DiddyKongRacingWorld, self).__init__(world, player)
+        self.track_versions: list[bool]
+        self.music: list[int] = list(range(20))
+        self.entrance_order: list[int] = list(range(20))
+        self.door_unlock_requirements: list[int] = [0] * len(vanilla_door_unlock_info_list)
 
     def create_regions(self) -> None:
         create_regions(self)
