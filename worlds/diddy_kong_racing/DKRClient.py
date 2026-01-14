@@ -42,7 +42,7 @@ logger.info(network_data_package["games"].keys())
 dkr_loc_name_to_id: dict[str, int] = network_data_package["games"]["Diddy Kong Racing"]["location_name_to_id"]
 dkr_itm_name_to_id: dict[str, int] = network_data_package["games"]["Diddy Kong Racing"]["item_name_to_id"]
 
-version_number: str = "v1.1.2"
+version_number: str = "v1.1.3"
 apworld_version: str = "DKR" + version_number
 
 
