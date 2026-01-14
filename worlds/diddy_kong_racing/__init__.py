@@ -5,8 +5,7 @@ from typing import Any
 from BaseClasses import Item, ItemClassification, MultiWorld, Tutorial
 from worlds.AutoWorld import WebWorld, World
 from worlds.LauncherComponents import Component, components, launch_subprocess, Type
-from .DoorUnlocks import place_door_unlock_items, set_shuffled_door_requirements, \
-    set_unshuffled_door_requirements, vanilla_door_unlock_info_list
+from .DoorUnlocks import place_door_unlock_items, set_door_unlock_requirements, vanilla_door_unlock_info_list
 from .Items import ALL_ITEM_TABLE, DiddyKongRacingItem, ITEM_NAME_GROUPS
 from .Locations import ALL_LOCATION_TABLE
 from .Names import ItemName, LocationName, RegionName
@@ -76,11 +75,7 @@ class DiddyKongRacingWorld(World):
 
         # Skip for Universal Tracker, this will be done from slot_data
         if not hasattr(self.multiworld, "generation_is_fake"):
-            if self.options.shuffle_door_requirements:
-                set_shuffled_door_requirements(self)
-            else:
-                set_unshuffled_door_requirements(self)
-
+            set_door_unlock_requirements(self)
             place_door_unlock_items(self)
 
     def set_rules(self) -> None:

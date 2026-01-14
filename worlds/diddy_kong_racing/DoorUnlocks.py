@@ -70,16 +70,11 @@ vanilla_door_unlock_info_list: list[DoorUnlockInfo] = [
 
 vanilla_door_unlock_info_sorted_by_requirement: list[DoorUnlockInfo] = sorted(vanilla_door_unlock_info_list,
                                                                               key=lambda x: x.requirement)
-cached_door_requirement_progression: list[int] | None = None
 
 DOOR_UNLOCK_ITEM_PATTERN = re.compile("(\\d+) balloon\\(s\\) \\(.* Unlock\\)")
 
 
 def get_door_requirement_progression(world: DiddyKongRacingWorld) -> list[int]:
-    global cached_door_requirement_progression
-    if cached_door_requirement_progression:
-        return cached_door_requirement_progression
-
     if world.options.door_requirement_progression == 0:  # Vanilla
         door_requirement_progression = [x.requirement for x in vanilla_door_unlock_info_sorted_by_requirement]
     elif world.options.door_requirement_progression == 1:  # Linear
@@ -98,11 +93,19 @@ def get_door_requirement_progression(world: DiddyKongRacingWorld) -> list[int]:
 
         door_requirement_progression.append(int(world.options.maximum_door_requirement))
 
-    cached_door_requirement_progression = door_requirement_progression
     return door_requirement_progression
 
 
-def set_shuffled_door_requirements(world: DiddyKongRacingWorld) -> None:
+def set_door_unlock_requirements(world: DiddyKongRacingWorld) -> None:
+    door_requirement_progression = get_door_requirement_progression(world)
+
+    if world.options.shuffle_door_requirements:
+        set_shuffled_door_requirements(world, door_requirement_progression)
+    else:
+        set_unshuffled_door_requirements(world, door_requirement_progression)
+
+
+def set_shuffled_door_requirements(world: DiddyKongRacingWorld, door_requirement_progression: list[int]) -> None:
     race_1_unlock_to_race_2_unlock = {
         ItemName.ANCIENT_LAKE_DOOR_1_UNLOCK: ItemName.ANCIENT_LAKE_DOOR_2_UNLOCK,
         ItemName.FOSSIL_CANYON_DOOR_1_UNLOCK: ItemName.FOSSIL_CANYON_DOOR_2_UNLOCK,
@@ -179,7 +182,7 @@ def set_shuffled_door_requirements(world: DiddyKongRacingWorld) -> None:
     race_2_unlock_count = 0
 
     for door_unlock_info, requirement in zip(vanilla_door_unlock_info_sorted_by_requirement,
-                                             get_door_requirement_progression(world)):
+                                             door_requirement_progression):
         if not (world.options.open_worlds and door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
             world.random.shuffle(available_doors)
             door_unlock_item = available_doors.pop()
@@ -202,9 +205,9 @@ def set_shuffled_door_requirements(world: DiddyKongRacingWorld) -> None:
                     available_doors.extend(future_fun_land_race_1_unlocks)
 
 
-def set_unshuffled_door_requirements(world: DiddyKongRacingWorld) -> None:
+def set_unshuffled_door_requirements(world: DiddyKongRacingWorld, door_requirement_progression: list[int]) -> None:
     for door_unlock_info, requirement in zip(vanilla_door_unlock_info_sorted_by_requirement,
-                                             get_door_requirement_progression(world)):
+                                             door_requirement_progression):
         if not (world.options.open_worlds and door_unlock_info.location in LocationName.WORLD_UNLOCK_LOCATIONS):
             world.door_unlock_requirements[door_unlock_info.door_index] = requirement
 
