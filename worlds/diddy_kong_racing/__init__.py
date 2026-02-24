@@ -87,25 +87,22 @@ class DiddyKongRacingWorld(World):
 
     def pre_fill(self) -> None:
         if self.is_ffl_unused():
-            future_fun_land_balloon = self.create_item(ItemName.FUTURE_FUN_LAND_BALLOON)
             for ffl_exit in self.multiworld.get_region(RegionName.FUTURE_FUN_LAND, self.player).exits:
                 if ffl_exit.connected_region.name != RegionName.TIMBERS_ISLAND:
                     for ffl_location in ffl_exit.connected_region.locations:
-                        self.place_locked_item(ffl_location.name, future_fun_land_balloon)
+                        self.place_locked_item(ffl_location.name, self.create_item(ItemName.FUTURE_FUN_LAND_BALLOON))
 
         if not self.options.shuffle_wizpig_amulet:
-            wizpig_amulet_item = self.create_item(ItemName.WIZPIG_AMULET_PIECE)
-            self.place_locked_item(LocationName.TRICKY_2, wizpig_amulet_item)
-            self.place_locked_item(LocationName.BLUEY_2, wizpig_amulet_item)
-            self.place_locked_item(LocationName.BUBBLER_2, wizpig_amulet_item)
-            self.place_locked_item(LocationName.SMOKEY_2, wizpig_amulet_item)
+            self.place_locked_item(LocationName.TRICKY_2, self.create_item(ItemName.WIZPIG_AMULET_PIECE))
+            self.place_locked_item(LocationName.BLUEY_2, self.create_item(ItemName.WIZPIG_AMULET_PIECE))
+            self.place_locked_item(LocationName.BUBBLER_2, self.create_item(ItemName.WIZPIG_AMULET_PIECE))
+            self.place_locked_item(LocationName.SMOKEY_2, self.create_item(ItemName.WIZPIG_AMULET_PIECE))
 
         if not self.options.shuffle_tt_amulet:
-            tt_amulet_item = self.create_item(ItemName.TT_AMULET_PIECE)
-            self.place_locked_item(LocationName.FIRE_MOUNTAIN, tt_amulet_item)
-            self.place_locked_item(LocationName.ICICLE_PYRAMID, tt_amulet_item)
-            self.place_locked_item(LocationName.DARKWATER_BEACH, tt_amulet_item)
-            self.place_locked_item(LocationName.SMOKEY_CASTLE, tt_amulet_item)
+            self.place_locked_item(LocationName.FIRE_MOUNTAIN, self.create_item(ItemName.TT_AMULET_PIECE))
+            self.place_locked_item(LocationName.ICICLE_PYRAMID, self.create_item(ItemName.TT_AMULET_PIECE))
+            self.place_locked_item(LocationName.DARKWATER_BEACH, self.create_item(ItemName.TT_AMULET_PIECE))
+            self.place_locked_item(LocationName.SMOKEY_CASTLE, self.create_item(ItemName.TT_AMULET_PIECE))
 
     def fill_slot_data(self) -> dict[str, Any]:
         dkr_options: dict[str, Any] = {
