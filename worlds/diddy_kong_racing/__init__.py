@@ -78,6 +78,8 @@ class DiddyKongRacingWorld(World):
             set_door_unlock_requirements(self)
             place_door_unlock_items(self)
 
+        self.place_locked_items()
+
     def set_rules(self) -> None:
         set_rules(self)
 
@@ -85,7 +87,7 @@ class DiddyKongRacingWorld(World):
         self.set_track_versions()
         self.set_music()
 
-    def pre_fill(self) -> None:
+    def place_locked_items(self) -> None:
         if self.is_ffl_unused():
             for ffl_exit in self.multiworld.get_region(RegionName.FUTURE_FUN_LAND, self.player).exits:
                 if ffl_exit.connected_region.name != RegionName.TIMBERS_ISLAND:
