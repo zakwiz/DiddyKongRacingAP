@@ -117,7 +117,7 @@ class DiddyKongRacingWorld(World):
             "open_worlds": "true" if self.options.open_worlds else "false",
             "door_requirement_progression": self.options.door_requirement_progression.value,
             "maximum_door_requirement": self.options.maximum_door_requirement.value,
-            "shuffle_door_requirements": "true" if self.options.shuffle_door_requirements.value else "false",
+            "shuffle_door_requirements": "true" if self.options.shuffle_door_requirements else "false",
             "door_unlock_requirements": self.door_unlock_requirements,
             "shuffle_race_entrances": "true" if self.options.shuffle_race_entrances else "false",
             "entrance_order": self.entrance_order,
@@ -187,7 +187,7 @@ class DiddyKongRacingWorld(World):
                 self.track_versions.append(bool(self.random.getrandbits(1)))
 
     def set_music(self) -> None:
-        if self.options.randomize_music.value:
+        if self.options.randomize_music:
             self.random.shuffle(self.music)
 
     # For Universal Tracker

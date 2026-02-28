@@ -91,7 +91,7 @@ def get_door_requirement_progression(world: DiddyKongRacingWorld) -> list[int]:
         for i in range(len(vanilla_door_unlock_info_list) - 1):
             door_requirement_progression.append(max(1, math.floor(ratio * 3.31 * math.exp(0.0628 * i) - 2)))
 
-        door_requirement_progression.append(int(world.options.maximum_door_requirement))
+        door_requirement_progression.append(world.options.maximum_door_requirement.value)
 
     return door_requirement_progression
 
