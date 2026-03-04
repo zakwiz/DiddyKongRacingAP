@@ -188,7 +188,6 @@ RomHack = {
       SHUFFLE_WIZPIG_AMULET = 0x2,
       SHUFFLE_TT_AMULET = 0x3,
       DOOR_PROGRESSION = 0x4,
-      MAX_DOOR_REQUIREMENT = 0x5,
       SHUFFLE_DOOR_REQUIREMENTS = 0x6,
       BOSS_1_REGIONAL_BALLOONS = 0x7,
       BOSS_2_REGIONAL_BALLOONS = 0x8,
@@ -829,10 +828,6 @@ function process_slot(slot)
         door_requirement_progression = slot["slot_door_requirement_progression"]
     end
 
-    if slot["slot_maximum_door_requirement"] and slot["slot_maximum_door_requirement"] ~= "" then
-        slot_maximum_door_requirement = slot["slot_maximum_door_requirement"]
-    end
-
     if slot["slot_shuffle_door_requirements"] and slot["slot_shuffle_door_requirements"] == "true" then
         shuffle_door_requirements = true
     else
@@ -916,7 +911,6 @@ function pass_settings_to_romhack()
     RomHack:set_value(RomHack.SETTINGS + RomHack.SHUFFLE_WIZPIG_AMULET, shuffle_wizpig_amulet and 1 or 0)
     RomHack:set_value(RomHack.SETTINGS + RomHack.SHUFFLE_TT_AMULET, shuffle_tt_amulet and 1 or 0)
     RomHack:set_value(RomHack.SETTINGS + RomHack.DOOR_PROGRESSION, door_requirement_progression)
-    RomHack:set_value(RomHack.SETTINGS + RomHack.MAX_DOOR_REQUIREMENT, maximum_door_requirement)
     RomHack:set_value(RomHack.SETTINGS + RomHack.SHUFFLE_DOOR_REQUIREMENTS, shuffle_door_requirements and 1 or 0)
     RomHack:set_value(RomHack.SETTINGS + RomHack.BOSS_1_REGIONAL_BALLOONS, boss_1_regional_balloons)
     RomHack:set_value(RomHack.SETTINGS + RomHack.BOSS_2_REGIONAL_BALLOONS, boss_2_regional_balloons)
