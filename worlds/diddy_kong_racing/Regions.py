@@ -12,7 +12,7 @@ else:
     DiddyKongRacingWorld = object
 
 ENTRANCE_NAME_SUFFIX: str = " Door"
-DATASTORAGE_KEY_PREFIX: str = "Diddy_Kong_Racing_{player}_"
+DATASTORAGE_KEY_PREFIX: str = "Diddy_Kong_Racing_{team}_{player}_"
 
 DIDDY_KONG_RACING_REGIONS: dict[str, list[str]] = {
     RegionName.TIMBERS_ISLAND: [

@@ -389,7 +389,7 @@ async def parse_payload(payload: dict, ctx: DiddyKongRacingContext) -> None:
             # For Universal Tracker deferred entrances
             await ctx.send_msgs([{
                 "cmd": "Set",
-                "key": f"Diddy_Kong_Racing_{ctx.slot}_" + str(payload_current_map),
+                "key": f"Diddy_Kong_Racing_{ctx.team}_{ctx.slot}_" + str(payload_current_map),
                 "default": False,
                 "want_reply": False,
                 "operations": [{
