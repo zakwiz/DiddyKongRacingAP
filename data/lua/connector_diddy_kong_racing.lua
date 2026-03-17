@@ -645,7 +645,6 @@ function handle_frame()
         if frame % 10 == 1 then
             check_if_in_save_file()
             if slot_loaded and in_save_file then
-                update_in_game_totals()
                 dpad_stats()
 
                 if not save_file_init_complete then
@@ -1060,24 +1059,17 @@ function process_client_response(response)
 end
 
 function process_items(items)
-    local new_item_received_item_ids = {}
+    local new_item_received = false
     for ap_id, item_id in pairs(items) do
         local ap_id_string = tostring(ap_id)
         if not receive_map[ap_id_string] then
             receive_map[ap_id_string] = tostring(item_id)
-            new_item_received_item_ids[item_id] = true
-
-            local index = ITEM_ID_TO_ROMHACK_ITEM_INDEX[item_id]
-            RomHack:increment_counter(RomHack.RECEIVED_ITEM_COUNTS + index)
+            new_item_received = true
         end
     end
 
-    if next(new_item_received_item_ids) ~= nil then
-        for item_id, _ in pairs(new_item_received_item_ids) do
-            set_boss_1_completion_if_boss_2_unlocked(item_id)
-        end
-
-        client.saveram()
+    if new_item_received then
+        update_in_game_totals()
     end
 end
 
@@ -1162,6 +1154,8 @@ function update_in_game_totals()
     set_boss_1_completion_if_boss_2_unlocked(ITEM_IDS.SNOWFLAKE_MOUNTAIN_BALLOON)
     set_boss_1_completion_if_boss_2_unlocked(ITEM_IDS.SHERBET_ISLAND_BALLOON)
     set_boss_1_completion_if_boss_2_unlocked(ITEM_IDS.DRAGON_FOREST_BALLOON)
+
+    client.saveram()
 end
 
 function set_boss_1_completion_if_boss_2_unlocked(item_id)
