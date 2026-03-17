@@ -1146,23 +1146,25 @@ end
 
 function update_in_game_totals()
     for item_id, romhack_item_index in pairs(ITEM_ID_TO_ROMHACK_ITEM_INDEX) do
-        local received_item_count = get_received_item_count(item_id)
-        RomHack:set_value(RomHack.RECEIVED_ITEM_COUNTS + romhack_item_index, received_item_count)
-    end
+        local item_count_to_set = get_received_item_count(item_id)
 
-    set_boss_1_completion_if_boss_2_unlocked(ITEM_IDS.DINO_DOMAIN_BALLOON)
-    set_boss_1_completion_if_boss_2_unlocked(ITEM_IDS.SNOWFLAKE_MOUNTAIN_BALLOON)
-    set_boss_1_completion_if_boss_2_unlocked(ITEM_IDS.SHERBET_ISLAND_BALLOON)
-    set_boss_1_completion_if_boss_2_unlocked(ITEM_IDS.DRAGON_FOREST_BALLOON)
+        if item_id >= 1616001 and item_id <= 1616004 then -- Regional balloons
+            item_count_to_set = math.min(item_count_to_set, 8)
+
+            if item_count_to_set >= boss_2_regional_balloons then
+                local boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[item_id]
+                Ram:set_flag(boss_1_completion_address[BYTE], boss_1_completion_address[BIT])
+            end
+        elseif item_id >= 1616006 and item_id <= 1616009 then -- Keys
+            item_count_to_set = math.min(item_count_to_set, 1)
+        elseif item_id >= 1616010 and item_id <= 1616011 then -- Amulets
+            item_count_to_set = math.min(item_count_to_set, 4)
+        end
+
+        RomHack:set_value(RomHack.RECEIVED_ITEM_COUNTS + romhack_item_index, item_count_to_set)
+    end
 
     client.saveram()
-end
-
-function set_boss_1_completion_if_boss_2_unlocked(item_id)
-    if BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[item_id] and get_received_item_count(item_id) >= boss_2_regional_balloons then
-        local boss_1_completion_address = BALLOON_ITEM_ID_TO_BOSS_1_COMPLETION_ADDRESS[item_id]
-        Ram:set_flag(boss_1_completion_address[BYTE], boss_1_completion_address[BIT])
-    end
 end
 
 function dpad_stats()
