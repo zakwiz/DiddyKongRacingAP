@@ -170,7 +170,7 @@ class DiddyKongRacingWorld(World):
         return created_item
 
     def place_locked_item(self, location_name: str, item: Item) -> None:
-        self.multiworld.get_location(location_name, self.player).place_locked_item(item)
+        self.get_location(location_name).place_locked_item(item)
 
     def is_ffl_unused(self) -> bool:
         return self.options.victory_condition.value == 0 and not self.options.open_worlds
